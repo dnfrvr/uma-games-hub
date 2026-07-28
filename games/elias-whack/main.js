@@ -16,9 +16,9 @@ const APPARITIONS_PAR_VAGUE = 14;
 
 const SANITY_MAX = 100;
 const SANITY = {
-  rate: 9,      // une vraie créature ratée : Elias se dit qu'elle est passée
+  rate: 7,      // une vraie créature ratée : Elias se dit qu'elle est passée
   bourde: 14,   // taper un innocent : la honte fait très mal
-  touche: -3,   // un bon clic rassure un peu
+  touche: -4,   // un bon clic rassure un peu
 };
 
 const PALIERS_SANITY = [0, 35, 65, 88];
@@ -30,6 +30,8 @@ const etat = {
   sanity: 10,
   apparitions: 0,
   stats: { ok: 0, rate: 0, bourde: 0 },
+  serie: 0,
+  meilleureSerie: 0,
   occupes: new Set(),
   minuteur: null,
   palier: -1,
@@ -49,7 +51,7 @@ const elements = {
   ecranTitre: $("ecran-titre"),
   ecranTexte: $("ecran-texte"),
   jouer: $("btn-jouer"),
-  stats: { ok: $("stat-ok"), rate: $("stat-rate"), bourde: $("stat-bourde") },
+  stats: { ok: $("stat-ok"), rate: $("stat-rate"), bourde: $("stat-bourde"), serie: $("stat-serie") },
 };
 
 const trous = [];
@@ -147,6 +149,8 @@ function demarre() {
   etat.sanity = 10;
   etat.apparitions = 0;
   etat.stats = { ok: 0, rate: 0, bourde: 0 };
+  etat.serie = 0;
+  etat.meilleureSerie = 0;
   etat.palier = -1;
 
   trous.forEach((_, i) => vide(i, false));
@@ -168,7 +172,8 @@ function arrete(titre, texte) {
     texte +
     "<br /><br /><b>" + etat.score + " points</b> · vague " + etat.vague +
     "<br />" + etat.stats.ok + " créatures neutralisées, " +
-    etat.stats.rate + " manquées, " + etat.stats.bourde + " bourdes";
+    etat.stats.rate + " manquées, " + etat.stats.bourde + " bourdes" +
+    "<br />Meilleure série : " + etat.meilleureSerie;
   elements.jouer.textContent = "Recommencer";
   elements.ecran.classList.add("visible");
 }
@@ -176,13 +181,13 @@ function arrete(titre, texte) {
 /* Cadence : elle raccourcit avec la vague, et encore un peu quand la sanity
    grimpe — c'est ce qui rend les paliers hauts réellement plus durs. */
 function delaiApparition() {
-  const base = Math.max(360, 1000 - (etat.vague - 1) * 90);
+  const base = Math.max(320, 1150 - (etat.vague - 1) * 105);
   const panique = 1 - (etat.sanity / SANITY_MAX) * 0.35;
   return Math.round(base * panique * (0.7 + Math.random() * 0.6));
 }
 
 function dureeVisible() {
-  return Math.max(600, 1500 - (etat.vague - 1) * 110);
+  return Math.max(520, 1750 - (etat.vague - 1) * 135);
 }
 
 function planifie() {
@@ -227,8 +232,9 @@ function apparait() {
     vide(index, true);
     if (etaitCible) {
       etat.stats.rate++;
+      etat.serie = 0;
       majSanity(SANITY.rate);
-      commente("Elle est repartie. Elias l'a bien vue, lui.");
+      commente("Elle est repartie. Moi je l'ai bien vue.");
       reagit("panique", 900);
       majTableau();
     }
@@ -250,7 +256,7 @@ function vide(index, animer) {
 
 function vagueSuivante() {
   etat.vague++;
-  commente("Vague " + etat.vague + " : ça s'accélère.");
+  commente("Vague " + etat.vague + ". Ça s'accélère, je le sens.");
   majTableau();
 }
 
@@ -267,7 +273,7 @@ function frappe(index) {
        remarque. On évite de punir, le jeu est déjà nerveux. */
     trou.el.classList.add("frappe");
     setTimeout(() => trou.el.classList.remove("frappe"), 150);
-    commente("Il n'y avait rien. Elias note quand même l'heure.");
+    commente("Il n'y avait rien. Je note quand même l'heure.");
     return;
   }
 
@@ -275,6 +281,7 @@ function frappe(index) {
 
   if (occupant.piege) {
     etat.stats.bourde++;
+    etat.serie = 0;
     etat.score = Math.max(0, etat.score - 80);
     majSanity(SANITY.bourde);
     commente(occupant.replique);
@@ -283,14 +290,23 @@ function frappe(index) {
     setTimeout(() => trou.el.classList.remove("bourde"), 300);
   } else {
     etat.stats.ok++;
-    etat.score += occupant.points;
+    etat.serie++;
+    etat.meilleureSerie = Math.max(etat.meilleureSerie, etat.serie);
+    etat.score += occupant.points * multiplicateur();
     majSanity(SANITY.touche);
-    commente(occupant.nom + " neutralisé·e.");
+    commente(occupant.replique + (multiplicateur() > 1 ? " (série ×" + multiplicateur() + ")" : ""));
     reagit("content", 800);
   }
 
   vide(index, true);
   majTableau();
+}
+
+/* Série : chaque tranche de 5 bons coups d'affilée double, puis triple les
+   points. Se tromper une fois remet le compteur à zéro — c'est ce qui pousse
+   à viser au lieu de cliquer partout. */
+function multiplicateur() {
+  return Math.min(3, 1 + Math.floor(etat.serie / 5));
 }
 
 /* =========================================================
@@ -323,6 +339,9 @@ function majTableau() {
   elements.stats.ok.textContent = etat.stats.ok;
   elements.stats.rate.textContent = etat.stats.rate;
   elements.stats.bourde.textContent = etat.stats.bourde;
+  if (elements.stats.serie) {
+    elements.stats.serie.textContent = etat.serie + (multiplicateur() > 1 ? " (×" + multiplicateur() + ")" : "");
+  }
 }
 
 function commente(texte) {

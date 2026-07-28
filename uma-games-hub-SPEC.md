@@ -245,10 +245,12 @@ les personnages sont maison.
 - **Meubles** : bureaux, casiers, canapés, arbres, enceintes… Les meubles hauts
   **coupent la ligne de vue** ; les meubles bas (bancs) ne la coupent pas mais servent
   de cachette quand on est accroupi.
-- **PNJ et faisceaux de regard** : chaque PNJ regarde dans une direction, dans SA
-  rangée uniquement, sur une certaine portée. Le faisceau est **toujours dessiné à
-  l'écran** (rayures claires, bord vif au bout) : le jeu est un puzzle de timing, pas
-  une devinette. Trois comportements :
+- **PNJ et téléphones** : chaque PNJ a son téléphone à la main et cadre dans une
+  direction, dans SA rangée uniquement, sur une certaine portée. Le champ de la caméra
+  est **toujours dessiné à l'écran** (cadre clair, barres de visée) : le jeu est un
+  puzzle de timing, pas une devinette. Si Eoghan y reste, **le snap part** : flash du
+  téléphone, écran blanc, et la photo file dans le groupe de la fac. Trois
+  comportements de cadrage :
   - `patrouille` — le PNJ va et vient et regarde devant lui ;
   - `tourne` — il reste en place et se retourne à intervalle régulier ;
   - `fixe` — il ne bouge jamais, mais sa portée est grande.
@@ -259,8 +261,8 @@ les personnages sont maison.
   - Pendant le bisou, Eoghan **ne peut pas bouger** : c'est le moment de vulnérabilité.
   - Bisou terminé sans être vu = **réussi**, le garçon passe en ✔ et sort de la liste
     des cibles (un bisou par garçon, pas de harcèlement de score).
-- **Se faire repérer** : si un faisceau touche Eoghan **pendant un bisou**, ou s'il
-  reste dans un faisceau plus de ~0,9 s en temps normal :
+- **Se faire snapper** : si une caméra cadre Eoghan **pendant un bisou**, ou s'il reste
+  dans un champ plus de ~0,9 s en temps normal :
   - la **jauge de ragots** perd un cœur (elle ne se répare jamais) ;
   - le PNJ lâche une réplique goofy et **tous les PNJ se braquent sur Eoghan** pendant
     3 s : une bourde peut en déclencher une autre.
@@ -271,8 +273,8 @@ les personnages sont maison.
   - Fin du chrono sans game over = score final tel quel.
 - **Score et combo** :
   - Bisou réussi = 100 pts, +50 par bisou enchaîné sans repérage entre-temps.
-  - **Bonus discrétion** : +200 si un faisceau frôle Eoghan pendant le bisou sans le
-    toucher (« bisou sous le nez »).
+  - **Bonus discrétion** : +200 si une caméra frôle Eoghan pendant le bisou sans le
+    cadrer (« bisou sous le nez »).
   - **Bonus rapidité** : temps restant × 5 en cas de victoire.
   - Rangs de fin : « Fantôme romantique 👻💗 » > « Discret… ish » > « Tout le monde a vu ».
 - **Données** : chaque décor est une entrée de `decors.js` (palette, meubles, garçons,
@@ -299,6 +301,10 @@ les personnages sont maison.
 Trois décors au choix depuis un **écran de sélection de niveau** (trois vignettes façon
 « choisis ton terrain »). Même moteur pour les trois, mais agencement, PNJ et rythme
 différents — c'est ce qui fait la progression de difficulté.
+
+**Courbe de difficulté** (mesurée : part de la salle surveillée en moyenne) —
+campus ≈ 20 %, soirée ≈ 48 %, vestiaire ≈ 56 %. Chaque décor doit rester au-dessus du
+précédent : c'est le critère à vérifier quand on retouche un PNJ.
 
 ### 1. Le campus ☀️ (facile, rythme lent)
 - **Agencement** : grande pelouse ouverte, quelques bancs et arbres comme seuls

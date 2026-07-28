@@ -75,9 +75,9 @@ const CHARTS = [
     resume: "Le rythme se resserre, la foule commence à y croire.",
     motifs: [
       "<.^.>.v.", "<.<.^.^.", ">.v.>.v.", "^.^.<.>.",
-      "<^>v<^>v", "..v..^..", "<.>.<.>.", "^.v.^.v.",
+      "<^>v....", "..v..^..", "<.>.<.>.", "^.v.^.v.",
       "<^..>v..", "<.^.>.v.", "^^..vv..", "<.>.^.v.",
-      "<^>v.^.v", "<.<.>.>.", "^v^v<.>.", "<^>v...."
+      "<^>v.^..", "<.<.>.>.", "^.v.<.>.", "<^>v...."
     ],
   },
   {
@@ -85,18 +85,17 @@ const CHARTS = [
     nom: "Finale du championnat",
     difficulte: "Difficile",
     etoiles: "★★★",
-    bpm: 148,
-    parPas: 4,
-    resume: "Plus personne ne respire. Surtout pas toi.",
+    bpm: 150,
+    parPas: 2,
+    resume: "Des rafales, des contretemps, et zéro pitié.",
+    /* Densité maximale : 4 notes d'affilée (~210 ms d'écart), toujours
+       suivies d'une respiration. Au-delà, ce n'est plus difficile, c'est
+       juste impossible à la main. */
     motifs: [
-      "<.^.>.v.<.^.>.v.", "<<..^^..>>..vv..",
-      "<^>v<^>v<^>v<^>v", "^.^.v.v.<.<.>.>.",
-      "<.>.<.>.^^^^vvvv", "<^..v>..<^..v>..",
-      "<<>><<>>^^vv^^vv", "<.^.>.v.<^>v<^>v",
-      "^v^v^v^v<><><><>", "<^>v..v^<^>v..v^",
-      "<<^^>>vv<<^^>>vv", "<.>.^.v.<^>v<^>v",
-      "<^>v<^>v^^vv<<>>", "<.<.>.>.^.^.v.v.",
-      "<^>v<^>v<^>v<^>v", "<...^...>...v..."
+      "<^>v.^.v", "<<..>>.v", "^.v.^^v.", "<^>v.<.>",
+      "<.>.<^>v", "^^..vv^.", "<^..>v.<", ".<.>.^.v",
+      "<^>v.^.v", "<<>>.^.v", "v.^.v^.v", "<^>v..<.",
+      ">.v.>^.v", "^.<.<^>v", "<^>v.^.v", "<...^..."
     ],
   },
 ].map((chart) => ({

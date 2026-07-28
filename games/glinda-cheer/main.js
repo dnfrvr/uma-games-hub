@@ -8,9 +8,9 @@
    ========================================================= */
 
 /* --- Réglages de jugement (en millisecondes d'écart avec la note) ------- */
-const FENETRE_PARFAIT = 55;
-const FENETRE_BIEN = 115;
-const FENETRE_RATE = 160; // au-delà, la note est comptée ratée toute seule
+const FENETRE_PARFAIT = 65;
+const FENETRE_BIEN = 135;
+const FENETRE_RATE = 190; // au-delà, la note est comptée ratée toute seule
 
 const CHUTE_MS = 1900; // temps que met une note pour traverser la piste
 
@@ -249,7 +249,24 @@ function demarre(chart) {
   audio.rythme(chart.bpm, () => etat.enCours);
 
   etat.debut = performance.now();
+  decompte();
   requestAnimationFrame(boucle);
+}
+
+/* Décompte avant la première note : on cale les paliers sur DEPART_MS pour
+   que le « GO ! » tombe pile quand la chorégraphie commence. */
+function decompte() {
+  const etapes = [
+    { a: 0, texte: "3" },
+    { a: DEPART_MS * 0.28, texte: "2" },
+    { a: DEPART_MS * 0.56, texte: "1" },
+    { a: DEPART_MS * 0.84, texte: "GO !" },
+  ];
+  etapes.forEach((e) => {
+    setTimeout(() => {
+      if (etat.enCours) affiche(e.texte, "decompte");
+    }, e.a);
+  });
 }
 
 function arrete(termine) {

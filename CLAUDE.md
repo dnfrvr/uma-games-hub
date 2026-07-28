@@ -112,8 +112,20 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       créatures et avatar réactif d'Elias, casting complet de Kiss & Cache.
 - [x] Kiss & Cache repassé **en vue de côté** (deux rangées de profondeur, faisceaux
       de regard, meubles qui coupent la vue) pour coller aux jeux de bisous d'époque.
+- [x] Équilibrage : la finale de Glinda était injouable (101 ms entre deux notes)
+      et le niveau 3 d'Eoghan plus sûr que le niveau 1. Les deux sont mesurés
+      maintenant (densité de notes, part de salle surveillée) et la courbe monte.
 - [ ] Remplacer les vignettes SVG du hub par de vraies illustrations si l'envie vient
       (le manifest suffit, aucun code à toucher).
+
+### Repères d'équilibrage (à revérifier après toute retouche)
+- **Glinda** : écart minimum entre deux notes ≥ 200 ms, rafale de 4 notes maximum
+  suivie d'une respiration. Densité moyenne : 1,1 / 2,1 / 3,3 notes par seconde.
+- **Elias** : vague 1 laisse 1,75 s pour viser, vague 8 tombe à 0,8 s. Série de bons
+  coups : ×2 à 5 d'affilée, ×3 à 10, remise à zéro à la moindre bourde.
+- **Eoghan** : part de la salle surveillée par les téléphones, en moyenne dans le
+  temps — campus 24 %, soirée 48 %, vestiaire 56 %. Chaque décor doit rester
+  au-dessus du précédent.
 
 ### Où en est chaque jeu par rapport à sa spec
 - **Glinda** : phases 0 à 4 faites (moteur, hype, combo, habillage). Décor : stade de
@@ -123,6 +135,8 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
   palier de sanity et réagit à chaque bon coup, bourde ou créature manquée.
 - **Eoghan** : phases 0 à 5 faites, les trois décors sont là dès le départ (le
   moteur est piloté par `decors.js`, ajouter un terrain ne demande aucun code).
+  Les PNJ ne portent pas de lampe : ils tiennent un téléphone et prennent un snap
+  quand ils cadrent Eoghan.
 
 Mets à jour cette liste à la fin de chaque tâche importante, pour que la prochaine
 session Claude Code sache exactement où en est le projet sans qu'on ait à tout

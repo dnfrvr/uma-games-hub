@@ -5,9 +5,10 @@
    profondeur : 0 = devant (près de la caméra), 1 = derrière. Eoghan marche
    de gauche à droite et change de plan avec ↑/↓.
 
-   Chaque PNJ regarde dans une direction, dans SON plan uniquement, sur une
-   certaine portée. Le faisceau de regard est toujours dessiné à l'écran :
-   c'est un jeu de timing, jamais une devinette.
+   Chaque PNJ tient son téléphone et cadre dans une direction, dans SON plan
+   uniquement, sur une certaine portée. Le champ de la caméra est toujours
+   dessiné à l'écran : c'est un jeu de timing, jamais une devinette. Si
+   Eoghan y reste, le snap part — et avec lui un cran de ragots.
    ========================================================= */
 
 const VITESSE = 210;        // unités par seconde
@@ -144,7 +145,7 @@ function chargeDecor(decor) {
 
   // --- PNJ
   decor.pnj.forEach((modele) => {
-    const el = persoElement({ ...modele.look, bouche: "neutre" }, "acteur acteur-pnj");
+    const el = persoElement({ ...modele.look, bouche: "neutre", telephone: true }, "acteur acteur-pnj");
     el.title = modele.nom;
     elements.acteurs.appendChild(el);
 
@@ -383,16 +384,19 @@ function gereDetection(maintenant, dt) {
   const flash = maintenant < etat.flashJusqua;
   const e = etat.eoghan;
 
-  const vu =
-    !estCache(maintenant) &&
-    etat.pnj.some((p) => {
-      if (p.plan !== e.plan) return false; // chacun surveille son plan
-      const d = (e.x - p.x) * p.dir;
-      if (d < 0) return false;             // il regarde ailleurs
-      if (d > (flash ? LARGEUR_SALLE : p.portee)) return false;
-      return flash || !vueBloquee(p, e.x);
-    });
+  /* On retient QUI cadre Eoghan : c'est ce PNJ qui déclenchera le snap. */
+  const photographe = estCache(maintenant)
+    ? null
+    : etat.pnj.find((p) => {
+        if (p.plan !== e.plan) return false; // chacun cadre son plan
+        const d = (e.x - p.x) * p.dir;
+        if (d < 0) return false;             // il vise ailleurs
+        if (d > (flash ? LARGEUR_SALLE : p.portee)) return false;
+        return flash || !vueBloquee(p, e.x);
+      });
 
+  const vu = !!photographe;
+  etat.photographe = photographe;
   etat.vu = vu;
   document.body.classList.toggle("repere", vu);
 
@@ -405,18 +409,33 @@ function gereDetection(maintenant, dt) {
      vulnérabilité du jeu. */
   if (etat.bisou) {
     annuleBisou();
-    bourde("J'AI TOUT VU !");
+    bourde("📸 SNAP ! La photo part dans le groupe.");
     return;
   }
 
   etat.exposition += dt * 1000;
   if (etat.exposition >= EXPOSITION_MAX) {
     etat.exposition = 0;
-    bourde("Eh, qu'est-ce que tu fais là ?");
+    bourde("📸 Snap ! « Regardez qui traîne ici. »");
   }
 }
 
+/* Le snap : le téléphone du PNJ crache son flash, l'écran blanchit une
+   fraction de seconde. C'est la sanction, et elle doit se voir. */
+function snap() {
+  const p = etat.photographe;
+  if (p) {
+    p.el.classList.remove("snap");
+    void p.el.offsetWidth;
+    p.el.classList.add("snap");
+    setTimeout(() => p.el.classList.remove("snap"), 500);
+  }
+  document.body.classList.add("snap-flash");
+  setTimeout(() => document.body.classList.remove("snap-flash"), 260);
+}
+
 function bourde(replique) {
+  snap();
   etat.ragots++;
   etat.combo = 0;
   etat.alerteJusqua = performance.now() + ALERTE_MS;

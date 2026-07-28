@@ -211,15 +211,15 @@ body {
    Les faisceaux de regard — toujours visibles, c'est la règle du jeu
    ========================================================= */
 
-/* Le faisceau part de l'œil du PNJ et s'élargit vers le sol : rayures
-   claires en travers + bord vif au bout, pour rester lisible aussi bien sur
-   la pelouse du campus que sur le parquet sombre de la soirée. */
+/* Le champ de la caméra du téléphone : un cadre clair qui s'élargit devant
+   le PNJ, avec des barres de visée. Lisible aussi bien sur la pelouse du
+   campus que sur le parquet sombre de la soirée. */
 .faisceau {
   position: absolute;
   height: 34%;
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0 7px, rgba(255, 255, 255, 0) 7px 20px),
-    linear-gradient(90deg, rgba(255, 208, 40, 0) 0%, rgba(255, 208, 40, 0.9) 92%, rgba(255, 255, 255, 0.95) 100%);
+    linear-gradient(90deg, rgba(190, 235, 255, 0) 0%, rgba(190, 235, 255, 0.85) 92%, rgba(255, 255, 255, 0.95) 100%);
   clip-path: polygon(100% 0, 100% 100%, 0 72%, 0 28%);
   pointer-events: none;
   mix-blend-mode: screen;
@@ -229,7 +229,7 @@ body {
 .faisceau.vers-gauche {
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0 7px, rgba(255, 255, 255, 0) 7px 20px),
-    linear-gradient(270deg, rgba(255, 208, 40, 0) 0%, rgba(255, 208, 40, 0.9) 92%, rgba(255, 255, 255, 0.95) 100%);
+    linear-gradient(270deg, rgba(190, 235, 255, 0) 0%, rgba(190, 235, 255, 0.85) 92%, rgba(255, 255, 255, 0.95) 100%);
   clip-path: polygon(0 0, 0 100%, 100% 72%, 100% 28%);
 }
 
@@ -266,6 +266,30 @@ body.flash .salle .flash-voile { opacity: 0.55; animation: clignoteFlash 0.3s st
 @keyframes clignoteFlash {
   50% { opacity: 0.22; }
 }
+
+/* Le snap : éclair du téléphone sur le PNJ qui déclenche… */
+.acteur-pnj.snap::after {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: 34%;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, 0.85) 40%, transparent 70%);
+  animation: eclairTelephone 0.35s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes eclairTelephone {
+  0%   { opacity: 0; transform: scale(0.3); }
+  25%  { opacity: 1; transform: scale(1.6); }
+  100% { opacity: 0; transform: scale(2.2); }
+}
+
+/* …et blanc plein écran, comme quand on se prend un flash en pleine face. */
+body.snap-flash .salle::before,
+body.snap-flash .flash-voile { opacity: 0.85; }
 
 /* Eoghan repéré : il clignote, comme dans les jeux d'infiltration */
 body.repere .acteur-eoghan { animation: repereClignote 0.28s steps(2) infinite; }

@@ -120,6 +120,15 @@ function persoSVG(options) {
         .join("")
     : "";
 
+  /* Téléphone brandi devant soi, prêt à dégainer un snap. */
+  const telephone = o.telephone
+    ? '<g transform="rotate(-10 40 38)">' +
+        '<rect x="34" y="28" width="12" height="18" rx="2.5" fill="#2b2b38" stroke="' + PERSO_TRAIT + '" stroke-width="2"/>' +
+        '<rect x="36" y="30.5" width="8" height="13" rx="1" fill="#bfe6ff"/>' +
+        '<circle cx="40" cy="45" r="1.1" fill="#8fa4c4"/>' +
+      "</g>"
+    : "";
+
   const jupe = o.jupe
     ? '<path d="M11 52h26l6 16H5z" fill="' + o.jupe + '" stroke="' + PERSO_TRAIT +
       '" stroke-width="2.5" stroke-linejoin="round"/>' +
@@ -150,6 +159,7 @@ function persoSVG(options) {
         (COIFFURE_EXTRAS[o.cheveux] ? COIFFURE_EXTRAS[o.cheveux](couleurCheveux) : "") +
         accessoireSVG(o.accessoire, couleurCheveux, o.couleurAccessoire) +
         pompons +
+        telephone +
       "</g>" +
     "</svg>"
   );
