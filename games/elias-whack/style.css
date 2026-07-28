@@ -120,15 +120,60 @@ body[data-sanity="3"] .scanlines { opacity: 0.9; }
   text-shadow: 0 0 8px rgba(198, 255, 77, 0.6);
 }
 
+/* --- Elias et sa bulle : le visage suit la jauge de sanity --- */
+.elias {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 92px;
+}
+
+.elias-avatar {
+  flex: 0 0 auto;
+  width: 76px;
+  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, 0.6));
+}
+
+.elias-avatar svg { display: block; width: 100%; height: auto; }
+
+.elias-avatar.secoue { animation: secoueElias 0.4s ease-out; }
+
+@keyframes secoueElias {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  20%      { transform: translateX(-5px) rotate(-4deg); }
+  50%      { transform: translateX(5px) rotate(4deg); }
+  80%      { transform: translateX(-3px) rotate(-2deg); }
+}
+
+/* Bulle de dialogue à côté de lui, pointe vers l'avatar. */
 .commentaire {
+  position: relative;
+  flex: 1 1 auto;
   min-height: 1.4em;
   margin: 0;
+  padding: 10px 14px;
   text-align: center;
   font-size: 0.85rem;
   font-weight: bold;
-  color: #fff;
-  text-shadow: 1px 1px 0 var(--text-color);
+  color: var(--text-color);
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.5);
   opacity: 0;
+}
+
+.commentaire::after {
+  content: "";
+  position: absolute;
+  left: -9px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  background: var(--panel-bg);
+  border-left: var(--trait);
+  border-bottom: var(--trait);
+  transform: translateY(-50%) rotate(45deg);
 }
 
 .commentaire.pop { animation: popCommentaire 2.4s ease-out forwards; }
@@ -181,13 +226,15 @@ body[data-sanity="3"] .scanlines { opacity: 0.9; }
 }
 
 .habitant {
-  font-size: 2.6rem;
-  line-height: 1;
+  width: 76%;
+  line-height: 0;
   transform: translateY(120%);
   transition: transform 0.13s ease-out;
-  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.8));
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.8));
   pointer-events: none;
 }
+
+.habitant svg { display: block; width: 100%; height: auto; }
 
 .trou.occupe .habitant { transform: translateY(4%); }
 
@@ -359,7 +406,7 @@ body[data-sanity="3"] .scanlines { opacity: 0.9; }
 @media (max-width: 460px) {
   :root { --trou-taille: 66px; }
   .grille { gap: 8px; }
-  .habitant { font-size: 1.9rem; }
+  .habitant { width: 82%; }
 }
 
 /* =========================================================

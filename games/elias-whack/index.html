@@ -38,7 +38,12 @@
           <div class="terrain">
             <p class="ambiance" id="ambiance">Tout va bien. Enfin, presque.</p>
             <div id="grille" class="grille" aria-label="Terrain de jeu"></div>
-            <p id="commentaire" class="commentaire" role="status"></p>
+
+            <!-- Elias commente en direct : son visage suit sa santé mentale -->
+            <div class="elias">
+              <div id="elias-avatar" class="elias-avatar" aria-hidden="true"></div>
+              <p id="commentaire" class="commentaire" role="status"></p>
+            </div>
           </div>
 
           <!-- Écrans superposés : accueil et fin de partie -->
@@ -47,7 +52,7 @@
               <h2 id="ecran-titre" class="ecran-titre">Sanity Whack</h2>
               <p id="ecran-texte" class="ecran-texte">
                 Tape les créatures avant qu'elles ne disparaissent.<br />
-                <b>Ne tape jamais</b> le chat 🐈, la grand-mère 👵 ou la pizza 🍕 :
+                <b>Ne tape jamais</b> le chat, la grand-mère ou la pizza :
                 Elias panique déjà bien assez tout seul.
               </p>
               <button id="btn-jouer" class="fun-btn primary">Commencer l'enquête</button>
@@ -103,6 +108,7 @@
     <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
   </div>
 
+  <script src="../../shared/perso.js"></script>
   <script src="roster.js"></script>
   <script src="main.js"></script>
   <script src="../../shared/sparkle.js"></script>

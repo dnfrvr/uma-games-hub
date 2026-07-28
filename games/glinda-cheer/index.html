@@ -31,18 +31,38 @@
       <div class="game">
         <!-- ===== Scène : tribunes, Glinda, couloirs de notes ===== -->
         <section class="stage">
-          <!-- Tribunes animées, remplies par main.js -->
-          <div class="tribune" aria-hidden="true">
-            <div id="foule" class="foule"></div>
+          <!-- Le stade : ciel, tribunes bondées, panneau d'affichage,
+               terrain de foot US avec ses lignes de yards et ses poteaux -->
+          <div class="stade" aria-hidden="true">
+            <div class="ciel"></div>
+
+            <div class="panneau-score">
+              <span class="panneau-ligne">AUGUSTA <b>21</b> — <b>14</b> VISITEURS</span>
+              <span class="panneau-ligne petite">4<sup>e</sup> QUART · 02:14</span>
+            </div>
+
+            <div class="tribunes">
+              <div id="foule" class="foule"></div>
+            </div>
+
+            <div class="terrain">
+              <div class="poteaux">
+                <svg viewBox="0 0 120 90" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M60 90V46" stroke="#2b1a2e" stroke-width="9" fill="none"/>
+                  <path d="M60 88V44" stroke="#ffd84d" stroke-width="5" fill="none"/>
+                  <path d="M22 8v40M98 8v40M22 46h76" stroke="#2b1a2e" stroke-width="9" fill="none" stroke-linecap="round"/>
+                  <path d="M22 8v40M98 8v40M22 46h76" stroke="#ffd84d" stroke-width="5" fill="none" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="lignes"></div>
+            </div>
+
             <div id="confettis" class="confettis"></div>
           </div>
 
-          <!-- Glinda, qui prend la pose de la touche jouée -->
-          <div class="glinda" aria-hidden="true">
-            <span class="pompon pompon-gauche">🎀</span>
-            <span id="glinda-corps" class="glinda-corps">📣</span>
-            <span class="pompon pompon-droit">🎀</span>
-          </div>
+          <!-- Glinda : sa pose change à chaque touche jouée -->
+          <div id="glinda" class="glinda" aria-hidden="true"></div>
+          <div id="copine" class="copine" aria-hidden="true"></div>
 
           <!-- Piste de jeu : 4 couloirs + ligne de jugement -->
           <div id="piste" class="piste">
@@ -113,6 +133,7 @@
     <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
   </div>
 
+  <script src="../../shared/perso.js"></script>
   <script src="charts.js"></script>
   <script src="main.js"></script>
   <script src="../../shared/sparkle.js"></script>

@@ -9,7 +9,7 @@ un par personnage principal, chacun exploitant un trait de personnalité goofy :
 | Drew    | Dress-up (mauvais goût vestimentaire)              | En cours, projet séparé `dress-my-drew` |
 | Glinda  | **Pep Rally Rhythm** — jeu de rythme cheerleader   | À spec ci-dessous |
 | Elias   | **Sanity Whack** — whack-a-mole aliens/creepypasta | À spec ci-dessous |
-| Eoghan  | **Kiss & Cache** — infiltration/bisous en vue de dessus | À spec ci-dessous |
+| Eoghan  | **Kiss & Cache** — infiltration/bisous en vue de côté | À spec ci-dessous |
 
 Le **hub** (page d'accueil) affiche les 4 jeux en grille de vignettes façon site de jeux
 2012. Sur **chaque page de jeu**, une **sidebar** liste les 3 autres jeux (vignette +
@@ -166,10 +166,9 @@ tapes la mauvaise chose, plus l'écran déraille visuellement (tremblements, bru
 distorsion), dans l'esprit parano/creepypasta/complotiste d'Elias — le tout en mode
 comique, jamais glauque.
 
-**Important droits d'auteur** : on n'utilise **aucun personnage creepypasta existant**
-(pas de Slenderman, Jeff the Killer, etc. nommés ou dessinés à leur image) — on crée un
-**casting original** dans le même esprit visuel (silhouette floue dans les bois, œil
-géant dans le ciel, petit gris générique, ombre humanoïde, ovni, chèvre suspecte).
+Le casting est maison (silhouette floue dans les bois, œil géant dans le ciel, petit
+gris générique, ombre humanoïde, ovni, chèvre suspecte), dessiné en SVG comme le reste
+du portail.
 
 ## Mécanique
 - Grille de trous/fenêtres (ex: 3×3 ou 4×3) façon whack-a-mole classique.
@@ -220,10 +219,11 @@ géant dans le ciel, petit gris générique, ombre humanoïde, ovni, chèvre sus
 # Jeu Eoghan — "Kiss & Cache"
 
 ## Concept
-Jeu d'infiltration comique en vue de dessus, façon mini-jeu flash 2012 « vole un bisou
-sans te faire voir ». Eoghan se déplace dans un décor rempli de PNJ qui regardent
-autour d'eux, et doit embrasser un maximum de garçons **partants** avant la fin du
-chrono, sans jamais être pris sur le fait.
+Jeu d'infiltration comique **en vue de côté**, façon mini-jeu flash 2012 « vole un
+bisou sans te faire voir ». La salle est vue de profil, sur deux rangées de
+profondeur ; Eoghan marche de gauche à droite au milieu des PNJ qui regardent autour
+d'eux, et doit embrasser un maximum de garçons **partants** avant la fin du chrono,
+sans jamais être pris sur le fait.
 
 Le trait exploité : Eoghan drague tout ce qui bouge et se croit d'une discrétion
 absolue. Il ne l'est pas. Ton fun et bienveillant, jamais gênant : **seuls les garçons
@@ -232,61 +232,66 @@ cibles valides du jeu, et c'est aussi la règle de game design (voir Mécanique)
 garçon sans cœur n'est pas une cible : l'approcher fait juste apparaître une réplique
 goofy du style « Salut. Non. », sans pénalité.
 
-**Important droits d'auteur** : le genre est librement inspiré des vieux jeux flash de
-bisous, mais **rien n'est repris** — nom, décors, PNJ et assets sont originaux, et
-aucun décor ne représente un lieu, une marque ou une personne réelle.
+Le genre est librement inspiré des vieux jeux flash de bisous ; le nom, les décors et
+les personnages sont maison.
 
 ## Mécanique
-- **Vue de dessus**, décor d'un seul écran (pas de scrolling), avec des **obstacles**
-  (meubles, tables, casiers, buissons) derrière lesquels se cacher.
-- **Déplacement** : flèches / ZQSD au clavier, et clic/tap sur une case pour la version
-  tactile (Eoghan marche jusqu'au point visé). Une touche **« s'accroupir »** (Maj)
-  ralentit Eoghan mais le rend invisible derrière un obstacle bas.
-- **PNJ à cônes de vision** : chaque PNJ porte un cône (triangle CSS/canvas) qui balaye
-  selon un motif propre — rotation régulière, va-et-vient, ou orientation fixe avec des
-  micro-pauses. Le cône est **toujours visible à l'écran** : le jeu est un puzzle de
-  timing, pas une devinette.
-- **Embrasser** : se placer sur la case adjacente à un garçon partant et **maintenir la
-  touche Espace** pendant une courte durée (~0,8 s, réglable par décor). Une jauge
-  circulaire se remplit au-dessus du couple.
-  - Pendant le bisou, Eoghan **ne peut pas bouger** et une petite bulle de cœurs
-    apparaît : c'est le moment de vulnérabilité du jeu.
-  - Bisou terminé sans être vu = **réussi**, le garçon devient tout rouge et sort de la
-    liste des cibles (un bisou par garçon, pas de harcèlement de score).
-- **Se faire repérer** : si un cône de vision touche Eoghan **pendant un bisou**, ou
-  si Eoghan reste dans un cône plus de ~1 s en temps normal :
-  - la **jauge de ragots** monte d'un cran (elle ne redescend jamais toute seule) ;
-  - le PNJ lâche une réplique goofy (« J'AI TOUT VU ») et les PNJ voisins tournent leur
-    cône vers Eoghan pendant 3 s : une bourde peut en déclencher une autre.
+- **Vue de côté**, salle d'un seul écran (pas de scrolling), avec deux **rangées de
+  profondeur** : le premier plan (près de la caméra) et le fond. La rangée du fond est
+  dessinée plus petite et plus haute, ce qui creuse la salle.
+- **Déplacement** : ← → (ou Q/D) pour marcher, ↑ ↓ pour changer de rangée. Au doigt,
+  on maintient à gauche ou à droite de l'écran. Une touche **« s'accroupir »** (Maj)
+  ralentit Eoghan mais le rend invisible s'il est **planqué près d'un meuble**.
+- **Meubles** : bureaux, casiers, canapés, arbres, enceintes… Les meubles hauts
+  **coupent la ligne de vue** ; les meubles bas (bancs) ne la coupent pas mais servent
+  de cachette quand on est accroupi.
+- **PNJ et faisceaux de regard** : chaque PNJ regarde dans une direction, dans SA
+  rangée uniquement, sur une certaine portée. Le faisceau est **toujours dessiné à
+  l'écran** (rayures claires, bord vif au bout) : le jeu est un puzzle de timing, pas
+  une devinette. Trois comportements :
+  - `patrouille` — le PNJ va et vient et regarde devant lui ;
+  - `tourne` — il reste en place et se retourne à intervalle régulier ;
+  - `fixe` — il ne bouge jamais, mais sa portée est grande.
+- **Embrasser** : se placer à côté d'un garçon partant (même rangée) et **maintenir la
+  touche Espace** pendant une courte durée (0,6 à 1 s selon le décor). Une jauge
+  circulaire se remplit, les deux personnages se penchent l'un vers l'autre, yeux
+  fermés.
+  - Pendant le bisou, Eoghan **ne peut pas bouger** : c'est le moment de vulnérabilité.
+  - Bisou terminé sans être vu = **réussi**, le garçon passe en ✔ et sort de la liste
+    des cibles (un bisou par garçon, pas de harcèlement de score).
+- **Se faire repérer** : si un faisceau touche Eoghan **pendant un bisou**, ou s'il
+  reste dans un faisceau plus de ~0,9 s en temps normal :
+  - la **jauge de ragots** perd un cœur (elle ne se répare jamais) ;
+  - le PNJ lâche une réplique goofy et **tous les PNJ se braquent sur Eoghan** pendant
+    3 s : une bourde peut en déclencher une autre.
 - **Fin de partie** :
-  - **Game over** si la jauge de ragots atteint le maximum (3 crans en Campus, 4 en
-    Soirée, 2 en Vestiaire) → écran comique : « Toute la fac est au courant. Eoghan
-    trouve ça flatteur. »
-  - **Victoire** si tous les garçons partants du décor ont été embrassés avant la fin
-    du chrono → écran de score + rang goofy.
+  - **Game over** si la jauge de ragots est vidée (3 cœurs en Campus, 4 en Soirée, 2 en
+    Vestiaire) → « Toute la fac est au courant. Eoghan trouve ça flatteur. »
+  - **Victoire** si tous les garçons partants ont été embrassés avant la fin du chrono.
   - Fin du chrono sans game over = score final tel quel.
 - **Score et combo** :
-  - Bisou réussi = 100 pts.
-  - **Combo** : chaque bisou enchaîné sans se faire repérer entre-temps ajoute +50 par
-    palier (100, 150, 200…). Un repérage remet le combo à zéro, jamais le score.
-  - **Bonus discrétion** : +200 si le bisou a lieu alors qu'un cône passe à moins d'une
-    case sans toucher Eoghan (« bisou sous le nez »).
+  - Bisou réussi = 100 pts, +50 par bisou enchaîné sans repérage entre-temps.
+  - **Bonus discrétion** : +200 si un faisceau frôle Eoghan pendant le bisou sans le
+    toucher (« bisou sous le nez »).
   - **Bonus rapidité** : temps restant × 5 en cas de victoire.
   - Rangs de fin : « Fantôme romantique 👻💗 » > « Discret… ish » > « Tout le monde a vu ».
-- **Données** : chaque décor est un objet JSON (grille, obstacles, liste de PNJ avec
-  motif de cône, liste de garçons, chrono, seuil de ragots). Ajouter un décor = ajouter
-  une entrée, **pas de code à écrire**.
+- **Données** : chaque décor est une entrée de `decors.js` (palette, meubles, garçons,
+  PNJ, chrono, seuil de ragots, gimmick). Les positions sont en unités de 0 à 1000 sur
+  la largeur de la salle. Ajouter un décor = ajouter une entrée, **pas de code**.
   ```json
   {
     "id": "campus",
     "titre": "Le campus",
-    "grille": [12, 8],
     "chrono_s": 90,
     "ragots_max": 3,
     "duree_bisou_ms": 800,
-    "obstacles": [{ "x": 3, "y": 2, "type": "banc" }],
-    "garcons":  [{ "x": 9, "y": 5, "nom": "Le type du club d'échecs" }],
-    "pnj":      [{ "x": 6, "y": 3, "type": "bibliothecaire", "motif": "rotation", "vitesse": 1 }]
+    "gimmick": null,
+    "palette": { "fond": "…", "solArriere": "…", "solAvant": "…" },
+    "eoghan": { "x": 80, "plan": 0 },
+    "props":   [{ "type": "banc", "x": 300, "plan": 0 }],
+    "garcons": [{ "x": 430, "plan": 0, "nom": "…", "replique": "…", "look": {} }],
+    "pnj":     [{ "x": 260, "plan": 0, "nom": "…", "motif": "patrouille",
+                  "de": 180, "a": 640, "vitesse": 78, "portee": 260, "look": {} }]
   }
   ```
 
@@ -296,8 +301,8 @@ Trois décors au choix depuis un **écran de sélection de niveau** (trois vigne
 différents — c'est ce qui fait la progression de difficulté.
 
 ### 1. Le campus ☀️ (facile, rythme lent)
-- **Agencement** : grande pelouse ouverte, quelques bancs, arbres et panneaux
-  d'affichage comme seuls abris. Peu d'obstacles, mais beaucoup d'espace pour contourner.
+- **Agencement** : grande pelouse ouverte, quelques bancs et arbres comme seuls
+  abris. Peu d'obstacles, mais de la place pour contourner et changer de rangée.
 - **Ambiance** : plein jour, oiseaux, affiches « CLUB DE THÉÂTRE : AUDITIONS ».
 - **PNJ obstacles** : 📚 la bibliothécaire (cône lent en rotation continue), 🧹 l'agent
   d'entretien (va-et-vient sur une allée, cône court), 🐿️ l'écureuil (cône minuscule,
@@ -306,8 +311,8 @@ différents — c'est ce qui fait la progression de difficulté.
   décor d'apprentissage.
 
 ### 2. La soirée 🎉 (moyen, rythme irrégulier)
-- **Agencement** : intérieur encombré — canapés, table de boissons, enceintes, un
-  couloir étroit. Beaucoup d'abris, mais des passages obligés très surveillés.
+- **Agencement** : intérieur encombré — canapés, table de boissons, enceintes.
+  Beaucoup d'abris, mais des passages obligés très surveillés.
 - **Ambiance** : lumière tamisée traversée de flashs colorés, basses qui font vibrer
   l'écran. Toutes les ~10 s, un **flash de lumière** éclaire toute la pièce : pendant
   1,5 s, tous les cônes voient partout. C'est le gimmick du décor.
@@ -318,8 +323,8 @@ différents — c'est ce qui fait la progression de difficulté.
   flashs. Chrono 75 s, bisous un peu plus longs (1 s) : la musique déconcentre Eoghan.
 
 ### 3. Le vestiaire de sport 🏀 (difficile, rythme rapide)
-- **Agencement** : couloirs étroits entre des rangées de casiers, une seule grande
-  salle au fond. Cachettes nombreuses mais culs-de-sac fréquents.
+- **Agencement** : rangées de casiers en fond de salle, bancs au premier plan.
+  Cachettes nombreuses, mais le coach couvre toute la longueur.
 - **Ambiance** : néons, buée, sifflet au loin. Un **compteur de douches** : toutes les
   20 s, un groupe traverse le couloir central de part en part — il faut être planqué.
 - **PNJ obstacles** : 🏐 le coach (cône long et rapide, patrouille les couloirs),
@@ -339,8 +344,9 @@ différents — c'est ce qui fait la progression de difficulté.
   juste très, très bavards.
 
 ## Assets nécessaires (prototype → placeholders d'abord)
-- Sprite d'Eoghan vu de dessus, 4 orientations (V1 : un rond de couleur avec un point
-  pour le nez suffit, comme les silhouettes de Drew).
+- Personnages : tous générés par `shared/perso.js`, la fabrique de personnages
+  chibi commune au portail (peau, coiffure, tenue, regard, bouche, pose). Aucun
+  fichier image : le dessin est du SVG paramétré.
 - Un sprite/emoji par garçon du roster + une icône cœur 💗 clignotante au-dessus des
   cibles encore disponibles.
 - Un sprite/emoji par PNJ obstacle (les emoji du roster suffisent en V1).

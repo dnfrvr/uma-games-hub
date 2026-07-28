@@ -36,53 +36,130 @@ body {
   justify-content: flex-end;
   padding: 12px;
   overflow: hidden;
-  background: linear-gradient(180deg, #2a1140 0%, #5c1c6b 55%, #8b2a7a 100%);
+  background: linear-gradient(180deg, #6cc6f0 0%, #a8dff5 45%, #cdeecb 100%);
 }
 
-/* --- Les tribunes ------------------------------------------------------
-   Trois rangs de silhouettes qui sautent : plus la hype monte, plus elles
-   sautent haut et vite (variables pilotées par [data-hype] sur <body>). */
-.tribune {
+/* --- Le stade ----------------------------------------------------------
+   Ciel, tribunes bondées, panneau d'affichage et terrain de foot US avec
+   ses lignes de yards : tout est dessiné en CSS/SVG, aucun asset externe. */
+.stade {
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 46%;
-  padding-top: 10px;
+  inset: 0;
+  overflow: hidden;
+}
+
+.ciel {
+  position: absolute;
+  inset: 0 0 62% 0;
+  background: linear-gradient(180deg, #4fb3e8 0%, #86d0f2 55%, #bfe6f7 100%);
+}
+
+/* Nuages et soleil : le match se joue en plein après-midi. */
+.ciel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 14% 46%, #fff 0 26px, transparent 27px),
+    radial-gradient(circle at 20% 40%, #fff 0 32px, transparent 33px),
+    radial-gradient(circle at 27% 47%, #fff 0 22px, transparent 23px),
+    radial-gradient(circle at 68% 34%, rgba(255,255,255,.95) 0 24px, transparent 25px),
+    radial-gradient(circle at 74% 29%, rgba(255,255,255,.95) 0 30px, transparent 31px),
+    radial-gradient(circle at 81% 35%, rgba(255,255,255,.95) 0 20px, transparent 21px);
+  pointer-events: none;
+}
+
+.ciel::after {
+  content: "";
+  position: absolute;
+  top: 8%;
+  right: 6%;
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fff6c4 0%, #ffd84d 60%, #ffb52e 100%);
+  box-shadow: 0 0 30px rgba(255, 216, 77, 0.8);
+  pointer-events: none;
+}
+
+/* Le panneau d'affichage, façon tableau lumineux */
+.panneau-score {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 16px;
+  background: #0d0a18;
+  border: 3px solid var(--text-color);
+  border-radius: 10px;
+  box-shadow: 0 5px 0 rgba(0, 0, 0, 0.5), inset 0 0 14px rgba(255, 216, 77, 0.25);
+}
+
+.panneau-ligne {
+  font-family: var(--font-chiffres);
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: var(--citron);
+  text-shadow: 0 0 8px rgba(198, 255, 77, 0.8);
+}
+
+.panneau-ligne.petite { font-size: 0.55rem; color: var(--or); text-shadow: 0 0 8px rgba(255, 216, 77, 0.7); }
+
+/* --- Les tribunes : gradins + spectateurs dessinés --- */
+.tribunes {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18%;
+  height: 44%;
+  padding-top: 6px;
   background:
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 3px, transparent 3px 26px),
-    linear-gradient(180deg, #1b0b2a 0%, #3a1550 100%);
-  border-bottom: 4px solid rgba(255, 255, 255, 0.25);
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0 2px, transparent 2px 26px),
+    linear-gradient(180deg, #cfd8e2 0%, #b8c4d2 60%, #9daabb 100%);
+  border-top: 3px solid rgba(255, 255, 255, 0.6);
+  border-bottom: 4px solid var(--text-color);
   overflow: hidden;
 }
 
 .foule {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  height: 100%;
   justify-content: flex-end;
-  padding-bottom: 8px;
+  gap: 2px;
+  height: 100%;
+  padding-bottom: 4px;
 }
 
 .foule-rang {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  align-items: flex-end;
+  gap: 4px;
 }
 
-.foule-rang-0 { opacity: 0.55; }
-.foule-rang-1 { opacity: 0.78; }
+.foule-rang-0 { opacity: 0.5; }
+.foule-rang-1 { opacity: 0.62; }
+.foule-rang-2 { opacity: 0.76; }
+.foule-rang-3 { opacity: 0.9; }
 
 .spectateur {
-  width: 22px;
-  height: 30px;
-  border-radius: 11px 11px 4px 4px;
-  background: linear-gradient(180deg, var(--bonbon-clair), var(--lilas));
-  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.25);
+  display: block;
+  width: 28px;
   animation: saute var(--saut-duree, 1.4s) ease-in-out infinite;
 }
 
-.foule-rang-1 .spectateur { background: linear-gradient(180deg, var(--piscine), #1aa6cc); }
-.foule-rang-2 .spectateur { background: linear-gradient(180deg, var(--or), #ff9d00); }
+/* Les rangs du fond sont plus petits : c'est ce qui creuse la tribune. */
+.foule-rang-0 .spectateur { width: 17px; }
+.foule-rang-1 .spectateur { width: 20px; }
+.foule-rang-2 .spectateur { width: 23px; }
+.foule-rang-3 .spectateur { width: 25px; }
+
+.spectateur svg { display: block; width: 100%; height: auto; }
 
 @keyframes saute {
   0%, 100% { transform: translateY(0) scaleY(1); }
@@ -95,76 +172,102 @@ body[data-hype="1"] { --saut-duree: 1.5s; --saut-hauteur: -7px; }
 body[data-hype="2"] { --saut-duree: 0.9s; --saut-hauteur: -14px; }
 body[data-hype="3"] { --saut-duree: 0.5s; --saut-hauteur: -24px; }
 
-body[data-hype="3"] .tribune {
-  box-shadow: inset 0 0 60px rgba(255, 216, 77, 0.55);
+body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.45); }
+
+/* --- Le terrain : pelouse rayée et lignes de yards --- */
+.terrain {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 38%;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 40px, rgba(0, 0, 0, 0.06) 40px 80px),
+    linear-gradient(180deg, #59b95f 0%, #3d9a46 100%);
+  border-top: 4px solid #fff;
 }
 
-/* --- Confettis (palier maximum uniquement) --- */
-.confettis {
+/* Les lignes de yards, plus serrées vers le fond pour donner la perspective */
+.lignes {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  overflow: hidden;
+  background-image: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0 3px, transparent 3px 84px);
+  opacity: 0.75;
 }
 
-.confetti {
+.lignes::after {
+  content: "";
   position: absolute;
-  top: -14px;
-  width: 8px;
-  height: 14px;
-  border-radius: 2px;
-  animation: tombeConfetti 1.9s linear forwards;
+  inset: auto 0 26% 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.9);
 }
 
-@keyframes tombeConfetti {
-  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(360px) rotate(540deg); opacity: 0; }
+/* Les poteaux sont posés au fond à droite : le centre du terrain est pris
+   par la piste de notes. */
+.poteaux {
+  position: absolute;
+  left: 66%;
+  bottom: 56%;
+  width: clamp(56px, 10%, 104px);
+  transform: translateX(-50%);
 }
 
-/* --- Glinda : elle pulse et prend la pose de la touche jouée --- */
+.poteaux svg { display: block; width: 100%; height: auto; }
+
+/* --- Glinda : la cheerleader, sur la ligne de touche --------------------
+   Le conteneur porte la réaction à la touche jouée, le SVG porte le
+   dandinement permanent : deux animations qui ne se marchent pas dessus. */
+/* Glinda est sur la ligne de touche, à gauche de la piste — pas au milieu
+   du terrain, sinon elle passe derrière les notes. */
 .glinda {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, 0.45));
+  position: absolute;
+  left: 15%;
+  bottom: 3%;
+  z-index: 3;
+  width: clamp(84px, 14%, 138px);
+  filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, 0.35));
 }
 
-.glinda-corps {
-  font-size: 3.4rem;
-  line-height: 1;
-  animation: pulseGlinda 0.9s ease-in-out infinite;
+/* Une camarade de squad à droite, purement décorative : elle donne
+   l'échelle du terrain et remplit la ligne de touche. */
+.copine {
+  position: absolute;
+  right: 13%;
+  bottom: 3%;
+  z-index: 3;
+  width: clamp(70px, 11%, 116px);
+  opacity: 0.95;
+  filter: drop-shadow(4px 6px 0 rgba(0, 0, 0, 0.3));
 }
 
-.pompon {
-  font-size: 1.9rem;
-  line-height: 1;
-  animation: pulseGlinda 0.9s ease-in-out infinite;
+.copine svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  animation: dandineGlinda 0.9s ease-in-out infinite 0.45s;
 }
 
-.pompon-droit { animation-delay: 0.45s; }
-
-@keyframes pulseGlinda {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  50%      { transform: scale(1.08) rotate(3deg); }
+.glinda svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  animation: dandineGlinda 0.9s ease-in-out infinite;
 }
 
-/* La pose : un petit décalage dans la direction jouée, rien de plus —
-   en V1 Glinda est un emoji, l'important est de sentir la réponse. */
-.glinda-corps.bouge { animation: poseGlinda 0.28s ease-out; }
+@keyframes dandineGlinda {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50%      { transform: translateY(-5px) rotate(1.5deg); }
+}
 
-.glinda-corps[data-pose="gauche"].bouge { --pose-x: -16px; --pose-y: 0px; }
-.glinda-corps[data-pose="droite"].bouge { --pose-x: 16px;  --pose-y: 0px; }
-.glinda-corps[data-pose="haut"].bouge   { --pose-x: 0px;   --pose-y: -14px; }
-.glinda-corps[data-pose="bas"].bouge    { --pose-x: 0px;   --pose-y: 10px; }
+.glinda.bouge { animation: poseGlinda 0.26s ease-out; }
 
 @keyframes poseGlinda {
-  0%   { transform: translate(0, 0) scale(1); }
-  45%  { transform: translate(var(--pose-x, 0), var(--pose-y, 0)) scale(1.18); }
-  100% { transform: translate(0, 0) scale(1); }
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.12) translateY(-6px); }
+  100% { transform: scale(1); }
 }
 
 /* =========================================================
@@ -179,11 +282,11 @@ body[data-hype="3"] .tribune {
   padding-top: 4px;
   width: calc(var(--largeur-couloir) * 4 + 24px);
   max-width: 100%;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.15));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.75));
   border: var(--trait);
   border-bottom: none;
   border-radius: 16px 16px 0 0;
-  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.18);
 }
 
 .couloirs {
@@ -197,7 +300,8 @@ body[data-hype="3"] .tribune {
   position: relative;
   width: var(--largeur-couloir);
   border-radius: 12px 12px 0 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.16));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.6));
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.7);
 }
 
 .couloir-gauche { --teinte: var(--bonbon); }
@@ -504,7 +608,8 @@ body[data-hype="3"] .tribune {
 
 @media (max-width: 460px) {
   :root { --largeur-couloir: 52px; --hauteur-piste: 210px; }
-  .glinda-corps { font-size: 2.6rem; }
+  .glinda { width: 88px; left: 8%; }
+  .copine { display: none; }
   .cible { width: 50px; height: 44px; }
 }
 
@@ -513,5 +618,5 @@ body[data-hype="3"] .tribune {
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  .spectateur, .glinda-corps, .pompon { animation: none !important; }
+  .spectateur, .glinda svg { animation: none !important; }
 }

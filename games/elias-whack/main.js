@@ -39,6 +39,7 @@ const $ = (id) => document.getElementById(id);
 
 const elements = {
   grille: $("grille"),
+  avatar: $("elias-avatar"),
   score: $("score"),
   vague: $("vague"),
   barre: $("sanity-barre"),
@@ -52,6 +53,62 @@ const elements = {
 };
 
 const trous = [];
+
+/* =========================================================
+   L'avatar d'Elias : il réagit à ce qui se passe
+   ---------------------------------------------------------
+   Deux sources d'expression :
+     - le PALIER DE SANITY, qui est l'état de fond ;
+     - une RÉACTION ponctuelle (bon coup, bourde, créature manquée), qui
+       prend le dessus pendant un court instant avant de revenir au fond.
+   ========================================================= */
+
+const ELIAS = {
+  peau: "#f0c39a",
+  cheveux: "boucle",
+  couleurCheveux: "#4a2c17",
+  haut: "#6672d0",
+  bas: "#2f3550",
+  accessoire: "lunettes",
+};
+
+/* Une humeur = un regard + une bouche. */
+const HUMEURS = {
+  calme: { regard: "face", bouche: "sourire" },
+  inquiet: { regard: "gauche", bouche: "neutre" },
+  tendu: { regard: "droite", bouche: "neutre" },
+  panique: { regard: "face", bouche: "o" },
+  content: { regard: "face", bouche: "sourire-large" },
+  honte: { regard: "ferme", bouche: "o" },
+};
+
+/* L'humeur de fond, par palier de sanity. */
+const HUMEUR_PALIER = ["calme", "inquiet", "tendu", "panique"];
+
+let reactionEnCours = null;
+
+function dessineElias(humeur) {
+  elements.avatar.innerHTML = persoSVG({ ...ELIAS, ...HUMEURS[humeur] });
+  elements.avatar.dataset.humeur = humeur;
+}
+
+/* Réaction ponctuelle : elle s'affiche, puis Elias retombe sur l'humeur que
+   lui dicte sa jauge de sanity. */
+function reagit(humeur, duree) {
+  dessineElias(humeur);
+  elements.avatar.classList.remove("secoue");
+  if (humeur === "honte" || humeur === "panique") {
+    void elements.avatar.offsetWidth;
+    elements.avatar.classList.add("secoue");
+  }
+  clearTimeout(reactionEnCours);
+  reactionEnCours = setTimeout(humeurDeFond, duree || 900);
+}
+
+function humeurDeFond() {
+  dessineElias(HUMEUR_PALIER[Math.max(0, etat.palier)] || "calme");
+  elements.avatar.classList.remove("secoue");
+}
 
 /* =========================================================
    Construction de la grille
@@ -154,7 +211,7 @@ function apparait() {
 
   const trou = trous[index];
   trou.occupant = { ...modele, piege: estPiege };
-  trou.habitant.textContent = modele.emoji;
+  trou.habitant.innerHTML = modele.svg;
   trou.habitant.title = modele.nom;
   trou.el.classList.add("occupe", estPiege ? "piege" : "cible");
 
@@ -172,6 +229,7 @@ function apparait() {
       etat.stats.rate++;
       majSanity(SANITY.rate);
       commente("Elle est repartie. Elias l'a bien vue, lui.");
+      reagit("panique", 900);
       majTableau();
     }
   }, dureeVisible());
@@ -186,7 +244,7 @@ function vide(index, animer) {
     trou.el.classList.add("part");
     setTimeout(() => trou.el.classList.remove("part"), 200);
   }
-  trou.habitant.textContent = "";
+  trou.habitant.innerHTML = "";
   trou.habitant.removeAttribute("title");
 }
 
@@ -220,6 +278,7 @@ function frappe(index) {
     etat.score = Math.max(0, etat.score - 80);
     majSanity(SANITY.bourde);
     commente(occupant.replique);
+    reagit("honte", 1200);
     trou.el.classList.add("bourde");
     setTimeout(() => trou.el.classList.remove("bourde"), 300);
   } else {
@@ -227,6 +286,7 @@ function frappe(index) {
     etat.score += occupant.points;
     majSanity(SANITY.touche);
     commente(occupant.nom + " neutralisé·e.");
+    reagit("content", 800);
   }
 
   vide(index, true);
@@ -246,6 +306,7 @@ function majSanity(delta) {
     etat.palier = palier;
     document.body.dataset.sanity = String(palier);
     elements.ambiance.textContent = AMBIANCES[palier];
+    humeurDeFond();
   }
 
   if (etat.sanity >= SANITY_MAX) {
@@ -285,5 +346,6 @@ $("btn-stop").addEventListener("click", () => {
 });
 
 construitGrille();
+dessineElias("calme");
 majTableau();
 majSanity(0);

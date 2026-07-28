@@ -33,10 +33,13 @@
         <section class="stage">
           <p class="ambiance" id="ambiance"></p>
 
-          <div class="terrain-cadre">
-            <div id="terrain" class="terrain">
-              <div id="tuiles" class="tuiles"></div>
+          <div class="salle-cadre">
+            <div id="salle" class="salle">
+              <div id="fond" class="fond" aria-hidden="true"></div>
+              <div id="faisceaux" class="faisceaux" aria-hidden="true"></div>
+              <div id="props" class="props" aria-hidden="true"></div>
               <div id="acteurs" class="acteurs"></div>
+              <div class="flash-voile" aria-hidden="true"></div>
               <div class="jauge-bisou" aria-hidden="true"></div>
             </div>
           </div>
@@ -44,9 +47,10 @@
           <p id="commentaire" class="commentaire" role="status"></p>
 
           <p class="aide">
-            ← ↑ → ↓ ou ZQSD pour marcher · <b>Espace</b> maintenu pour embrasser ·
-            <b>Maj</b> pour s'accroupir · au doigt : tape une case pour avancer,
-            tape un garçon voisin pour l'embrasser
+            ← → ou Q/D pour marcher · ↑ ↓ pour changer de rangée ·
+            <b>Espace</b> maintenu pour embrasser · <b>Maj</b> pour s'accroupir
+            derrière un meuble · au doigt : maintiens à gauche/à droite pour
+            marcher, sur un garçon proche pour l'embrasser
           </p>
 
           <!-- Écrans superposés : choix du décor et fin de partie -->
@@ -107,6 +111,7 @@
     <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
   </div>
 
+  <script src="../../shared/perso.js"></script>
   <script src="decors.js"></script>
   <script src="main.js"></script>
   <script src="../../shared/sparkle.js"></script>

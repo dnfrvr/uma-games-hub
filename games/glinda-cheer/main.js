@@ -60,7 +60,8 @@ const elements = {
   hypeTexte: $("hype-texte"),
   foule: $("foule"),
   confettis: $("confettis"),
-  glinda: $("glinda-corps"),
+  glinda: $("glinda"),
+  copine: $("copine"),
   ecran: $("ecran"),
   ecranTitre: $("ecran-titre"),
   ecranTexte: $("ecran-texte"),
@@ -128,20 +129,82 @@ function construitCouloirs() {
   });
 }
 
+/* --- La foule des tribunes : de vrais petits spectateurs dessinés --------
+   Trois rangs, couleurs de maillot alternées (les couleurs de la fac), et
+   un décalage d'animation par personne pour que la tribune ne saute pas
+   comme un seul homme. */
+const MAILLOTS = ["#e91e8c", "#ffd84d", "#4de0ff", "#9b4dff", "#c6ff4d", "#ff8ac4"];
+
 function construitFoule() {
-  /* Trois rangs de silhouettes ; les décalages d'animation évitent que toute
-     la tribune saute comme un seul homme. */
-  for (let rang = 0; rang < 3; rang++) {
+  for (let rang = 0; rang < 5; rang++) {
     const ligne = document.createElement("div");
     ligne.className = "foule-rang foule-rang-" + rang;
-    const combien = 14 - rang * 2;
+
+    /* Les rangs du fond comptent plus de monde : la tribune paraît pleine
+       jusqu'en haut sans coûter des centaines de personnages. */
+    const combien = 30 - rang * 2;
     for (let i = 0; i < combien; i++) {
-      const tete = document.createElement("span");
-      tete.className = "spectateur";
-      tete.style.animationDelay = (i * 0.13 + rang * 0.21).toFixed(2) + "s";
-      ligne.appendChild(tete);
+      const spectateur = document.createElement("span");
+      spectateur.className = "spectateur";
+      /* Un supporter sur six agite une écharpe, un sur neuf brandit un
+         panneau : ça suffit à faire vivre la tribune. */
+      const accessoire = i % 6 === 0 ? "echarpe" : i % 9 === 4 ? "panneau" : null;
+      spectateur.innerHTML = spectateurSVG(MAILLOTS[(i + rang) % MAILLOTS.length], null, accessoire);
+      spectateur.style.animationDelay = (i * 0.11 + rang * 0.19).toFixed(2) + "s";
+      ligne.appendChild(spectateur);
     }
     elements.foule.appendChild(ligne);
+  }
+}
+
+/* --- Glinda ------------------------------------------------------------
+   Une seule fabrique : on redessine le personnage quand la pose change.
+   Le look reste constant, seule la pose bouge. */
+/* Uniforme de la squad d'Augusta : bleu marine et blanc. */
+const MARINE = "#16255c";
+
+const GLINDA = {
+  peau: "#f8dcc0",
+  cheveux: "queue",
+  couleurCheveux: "#e8b84b",
+  haut: MARINE,
+  bas: MARINE,
+  jupe: "#ffffff",
+  pompons: "#ffffff",
+  accessoire: "noeud",
+  couleurAccessoire: MARINE,
+  bouche: "sourire-large",
+};
+
+const POSES_GLINDA = {
+  gauche: "pompons-gauche",
+  droite: "pompons-droite",
+  haut: "pompons-haut",
+  bas: "pompons-bas",
+  repos: "bras-leves",
+};
+
+/* Son camarade de squad, décoratif : blond aux cheveux longs, même uniforme
+   d'Augusta. Il suit la même pose que Glinda avec un temps de retard, ce qui
+   suffit à faire une chorégraphie à deux. */
+const COPINE = {
+  peau: "#f6dcc4",
+  cheveux: "long",
+  couleurCheveux: "#f0d68a",
+  haut: MARINE,
+  bas: MARINE,
+  jupe: "#ffffff",
+  pompons: "#ffffff",
+  accessoire: "serretete",
+  couleurAccessoire: MARINE,
+  bouche: "sourire",
+};
+
+function dessineGlinda(pose) {
+  const nom = POSES_GLINDA[pose] || POSES_GLINDA.repos;
+  elements.glinda.innerHTML = persoSVG({ ...GLINDA, pose: nom });
+  if (elements.copine) {
+    elements.copine.innerHTML = persoSVG({ ...COPINE, pose: nom });
   }
 }
 
@@ -338,11 +401,18 @@ function affiche(texte, classe) {
   elements.jugement.classList.add("pop");
 }
 
+/* Glinda prend la pose de la touche jouée, puis revient au repos : c'est le
+   retour visuel qui donne l'impression de danser avec la musique. */
+let retourRepos = null;
+
 function poseGlinda(touche) {
-  elements.glinda.dataset.pose = touche;
+  dessineGlinda(touche);
   elements.glinda.classList.remove("bouge");
   void elements.glinda.offsetWidth;
   elements.glinda.classList.add("bouge");
+
+  clearTimeout(retourRepos);
+  retourRepos = setTimeout(() => dessineGlinda("repos"), 260);
 }
 
 /* =========================================================
@@ -474,6 +544,7 @@ elements.rejouer.addEventListener("click", () => {
 
 construitCouloirs();
 construitFoule();
+dessineGlinda("repos");
 construitMenuCharts();
 majTableau();
 majHype(0);
