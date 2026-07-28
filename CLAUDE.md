@@ -9,12 +9,15 @@ regroupe 4 mini-jeux, un par personnage principal d'un JDR/univers narratif appe
 *IT: Welcome to UMA*. Chaque jeu est goofy et exploite un trait de personnalité, sans
 raconter le lore/l'intrigue.
 
-| Perso   | Jeu                          | Dossier                 | Statut       |
-|---------|------------------------------|--------------------------|--------------|
-| Drew    | Dress-up (mauvais goût)      | `games/drew-dress-up/`   | Prototype OK |
-| Glinda  | Pep Rally Rhythm (rythme/QTE)| `games/glinda-cheer/`    | À faire      |
-| Elias   | Sanity Whack (whack-a-mole)  | `games/elias-whack/`     | À faire      |
-| Eoghan  | Kiss & Cache (infiltration)  | `games/eoghan-office/`   | Spécifié     |
+| Perso   | Jeu                          | Dossier                 | Statut          |
+|---------|------------------------------|--------------------------|-----------------|
+| Drew    | Dress-up (mauvais goût)      | `games/drew-dress-up/`   | Jouable         |
+| Glinda  | Pep Rally Rhythm (rythme/QTE)| `games/glinda-cheer/`    | Jouable         |
+| Elias   | Sanity Whack (whack-a-mole)  | `games/elias-whack/`     | Jouable         |
+| Eoghan  | Kiss & Cache (infiltration)  | `games/eoghan-office/`   | Jouable         |
+
+**Les 4 jeux sont finis et branchés au hub.** Ce qui reste est du contenu et du
+polish, pas de la structure — voir « État d'avancement » en bas de ce fichier.
 
 Voir `uma-games-hub-SPEC.md` pour l'architecture du hub/sidebar, et les fichiers
 `dress-my-drew-SPEC.md` / futures specs Glinda-Elias pour le détail de chaque jeu.
@@ -44,12 +47,17 @@ uma-games-hub/
 │   ├── sidebar.js / sidebar.css # renderSidebar(currentGameId, targetElementId)
 │   ├── sparkle.js               # paillettes du curseur + compteur de visites
 │   └── vignettes/               # vignettes SVG des jeux (placeholders)
+├── outils/                      # bancs d'essai Node (voir outils/LISEZMOI.md)
 └── games/
-    ├── drew-dress-up/
-    ├── glinda-cheer/
-    ├── elias-whack/
-    └── eoghan-office/
+    ├── drew-dress-up/           # index/style/main/layers/export/decors/silhouettes
+    ├── glinda-cheer/            # index/style/main + charts.js (chorégraphies)
+    ├── elias-whack/             # index/style/main + roster.js (casting dessiné)
+    └── eoghan-office/           # index/style/main + decors.js (3 salles + mobilier)
 ```
+
+Chaque jeu suit le même squelette de page : `#navbar` → `.page` (`.shell` du jeu +
+`#sidebar-autres-jeux`) → scripts du jeu, puis `sparkle.js`, `navbar.js`, `sidebar.js`
+et l'appel à `renderNavbar(id, "navbar")` / `renderSidebar(id, "sidebar-autres-jeux")`.
 
 ## Direction artistique (DA) commune
 Tous les jeux + le hub partagent la même DA rétro 2012 kitsch via `shared/`.
@@ -84,9 +92,12 @@ Ne jamais dupliquer ces infos ailleurs en dur — toujours lire ce fichier.
 
 ## Comment tester en local
 ```bash
-python3 -m http.server 8000
-# puis ouvrir http://localhost:8000
+python3 -m http.server 8000       # puis ouvrir http://localhost:8000
+node outils/test-jeux.js          # 49 vérifications de règles, sans navigateur
 ```
+Les jeux eux-mêmes n'ont **aucune dépendance** : Node ne sert qu'aux bancs d'essai.
+Penser au **rechargement forcé** (Ctrl+Maj+R) après une modif de CSS/JS : le serveur
+Python ne renvoie pas d'en-tête anti-cache et le navigateur garde l'ancienne version.
 
 ## Convention de commit
 Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le rendu du hub`,
@@ -115,8 +126,33 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
 - [x] Équilibrage : la finale de Glinda était injouable (101 ms entre deux notes)
       et le niveau 3 d'Eoghan plus sûr que le niveau 1. Les deux sont mesurés
       maintenant (densité de notes, part de salle surveillée) et la courbe monte.
-- [ ] Remplacer les vignettes SVG du hub par de vraies illustrations si l'envie vient
-      (le manifest suffit, aucun code à toucher).
+- [x] Dialogues de Sanity Whack à la première personne (c'est Elias qui parle),
+      casting élargi : Pennywise et Slenderman à taper, Drew/Eoghan/Glinda et
+      Toto le perroquet à éviter.
+- [x] Bancs d'essai rangés dans `outils/` : ils tournent sans navigateur et
+      remplacent ce que les captures d'écran ne savent pas vérifier.
+
+### Ce qu'il reste à faire (par ordre d'intérêt)
+- [ ] **Musique** pour Pep Rally Rhythm. Aujourd'hui : métronome + blips synthétisés
+      en WebAudio, aucun fichier audio. Une vraie piste demanderait de caler les
+      `temps_ms` des charts dessus (`games/glinda-cheer/charts.js`).
+- [ ] **Vignettes du hub** : les 4 sont des SVG placeholder (`shared/vignettes/`).
+      Les remplacer ne demande que de changer le chemin dans `games-manifest.json`.
+- [ ] **Sauvegarde des meilleurs scores** en `localStorage` (aucun jeu n'en garde),
+      et éventuellement un tableau des records sur le hub.
+- [ ] **Habillage « dossier secret »** plus poussé pour Sanity Whack (phase 4 de sa
+      spec) : le VHS et le tremblement sont là, la déco type complot non.
+- [ ] **Décors supplémentaires** pour Kiss & Cache : le moteur est piloté par
+      `decors.js`, un nouveau terrain ne demande aucune ligne de code.
+
+### Points non vérifiés / limites connues
+- Le **glisser-déposer de Drew** et le **maintien de touche** (bisou d'Eoghan, jeu au
+  doigt) ne sont pas testables en automatisation : les événements synthétiques ne
+  reproduisent pas la séquence `pointer*` attendue. À vérifier à la main.
+- Le rendu **en écran étroit (< 900 px)** n'a jamais été contrôlé visuellement ; les
+  règles responsives existent dans chaque `style.css` mais méritent un coup d'œil.
+- L'extension Chrome de capture d'écran tombe régulièrement en panne pendant les
+  sessions longues : ouvrir un nouvel onglet la remet d'aplomb.
 
 ### Repères d'équilibrage (à revérifier après toute retouche)
 - **Glinda** : écart minimum entre deux notes ≥ 200 ms, rafale de 4 notes maximum
