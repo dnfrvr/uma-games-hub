@@ -1,0 +1,79 @@
+/* À importer APRÈS style-tokens.css */
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-title);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--bg-pattern-a), var(--bg-pattern-a) 20px,
+    var(--bg-pattern-b) 20px, var(--bg-pattern-b) 40px
+  );
+  color: var(--text-color);
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(90deg, var(--accent), var(--bg-pattern-b));
+  border-bottom: var(--border-thick) dashed #fff;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--accent);
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: var(--border-thick) solid var(--accent);
+  border-radius: var(--radius-panel);
+  padding: 16px;
+  box-shadow: 6px 6px 0 var(--text-color);
+}
+
+.fun-btn {
+  font-family: inherit;
+  font-weight: bold;
+  padding: 8px 14px;
+  border: 3px solid var(--text-color);
+  border-radius: var(--radius-button);
+  background: #fff2fb;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--text-color);
+}
+
+.fun-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--text-color);
+}
+
+.fun-btn.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.tab-btn {
+  font-family: inherit;
+  padding: 6px 10px;
+  border: 2px solid var(--text-color);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.tab-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+footer {
+  text-align: center;
+  padding: 16px;
+  font-size: 0.85rem;
+  border-top: var(--border-thick) dashed #fff;
+  background: linear-gradient(90deg, var(--bg-pattern-b), var(--accent));
+}

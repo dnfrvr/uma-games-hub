@@ -1,0 +1,30 @@
+:root {
+  /* Couleurs d'accent par personnage (reprises du LORE.md) */
+  --accent-drew: #aa6caa;
+  --accent-glinda: #e91e8c;
+  --accent-eoghan: #00d435;
+  --accent-elias: #6672d0;
+
+  /* Palette rétro 2012 commune (par défaut = thème neutre du hub) */
+  --accent: var(--accent-drew);
+  --bg-pattern-a: #ffd6f5;
+  --bg-pattern-b: #d6f0ff;
+  --panel-bg: #fff8ff;
+  --text-color: #4a1a4a;
+  --shadow-color: #4a1a4a;
+
+  /* Typo */
+  --font-title: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+
+  /* Rythme visuel */
+  --radius-panel: 18px;
+  --radius-button: 999px;
+  --border-thick: 4px;
+}
+
+/* Chaque page de jeu surcharge juste --accent (et éventuellement le fond)
+   en ajoutant une classe sur <body>, ex: <body class="theme-glinda"> */
+body.theme-drew   { --accent: var(--accent-drew); }
+body.theme-glinda { --accent: var(--accent-glinda); }
+body.theme-eoghan { --accent: var(--accent-eoghan); }
+body.theme-elias  { --accent: var(--accent-elias); }
