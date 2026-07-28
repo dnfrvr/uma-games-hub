@@ -1,0 +1,892 @@
+/* =========================================================
+   Dress my Drew — habillage rétro « jeux de filles » 2012
+   Mise en page inspirée des jeux d'habillage mobiles :
+   la poupée occupe la scène, la garde-robe est un dock
+   (rail de catégories + bande d'items) collé sur le côté
+   en grand écran, en bas sur mobile.
+   ========================================================= */
+
+:root {
+  --bonbon: #ff3d9a;
+  --bonbon-clair: #ff8ac4;
+  --barbe: #ffd3ef;
+  --barbe-pale: #fff0fa;
+  --lilas: #9b4dff;
+  --lilas-clair: #c9a3ff;
+  --piscine: #4de0ff;
+  --citron: #c6ff4d;
+  --encre: #3b0a45;
+  --encre-clair: #5c1c6b;
+  --or: #ffd84d;
+
+  --trait: 3px solid var(--encre);
+  --ombre-dure: 5px 5px 0 var(--encre);
+
+  --police-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
+  --police-texte: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
+  --police-chiffres: "Courier New", Courier, monospace;
+
+  --doll-scale: 1;
+  --tuile: 88px;
+
+  /* Durée du raid de l'aigle. Doit rester égale à AIGLE_DUREE_MS (main.js). */
+  --aigle-duree: 1900ms;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  padding: 14px 12px 28px;
+  font-family: var(--police-texte);
+  font-size: 15px;
+  color: var(--encre);
+  background: linear-gradient(160deg, #ffc2e8 0%, #f6b8ff 45%, #b8e7ff 100%) fixed;
+
+  /* On est dans un jeu, pas dans un document : un glissé doit attraper un
+     vêtement, jamais surligner du texte. Idem pour le halo bleu au tap et le
+     menu « Enregistrer l'image » du appui long mobile. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Papier peint étoiles + cœurs, sur son propre calque : il glisse en
+   transform (composité par le GPU) plutôt qu'en background-position,
+   sinon toute la page se repeint à chaque frame. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -80px;
+  z-index: -1;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='%23ffffff' opacity='.55'%3E%3Cpath d='M18 5l2.9 7.1L28 15l-7.1 2.9L18 25l-2.9-7.1L8 15l7.1-2.9z'/%3E%3Cpath d='M54 41l2.9 7.1L64 51l-7.1 2.9L54 61l-2.9-7.1L44 51l7.1-2.9z'/%3E%3C/g%3E%3Cg fill='%23ffd84d' opacity='.6'%3E%3Cpath d='M52 9c2.2-2.7 6.8-1.1 6.8 2.3 0 3.4-4.5 6.8-6.8 9.1-2.3-2.3-6.8-5.7-6.8-9.1C45.2 7.9 49.8 6.3 52 9z'/%3E%3Cpath d='M16 45c2.2-2.7 6.8-1.1 6.8 2.3 0 3.4-4.5 6.8-6.8 9.1-2.3-2.3-6.8-5.7-6.8-9.1C9.2 43.9 13.8 42.3 16 45z'/%3E%3C/g%3E%3Cg fill='%234de0ff' opacity='.5'%3E%3Ccircle cx='36' cy='30' r='2.4'/%3E%3Ccircle cx='4' cy='66' r='2.4'/%3E%3Ccircle cx='68' cy='66' r='2.4'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  will-change: transform;
+  animation: papierPeint 24s linear infinite;
+}
+
+@keyframes papierPeint {
+  to { transform: translate3d(72px, 72px, 0); }
+}
+
+.shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  background: var(--barbe-pale);
+  border: 5px double var(--encre);
+  border-radius: 26px;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.7), 10px 12px 0 rgba(59, 10, 69, 0.35);
+  overflow: hidden;
+}
+
+/* =========================================================
+   Bandeau
+   ========================================================= */
+
+.banner {
+  text-align: center;
+  padding: 12px 16px 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
+  border-bottom: var(--trait);
+}
+
+/* Titre « WordArt » : remplissage doré animé, contour et ombre portée */
+.wordart {
+  position: relative;
+  margin: 0 0 10px;
+  font-family: var(--police-deco);
+  font-weight: 400;
+  font-size: clamp(2rem, 6.5vw, 3.8rem);
+  /* Le contour épais déborde du bloc de texte : on lui laisse la place. */
+  line-height: 1.25;
+}
+
+.wordart::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  -webkit-text-stroke: clamp(5px, 1.6vw, 9px) var(--encre);
+  text-shadow: 4px 5px 0 rgba(59, 10, 69, 0.45);
+}
+
+.wordart span {
+  position: relative;
+  background: linear-gradient(100deg, #fff 0%, var(--or) 18%, #fff 34%, var(--barbe) 50%, var(--or) 66%, #fff 82%, var(--or) 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: brillance 5s linear infinite;
+}
+
+@keyframes brillance {
+  to { background-position: -260% 0; }
+}
+
+.tagline {
+  margin: 0;
+  font-style: italic;
+  font-size: clamp(0.75rem, 2.4vw, 0.95rem);
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--encre);
+}
+
+/* =========================================================
+   Aire de jeu : scène + dock
+   ========================================================= */
+
+.game {
+  display: flex;
+  align-items: stretch;
+  min-height: 620px;
+}
+
+/* --- La scène : Drew en grand, boutons ronds aux coins --- */
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background:
+    radial-gradient(ellipse at 50% 28%, #fff 0%, var(--barbe-pale) 45%, var(--barbe) 100%);
+}
+
+.stage-tools {
+  position: absolute;
+  top: 14px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stage-tools-gauche { left: 14px; }
+.stage-tools-droite { right: 14px; }
+
+.round-btn {
+  width: 58px;
+  height: 58px;
+  display: grid;
+  place-content: center;
+  gap: 1px;
+  padding: 0;
+  font-family: var(--police-texte);
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--encre);
+  border: var(--trait);
+  border-radius: 50%;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%),
+    var(--barbe);
+  box-shadow: 3px 4px 0 var(--encre);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.round-label {
+  font-size: 0.5rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.round-btn:hover { transform: translate(-1px, -2px) rotate(-4deg); box-shadow: 4px 6px 0 var(--encre); filter: saturate(1.3); }
+.round-btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--encre); }
+
+.round-btn.chaos   { background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0) 55%), var(--lilas-clair); }
+.round-btn.eagle   { background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0) 55%), var(--piscine); }
+.round-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0) 55%), var(--or); }
+
+:focus-visible {
+  outline: 4px solid var(--lilas);
+  outline-offset: 3px;
+}
+
+/* --- Poupée : mise à l'échelle pour toujours tenir dans la scène ---
+   Positionnement absolu + translate(-50%,-50%) : le cadre reste
+   parfaitement centré même quand il est plus grand que la scène,
+   ce que le centrage en flux ne garantit pas. */
+.doll-fit {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.doll-frame {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 420px;
+  height: 620px;
+  padding: 6px;
+  border: 4px dashed var(--bonbon);
+  border-radius: 18px;
+  background: repeating-linear-gradient(45deg, #fff 0 10px, var(--barbe-pale) 10px 20px);
+  transform: translate(-50%, -50%) scale(var(--doll-scale));
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.doll-frame.drop-actif {
+  border-color: var(--citron);
+  box-shadow: 0 0 0 5px var(--or), 0 0 30px var(--or);
+}
+
+#doll {
+  position: relative;
+  width: 400px;
+  height: 600px;
+  background: var(--barbe-pale) center / cover no-repeat;
+  border: 2px dotted var(--lilas-clair);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Vitre : léger reflet en haut à gauche, comme sur un écran de jeu */
+#doll::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(128deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 34%);
+  pointer-events: none;
+}
+
+/* Chaque calque occupe tout le cadre de référence : c'est ce qui garantit
+   l'alignement, aujourd'hui avec les silhouettes, demain avec tes PNG. */
+.layer-img {
+  position: absolute;
+  inset: 0;
+  width: 400px;
+  height: 600px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Seule la pièce qui vient d'être enfilée s'anime, pas toute la tenue. */
+.layer-img.entre {
+  animation: enfile 0.35s cubic-bezier(0.34, 1.6, 0.64, 1);
+  transform-origin: 50% 40%;
+}
+
+@keyframes enfile {
+  0%   { transform: scale(0.7) rotate(-6deg); opacity: 0; }
+  70%  { transform: scale(1.06) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); }
+}
+
+/* Surface d'interaction posée sur les calques. C'est le code qui détermine
+   la pièce visée d'après sa transparence, pas le navigateur. */
+.doll-hit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 400px;
+  height: 600px;
+  touch-action: none;
+}
+
+/* La pièce visée s'entoure d'un halo qui épouse sa forme réelle. */
+.layer-img.survol {
+  filter: drop-shadow(0 0 2px var(--bonbon)) drop-shadow(0 0 7px var(--bonbon));
+}
+
+/* --- Le raid de l'aigle -------------------------------------------------
+   Le conteneur porte la trajectoire, l'oiseau bat des ailes. Le butin, lui,
+   n'est pas un décor : ce sont les vrais vêtements de Drew, animés par
+   `emportee` plus bas. Les repères en pourcentage sont calés sur
+   AIGLE_SAISIE_MS dans main.js : si tu bouges l'un, bouge l'autre. */
+
+#eagle-anim {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-110px, -20px);
+  will-change: transform, opacity;
+}
+
+.eagle-corps {
+  display: block;
+  font-size: 2.4rem;
+  line-height: 1;
+  filter: drop-shadow(2px 2px 0 var(--encre));
+}
+
+#eagle-anim.fly { animation: volPique var(--aigle-duree) linear forwards; }
+#eagle-anim.fly .eagle-corps { animation: battementAiles 200ms ease-in-out infinite; }
+
+/* Approche lointaine, piqué sur Drew, saisie, puis fuite vers le ciel.
+   Chaque palier porte son propre easing : un `ease-in-out` global lissait
+   tout et l'aigle avait l'air de flotter au lieu de fondre sur sa proie. */
+@keyframes volPique {
+  0% {
+    opacity: 0;
+    transform: translate(-110px, -20px) scale(0.7) rotate(6deg);
+    animation-timing-function: ease-out;
+  }
+  8% {
+    opacity: 1;
+    transform: translate(-40px, 20px) scale(0.85) rotate(10deg);
+    animation-timing-function: ease-in;
+  }
+  32% {
+    opacity: 1;
+    transform: translate(120px, 200px) scale(1.7) rotate(24deg);
+    animation-timing-function: ease-out;
+  }
+  38% {
+    transform: translate(158px, 250px) scale(1.95) rotate(14deg);
+    animation-timing-function: ease-in-out;
+  }
+  /* 41 % : les serres se referment. C'est ici que main.js déshabille Drew. */
+  41% {
+    transform: translate(150px, 244px) scale(2.05) rotate(-4deg);
+    animation-timing-function: ease-in-out;
+  }
+  46% {
+    transform: translate(168px, 226px) scale(1.95) rotate(-18deg);
+    animation-timing-function: ease-in;
+  }
+  62% {
+    opacity: 1;
+    transform: translate(250px, 80px) scale(1.4) rotate(-14deg);
+    animation-timing-function: linear;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(470px, -170px) scale(0.55) rotate(-8deg);
+  }
+}
+
+@keyframes battementAiles {
+  0%, 100% { transform: scaleY(1) rotate(0deg); }
+  50%      { transform: scaleY(0.82) rotate(-5deg); }
+}
+
+/* Le choc de la saisie se voit aussi sur Drew. */
+#doll.secousse { animation: secousseDrew 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97); }
+
+@keyframes secousseDrew {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-7px) rotate(-1deg); }
+  32% { transform: translateX(6px) rotate(1deg); }
+  50% { transform: translateX(-4px); }
+  70% { transform: translateX(3px); }
+  86% { transform: translateX(-2px); }
+}
+
+/* Les fringues arrachées partent avec l'aigle. Le calque est posé DANS #doll
+   pour se caler tout seul sur les vêtements (même boîte que .layer-img) ;
+   #doll lève sa découpe le temps du vol, sinon les pièces seraient coupées
+   net au bord du cadre au lieu de s'envoler. */
+.envol {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#doll.envol-actif { overflow: visible; }
+
+/* Ces pièces SONT le butin de l'aigle : leur trajectoire suit la sienne
+   (fuite vers le haut à droite) et dure assez longtemps pour qu'on les voie
+   partir avec lui. Voir ENVOL_DUREE_MS dans main.js. */
+.envol-piece {
+  position: absolute;
+  inset: 0;
+  width: 400px;
+  height: 600px;
+  transform-origin: 50% 45%;
+  animation: emportee 900ms linear forwards;
+}
+
+/* Les pièces s'accrochent un court instant, puis sont arrachées d'un coup :
+   un easing lent au départ donnait l'impression qu'elles restaient collées
+   à Drew. Chaque palier porte donc son propre timing. */
+@keyframes emportee {
+  0% {
+    transform: translate(0, 0) scale(1) rotate(0deg);
+    opacity: 1;
+    animation-timing-function: ease-out;
+  }
+  12% {
+    transform: translate(-7px, 11px) scale(0.97) rotate(-5deg);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.25, 1);
+  }
+  70% { opacity: 0.85; }
+  100% {
+    transform: translate(340px, -300px) scale(0.24) rotate(30deg);
+    opacity: 0;
+  }
+}
+
+/* Bulle de commentaire, façon bulle bleue « envoyée » d'iMessage sous iOS 6 :
+   dégradé bleu coupé net à mi-hauteur, vernis brillant sur la moitié haute,
+   liseré clair en crête et petite queue en bas à droite.
+
+   Sa hauteur est FIXE : sans ça, un message plus long réduisait la scène et
+   Drew changeait de taille à chaque action, ce qui cassait l'illusion.
+   Le texte vit dans #flavor-texte, qui se charge de rogner les messages
+   trop longs — la bulle, elle, doit laisser dépasser sa queue. */
+#flavor-text {
+  position: relative;
+  flex: 0 0 auto;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px auto 2px;
+  padding: 9px 16px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 0.85rem;
+  color: #fff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.38);
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.38) 0%,
+      rgba(255, 255, 255, 0.10) 49%,
+      rgba(255, 255, 255, 0) 50%),
+    linear-gradient(180deg, #5aa9f8 0%, #3287f2 49%, #1a6ae4 51%, #0d55c9 100%);
+  border: 1px solid #0b47a8;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 2px 4px rgba(59, 10, 69, 0.35);
+  opacity: 0;
+}
+
+/* Le texte seul est rogné : la queue de la bulle doit rester visible. */
+#flavor-texte {
+  max-height: 100%;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+
+/* La queue : un carré tourné à 45°, teinté comme le bas du dégradé pour que
+   la soudure avec la bulle ne se voie pas. */
+#flavor-text::after {
+  content: "";
+  position: absolute;
+  right: 24px;
+  bottom: -7px;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, #1360d8 0%, #0d55c9 100%);
+  border-right: 1px solid #0b47a8;
+  border-bottom: 1px solid #0b47a8;
+  border-bottom-right-radius: 4px;
+  transform: rotate(45deg);
+}
+
+#flavor-text.show { animation: popIn 0.45s cubic-bezier(0.34, 1.6, 0.64, 1) forwards; }
+
+@keyframes popIn {
+  0%   { opacity: 0; transform: scale(0.75) rotate(-2deg); }
+  65%  { opacity: 1; transform: scale(1.06) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* =========================================================
+   Dock garde-robe : rail de catégories + bande d'items
+   ========================================================= */
+
+.dock {
+  flex: 0 0 336px;
+  display: flex;
+  align-items: stretch;
+  background: linear-gradient(180deg, var(--encre-clair), var(--encre));
+  border-left: var(--trait);
+}
+
+.dock.drop-retour {
+  background: repeating-linear-gradient(45deg, var(--encre-clair) 0 14px, var(--encre) 14px 28px);
+}
+
+/* Rail vertical d'icônes, comme les tranches latérales des jeux d'habillage */
+.dock-cats {
+  flex: 0 0 78px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: rgba(0, 0, 0, 0.22);
+  border-right: 2px solid rgba(255, 255, 255, 0.18);
+}
+
+.tab-btn {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 7px 2px 5px;
+  font-family: var(--police-texte);
+  font-size: 1.25rem;
+  line-height: 1;
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, var(--piscine), #1aa6cc);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: transform 0.1s ease, filter 0.1s ease;
+}
+
+.tab-label {
+  font-size: 0.5rem;
+  font-weight: bold;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.tab-btn:hover { transform: translateY(-2px); filter: saturate(1.3); }
+
+.tab-btn.active {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(180deg, var(--bonbon-clair), var(--bonbon));
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), 0 0 0 3px var(--or);
+}
+
+/* Pastille « Drew porte une pièce de cette catégorie ».
+   Positionnée en absolu : dans le flux de la grille, elle rallongeait chaque
+   onglet, donc le rail, donc toute l'aire de jeu — Drew se déplaçait à chaque
+   changement de tenue. */
+.tab-btn.porte::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--citron);
+  border: 1px solid var(--encre);
+  box-shadow: 0 0 6px var(--citron);
+}
+
+.dock-items {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.dock-panels {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.wardrobe-panel {
+  display: none;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 8px;
+}
+
+.wardrobe-panel.active { display: flex; }
+
+/* Une pièce = une tuile attrapable */
+.item-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: var(--tuile);
+  padding: 5px 4px 4px;
+  font-family: var(--police-texte);
+  font-size: 0.58rem;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--encre);
+  background: linear-gradient(180deg, #fff, var(--barbe-pale));
+  border: 2px solid #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
+  cursor: grab;
+  touch-action: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+/* En grand écran la bande d'items défile verticalement, on peut donc prendre
+   tout le geste. Le cas tactile est rattrapé plus bas (voir la requête média
+   860 px), sans quoi le bandeau horizontal deviendrait indéfilable. */
+
+.item-btn:hover { transform: translateY(-3px) rotate(-1.5deg); box-shadow: 0 6px 0 rgba(0, 0, 0, 0.4); }
+.item-btn:active { cursor: grabbing; }
+.item-btn.dragging { opacity: 0.4; transform: scale(0.94); }
+
+.item-swatch {
+  width: 100%;
+  height: 52px;
+  border: 2px solid var(--encre);
+  border-radius: 8px;
+  background: #fff center / contain no-repeat;
+  pointer-events: none;
+}
+
+.item-nom {
+  pointer-events: none;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Vignette de décor : on montre la scène en entier plutôt qu'un aplat */
+.decor-btn .item-swatch {
+  height: 58px;
+  background-size: cover;
+  background-position: center top;
+}
+
+.item-btn.selected {
+  background: linear-gradient(180deg, #fff, var(--citron));
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4), 0 0 0 3px var(--or);
+}
+
+.item-btn.selected::after {
+  content: "✔";
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  font-size: 0.65rem;
+  color: #fff;
+  background: var(--bonbon);
+  border: 2px solid #fff;
+  border-radius: 50%;
+}
+
+.dock-hint {
+  flex: 0 0 auto;
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 2px dotted rgba(255, 255, 255, 0.35);
+  font-size: 0.65rem;
+  font-style: italic;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--barbe);
+}
+
+/* Le « fantôme » qui suit le doigt / la souris pendant le glissé */
+.drag-ghost {
+  position: fixed;
+  z-index: 10000;
+  transform: translate(-50%, -50%) rotate(-7deg);
+  width: 92px;
+  padding: 6px 6px 7px;
+  font-family: var(--police-texte);
+  font-size: 0.58rem;
+  line-height: 1.15;
+  text-align: center;
+  color: var(--encre);
+  background: #fff;
+  border: 3px solid var(--encre);
+  border-radius: 12px;
+  box-shadow: 4px 6px 0 rgba(59, 10, 69, 0.5), 0 0 24px var(--or);
+  pointer-events: none;
+}
+
+.drag-ghost-img {
+  display: block;
+  height: 52px;
+  margin-bottom: 4px;
+  background: center / contain no-repeat;
+}
+
+/* =========================================================
+   Pied de page
+   ========================================================= */
+
+footer {
+  text-align: center;
+  padding: 14px;
+  border-top: var(--trait);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon));
+}
+
+.footer-compteur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.counter-label { font-size: 0.7rem; }
+
+.counter {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: #111;
+  border: 2px solid var(--encre);
+  border-radius: 5px;
+}
+
+.counter span {
+  font-family: var(--police-chiffres);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--citron);
+  background: #000;
+  padding: 1px 5px;
+  border-radius: 2px;
+  text-shadow: 0 0 6px var(--citron);
+}
+
+.badges {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* Un seul badge, et lisible : les trois anciens 88×31 en police 7 px ne se
+   déchiffraient qu'à la loupe. On garde le style bouton d'époque, mais la
+   largeur suit le texte au lieu de l'écraser. */
+.badge {
+  padding: 7px 18px;
+  font-family: var(--police-chiffres);
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+  color: #000;
+  background: linear-gradient(180deg, var(--or), #ff9d00);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* =========================================================
+   Paillettes du curseur (élément signature)
+   ========================================================= */
+
+#sparkles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.paillette {
+  position: absolute;
+  font-size: 14px;
+  will-change: transform, opacity;
+  animation: tombe 900ms ease-out forwards;
+}
+
+@keyframes tombe {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%, 34px) scale(0.25) rotate(160deg); }
+}
+
+/* =========================================================
+   Écrans étroits : le dock passe en bas, comme sur mobile
+   ========================================================= */
+
+@media (max-width: 860px) {
+  body { padding: 8px 6px 16px; }
+  .shell { border-radius: 18px; border-width: 4px; }
+  .banner { padding-top: 10px; }
+
+  /* Pile verticale en flux normal : le dock pousse le footer vers le bas
+     au lieu de passer dessous. */
+  .game { flex-direction: column; min-height: 0; }
+
+  .stage { padding: 8px; }
+  .doll-fit { min-height: min(56vh, 460px); }
+  .stage-tools { top: 10px; flex-direction: row; }
+  .stage-tools-gauche { left: 10px; }
+  .stage-tools-droite { right: 10px; }
+  .round-btn { width: 50px; height: 50px; font-size: 1.25rem; }
+
+  #flavor-text { font-size: 0.78rem; margin-top: 6px; }
+
+  .dock {
+    flex: 0 0 auto;
+    flex-direction: column;
+    border-left: none;
+    border-top: var(--trait);
+  }
+
+  /* Rail de catégories : bande horizontale déroulante */
+  .dock-cats {
+    flex: 0 0 auto;
+    flex-direction: row;
+    gap: 6px;
+    padding: 7px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.18);
+  }
+
+  .tab-btn { width: 60px; }
+
+  .dock-items { padding: 8px; }
+
+  /* Bande d'items : une seule ligne qui défile latéralement */
+  .dock-panels { overflow-x: auto; overflow-y: hidden; }
+  .wardrobe-panel { flex-wrap: nowrap; }
+
+  /* On rend le geste horizontal au navigateur, sinon le doigt tombe sur une
+     tuile et la bande refuse de défiler. Reste le glissé vertical, qui est
+     justement la direction de Drew, placé au-dessus du dock. */
+  .item-btn { flex: 0 0 auto; touch-action: pan-x; }
+  .dock-hint { margin-top: 8px; }
+}
+
+@media (max-width: 460px) {
+  :root { --tuile: 66px; }
+  .round-btn { width: 44px; height: 44px; font-size: 1.1rem; }
+  .round-label { font-size: 0.42rem; }
+  .badge { padding: 6px 12px; font-size: 10px; }
+}
+
+/* =========================================================
+   Confort : on coupe tout ce qui bouge si l'OS le demande
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  #flavor-text { opacity: 1; }
+  #sparkles { display: none; }
+}

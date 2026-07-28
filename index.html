@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>✿ Dress my Drew ✿</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <div class="shell">
+    <header class="banner">
+      <h1 class="wordart" data-text="Dress my Drew"><span>Dress my Drew</span></h1>
+      <p class="tagline">L'aigle surveille tes choix vestimentaires.</p>
+    </header>
+
+    <div class="game">
+      <section class="stage">
+        <div class="stage-tools stage-tools-gauche">
+          <button id="btn-chaos" class="round-btn chaos" title="Habiller Drew au hasard">
+            <span aria-hidden="true">🎲</span><span class="round-label">Chaos</span>
+          </button>
+          <button id="btn-eagle" class="round-btn eagle" title="Tout retirer">
+            <span aria-hidden="true">🦅</span><span class="round-label">Aigle</span>
+          </button>
+        </div>
+
+        <div class="stage-tools stage-tools-droite">
+          <button id="btn-export" class="round-btn primary" title="Enregistrer la tenue en PNG">
+            <span aria-hidden="true">📸</span><span class="round-label">Photo</span>
+          </button>
+        </div>
+
+        <div class="doll-fit">
+          <div class="doll-frame">
+            <div id="doll"></div>
+            <div id="eagle-anim" aria-hidden="true">
+              <span class="eagle-corps">🦅</span>
+            </div>
+          </div>
+        </div>
+
+        <p id="flavor-text" role="status"><span id="flavor-texte"></span></p>
+      </section>
+
+      <aside class="dock">
+        <div id="wardrobe-tabs" class="dock-cats" role="tablist" aria-label="Catégories de vêtements"></div>
+        <div class="dock-items">
+          <div id="wardrobe-panels" class="dock-panels"></div>
+          <p class="dock-hint">Attrape une pièce et lâche-la sur Drew. Renvoie-la ici pour la retirer.</p>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <div class="footer-compteur">
+        <span class="counter-label">Tu es la visiteuse n°</span>
+        <span id="counter" class="counter" aria-label="compteur de visites"></span>
+      </div>
+      <div class="badges" aria-hidden="true">
+        <span class="badge">★ POWERED BY LE POUVOIR DE L'AMITIER ★</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="layers.js"></script>
+  <script src="decors.js"></script>
+  <script src="silhouettes.js"></script>
+  <script src="main.js"></script>
+  <script src="export.js"></script>
+  <script src="sparkle.js"></script>
+</body>
+</html>
