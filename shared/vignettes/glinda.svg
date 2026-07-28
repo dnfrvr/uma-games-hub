@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Pep Rally Rhythm">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#e91e8c"/>
+  <rect width="320" height="240" fill="url(#glinda-rayures)"/>
+  <defs>
+    <pattern id="glinda-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+  <!-- pompons -->
+  <g stroke="#3b0a45" stroke-width="9" stroke-linecap="round">
+    <path d="M108 150 128 108" fill="none"/>
+    <path d="M212 150 192 108" fill="none"/>
+  </g>
+  <g fill="#ffd84d" stroke="#3b0a45" stroke-width="8">
+    <circle cx="128" cy="96" r="30"/>
+    <circle cx="192" cy="96" r="30"/>
+  </g>
+  <!-- notes -->
+  <g fill="#ffffff" stroke="#3b0a45" stroke-width="7" stroke-linejoin="round">
+    <path d="M62 190v-46l30-8v46" fill="none" stroke-linecap="round"/>
+    <circle cx="54" cy="192" r="12"/>
+    <circle cx="84" cy="184" r="12"/>
+  </g>
+</svg>

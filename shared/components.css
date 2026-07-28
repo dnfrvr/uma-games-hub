@@ -1,79 +1,286 @@
-/* À importer APRÈS style-tokens.css */
+/* =========================================================
+   Composants partagés du portail — À importer APRÈS style-tokens.css
+   ---------------------------------------------------------
+   Le « mobilier » commun au hub et à tous les jeux, repris tel quel de
+   l'habillage du jeu de Drew pour que tout le portail ait la même DA :
+   papier peint animé, cadre .shell, bandeau + titre WordArt, boutons,
+   pied de page avec compteur, traînée de paillettes.
+
+   Un jeu ne redéfinit ici que ce qui lui est propre (sa scène, ses
+   animations) dans son style.css, chargé après ce fichier.
+   ========================================================= */
 
 * { box-sizing: border-box; }
 
+html, body { height: 100%; }
+
 body {
   margin: 0;
+  padding: 14px 12px 28px;
   font-family: var(--font-title);
-  background: repeating-linear-gradient(
-    45deg,
-    var(--bg-pattern-a), var(--bg-pattern-a) 20px,
-    var(--bg-pattern-b) 20px, var(--bg-pattern-b) 40px
-  );
+  font-size: 15px;
   color: var(--text-color);
+  background: var(--page-bg) fixed;
 }
 
-header {
+/* Papier peint étoiles + cœurs, sur son propre calque : il glisse en
+   transform (composité par le GPU) plutôt qu'en background-position,
+   sinon toute la page se repeint à chaque frame. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -80px;
+  z-index: -1;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='%23ffffff' opacity='.55'%3E%3Cpath d='M18 5l2.9 7.1L28 15l-7.1 2.9L18 25l-2.9-7.1L8 15l7.1-2.9z'/%3E%3Cpath d='M54 41l2.9 7.1L64 51l-7.1 2.9L54 61l-2.9-7.1L44 51l7.1-2.9z'/%3E%3C/g%3E%3Cg fill='%23ffd84d' opacity='.6'%3E%3Cpath d='M52 9c2.2-2.7 6.8-1.1 6.8 2.3 0 3.4-4.5 6.8-6.8 9.1-2.3-2.3-6.8-5.7-6.8-9.1C45.2 7.9 49.8 6.3 52 9z'/%3E%3Cpath d='M16 45c2.2-2.7 6.8-1.1 6.8 2.3 0 3.4-4.5 6.8-6.8 9.1-2.3-2.3-6.8-5.7-6.8-9.1C9.2 43.9 13.8 42.3 16 45z'/%3E%3C/g%3E%3Cg fill='%234de0ff' opacity='.5'%3E%3Ccircle cx='36' cy='30' r='2.4'/%3E%3Ccircle cx='4' cy='66' r='2.4'/%3E%3Ccircle cx='68' cy='66' r='2.4'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  will-change: transform;
+  animation: papierPeint 24s linear infinite;
+}
+
+@keyframes papierPeint {
+  to { transform: translate3d(72px, 72px, 0); }
+}
+
+/* Le grand cadre de contenu, façon widget MySpace/Stardoll */
+.shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  background: var(--panel-bg);
+  border: 5px double var(--text-color);
+  border-radius: 26px;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.7), 10px 12px 0 rgba(59, 10, 69, 0.35);
+  overflow: hidden;
+}
+
+/* =========================================================
+   Bandeau + titre WordArt
+   ========================================================= */
+
+header,
+.banner {
   text-align: center;
-  padding: 20px;
-  background: linear-gradient(90deg, var(--accent), var(--bg-pattern-b));
-  border-bottom: var(--border-thick) dashed #fff;
+  padding: 12px 16px 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
+  border-bottom: var(--trait);
 }
 
-header h1 {
-  margin: 0;
-  font-size: 2.2rem;
-  text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--accent);
+/* Titre « WordArt » : remplissage doré animé, contour et ombre portée.
+   Le balisage attendu est :
+   <h1 class="wordart" data-text="Titre"><span>Titre</span></h1>
+   — le ::before porte le contour, le <span> le dégradé qui défile. */
+.wordart {
+  position: relative;
+  margin: 0 0 10px;
+  font-family: var(--font-deco);
+  font-weight: 400;
+  font-size: clamp(2rem, 6.5vw, 3.8rem);
+  /* Le contour épais déborde du bloc de texte : on lui laisse la place. */
+  line-height: 1.25;
 }
+
+.wordart::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: #fff;
+  -webkit-text-stroke: clamp(5px, 1.6vw, 9px) var(--text-color);
+  text-shadow: 4px 5px 0 rgba(59, 10, 69, 0.45);
+}
+
+.wordart span {
+  position: relative;
+  background: linear-gradient(100deg, #fff 0%, var(--or) 18%, #fff 34%, var(--barbe) 50%, var(--or) 66%, #fff 82%, var(--or) 100%);
+  background-size: 260% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: brillance 5s linear infinite;
+}
+
+@keyframes brillance {
+  to { background-position: -260% 0; }
+}
+
+.tagline {
+  margin: 0;
+  font-style: italic;
+  font-size: clamp(0.75rem, 2.4vw, 0.95rem);
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--text-color);
+}
+
+/* =========================================================
+   Panneaux et boutons
+   ========================================================= */
 
 .panel {
   background: var(--panel-bg);
   border: var(--border-thick) solid var(--accent);
   border-radius: var(--radius-panel);
   padding: 16px;
-  box-shadow: 6px 6px 0 var(--text-color);
+  box-shadow: var(--ombre-dure);
 }
 
 .fun-btn {
   font-family: inherit;
   font-weight: bold;
   padding: 8px 14px;
-  border: 3px solid var(--text-color);
+  border: var(--trait);
   border-radius: var(--radius-button);
-  background: #fff2fb;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--barbe);
+  color: var(--text-color);
   cursor: pointer;
-  box-shadow: 3px 3px 0 var(--text-color);
+  box-shadow: 3px 4px 0 var(--shadow-color);
 }
 
 .fun-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--text-color);
+  transform: translate(-1px, -2px);
+  box-shadow: 4px 6px 0 var(--shadow-color);
+  filter: saturate(1.3);
 }
 
 .fun-btn.primary {
-  background: var(--accent);
-  color: #fff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--or);
 }
 
 .tab-btn {
   font-family: inherit;
+  font-weight: bold;
   padding: 6px 10px;
   border: 2px solid var(--text-color);
-  border-radius: 10px;
-  background: #fff;
+  border-radius: 12px;
+  background: linear-gradient(180deg, var(--piscine), #1aa6cc);
+  color: #fff;
   cursor: pointer;
   font-size: 0.85rem;
 }
 
 .tab-btn.active {
-  background: var(--accent);
+  background: linear-gradient(180deg, var(--bonbon-clair), var(--bonbon));
   color: #fff;
 }
 
+:focus-visible {
+  outline: 4px solid var(--lilas);
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   Pied de page : compteur de visites factice + badge d'époque
+   ========================================================= */
+
 footer {
   text-align: center;
-  padding: 16px;
-  font-size: 0.85rem;
-  border-top: var(--border-thick) dashed #fff;
-  background: linear-gradient(90deg, var(--bg-pattern-b), var(--accent));
+  padding: 14px;
+  border-top: var(--trait);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon));
+}
+
+.footer-compteur {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.counter-label { font-size: 0.7rem; }
+
+.counter {
+  display: inline-flex;
+  gap: 3px;
+  padding: 4px;
+  background: #111;
+  border: 2px solid var(--text-color);
+  border-radius: 5px;
+}
+
+.counter span {
+  font-family: var(--font-chiffres);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--citron);
+  background: #000;
+  padding: 1px 5px;
+  border-radius: 2px;
+  text-shadow: 0 0 6px var(--citron);
+}
+
+.badges {
+  display: flex;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+/* Un seul badge, et lisible : les trois anciens 88×31 en police 7 px ne se
+   déchiffraient qu'à la loupe. On garde le style bouton d'époque, mais la
+   largeur suit le texte au lieu de l'écraser. */
+.badge {
+  padding: 7px 18px;
+  font-family: var(--font-chiffres);
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-align: center;
+  white-space: nowrap;
+  color: #000;
+  background: linear-gradient(180deg, var(--or), #ff9d00);
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* =========================================================
+   Paillettes du curseur (élément signature, cf. shared/sparkle.js)
+   ========================================================= */
+
+#sparkles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.paillette {
+  position: absolute;
+  font-size: 14px;
+  will-change: transform, opacity;
+  animation: tombe 900ms ease-out forwards;
+}
+
+@keyframes tombe {
+  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%, 34px) scale(0.25) rotate(160deg); }
+}
+
+/* =========================================================
+   Écrans étroits
+   ========================================================= */
+
+@media (max-width: 860px) {
+  body { padding: 8px 6px 16px; }
+  .shell { border-radius: 18px; border-width: 4px; }
+  header,
+  .banner { padding-top: 10px; }
+}
+
+@media (max-width: 460px) {
+  .badge { padding: 6px 12px; font-size: 10px; }
+}
+
+/* =========================================================
+   Confort : on coupe tout ce qui bouge si l'OS le demande
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  #sparkles { display: none; }
 }

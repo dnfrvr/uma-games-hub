@@ -8,11 +8,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
 <link rel="stylesheet" href="style.css" />
 </head>
-<body>
+<body class="theme-drew">
   <div id="sparkles" aria-hidden="true"></div>
 
+  <!-- Barre de navigation permanente du portail -->
+  <div id="navbar"></div>
+
+  <div class="page">
   <div class="shell">
     <header class="banner">
       <h1 class="wordart" data-text="Dress my Drew"><span>Dress my Drew</span></h1>
@@ -68,11 +77,21 @@
     </footer>
   </div>
 
+    <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+    <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
+  </div>
+
   <script src="layers.js"></script>
   <script src="decors.js"></script>
   <script src="silhouettes.js"></script>
   <script src="main.js"></script>
   <script src="export.js"></script>
-  <script src="sparkle.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script>
+    renderNavbar("drew", "navbar");
+    renderSidebar("drew", "sidebar-autres-jeux");
+  </script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Dress my Drew">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#aa6caa"/>
+  <rect width="320" height="240" fill="url(#drew-rayures)"/>
+  <defs>
+    <pattern id="drew-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+  <!-- cintre -->
+  <path d="M160 62a14 14 0 0 1 14 14c0 8-14 8-14 17" fill="none" stroke="#3b0a45" stroke-width="9" stroke-linecap="round"/>
+  <!-- robe -->
+  <path d="M160 93 196 111 187 132l-9-3 9 42h-54l9-42-9 3-9-21z"
+        fill="#4de0ff" stroke="#3b0a45" stroke-width="9" stroke-linejoin="round"/>
+  <g fill="#ffd84d">
+    <path d="M44 40l6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/>
+    <path d="M272 176l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+  </g>
+</svg>

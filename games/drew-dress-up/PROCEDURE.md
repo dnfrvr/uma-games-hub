@@ -277,11 +277,13 @@ navigateur interdit la lecture des pixels — garde tes fichiers dans `assets/`.
 | `serveur.py` | serveur local, sans cache |
 | `declarer_assets.py` | déclare les images déposées dans le manifest |
 | `index.html` | structure de la page |
-| `style.css` | tout l'habillage visuel |
+| `style.css` | habillage propre au jeu (scène, poupée, dock, aigle) |
+| `../../shared/style-tokens.css` + `components.css` | DA commune du portail (fond, cadre, bandeau, pied de page) |
 | `layers.js` | cadre de référence, `LAYER_ORDER` (empilement) et repères du corps |
 | `silhouettes.js` | corps de Drew + silhouettes de secours des vêtements |
 | `decors.js` | liste des décors + leurs SVG de secours |
 | `main.js` | état du jeu, garde-robe, glisser-déposer, rendu de la poupée |
 | `export.js` | export PNG |
-| `sparkle.js` | paillettes du curseur et compteur de visites |
+| `../../shared/sparkle.js` | paillettes du curseur et compteur de visites (partagé avec le hub) |
+| `../../shared/sidebar.js` + `sidebar.css` | colonne « Tu aimeras aussi… » des autres jeux |
 | `assets/manifest.json` | liste des vêtements |

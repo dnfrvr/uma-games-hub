@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Kiss &amp; Cache">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#00d435"/>
+  <rect width="320" height="240" fill="url(#eoghan-rayures)"/>
+  <defs>
+    <pattern id="eoghan-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+
+  <!-- Cône de vision d'un PNJ, le cœur de la mécanique -->
+  <path d="M266 40 118 122 268 176z" fill="#ffffff" opacity=".45"/>
+  <circle cx="272" cy="108" r="17" fill="#ffd84d" stroke="#0a3d16" stroke-width="7"/>
+
+  <!-- Le buisson derrière lequel on se planque -->
+  <path d="M40 196c-14 0-24-10-24-22s10-20 22-20c2-14 14-24 28-24s26 10 28 24c12 0 22 8 22 20s-10 22-24 22z"
+        fill="#0a8f2c" stroke="#0a3d16" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- Deux têtes vues de dessus qui se penchent l'une vers l'autre -->
+  <g stroke="#0a3d16" stroke-width="7">
+    <circle cx="128" cy="86" r="26" fill="#ffd9b3"/>
+    <circle cx="186" cy="86" r="26" fill="#ffc2a1"/>
+  </g>
+
+  <!-- Bulle de cœurs du bisou -->
+  <g fill="#ff3d9a" stroke="#0a3d16" stroke-width="6" stroke-linejoin="round">
+    <path d="M157 42c5-8 19-4 19 6 0 9-13 17-19 24-6-7-19-15-19-24 0-10 14-14 19-6z"/>
+  </g>
+  <g fill="#ff8ac4">
+    <path d="M96 46c3-4 10-2 10 3 0 5-7 9-10 13-3-4-10-8-10-13 0-5 7-7 10-3z"/>
+  </g>
+</svg>

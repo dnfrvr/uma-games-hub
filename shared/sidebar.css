@@ -1,0 +1,147 @@
+/* =========================================================
+   Sidebar « Tu aimeras aussi... » — habillage partagé
+   À importer APRÈS shared/components.css.
+   Même DA que le reste du portail : cadre à double filet, bandeau en
+   dégradé bonbon/lilas/piscine, titre WordArt, tuiles à ombre dure.
+   Les couleurs, polices et ombres viennent toutes de style-tokens.css ;
+   chaque item pose en plus sa propre --accent (couleur du perso).
+   ========================================================= */
+
+.sidebar-autres {
+  overflow: hidden;
+  font-family: var(--font-title);
+  color: var(--text-color);
+  background: var(--panel-bg);
+  border: 4px double var(--text-color);
+  border-radius: 20px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7), var(--ombre-dure);
+}
+
+/* Petit bandeau, comme celui des pages de jeu en miniature */
+.sidebar-titre {
+  margin: 0;
+  padding: 8px 10px 7px;
+  text-align: center;
+  font-family: var(--font-deco);
+  font-weight: 400;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--text-color), 2px 3px 0 rgba(59, 10, 69, 0.4);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
+  border-bottom: var(--trait);
+}
+
+.sidebar-liste {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: radial-gradient(ellipse at 50% 0%, #fff 0%, var(--panel-bg) 60%, var(--barbe) 100%);
+}
+
+/* Une tuile de jeu, cousine des tuiles de la garde-robe de Drew */
+.sidebar-lien {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  text-decoration: none;
+  color: inherit;
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: 2px solid var(--accent);
+  border-radius: 12px;
+  box-shadow: 0 3px 0 var(--shadow-color);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
+
+a.sidebar-lien:hover,
+a.sidebar-lien:focus-visible {
+  transform: translateY(-3px) rotate(-1.5deg);
+  box-shadow: 0 6px 0 var(--shadow-color);
+  filter: saturate(1.3);
+}
+
+/* L'étoile qui pétille sur les jeux jouables, comme sur le hub */
+a.sidebar-lien::after {
+  content: "★";
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  font-size: 0.8rem;
+  color: var(--or);
+  text-shadow: 0 0 5px #fff, 1px 1px 0 var(--text-color);
+}
+
+.sidebar-vignette {
+  flex: 0 0 auto;
+  width: 54px;
+  height: 40px;
+  object-fit: cover;
+  border: 2px solid var(--text-color);
+  border-radius: 7px;
+}
+
+.sidebar-texte {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.sidebar-nom {
+  font-size: 0.72rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+/* Badge « Bientôt » façon bouton doré d'époque */
+.sidebar-badge {
+  align-self: flex-start;
+  padding: 1px 7px;
+  font-family: var(--font-chiffres);
+  font-size: 0.5rem;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #000;
+  background: linear-gradient(180deg, var(--or), #ff9d00);
+  border: 1px solid #000;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+}
+
+.sidebar-item.bientot {
+  filter: grayscale(0.85);
+  opacity: 0.72;
+  cursor: not-allowed;
+}
+
+/* Retour au hub : petit bouton pilule, comme les boutons du portail */
+.sidebar-retour {
+  display: block;
+  margin: 0;
+  padding: 8px 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.62rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-color);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon));
+  border-top: var(--trait);
+  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.sidebar-retour:hover { filter: saturate(1.4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-lien { transition: none; }
+}

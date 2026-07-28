@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>★ UMA Games Hub ★</title>
+<link rel="icon" type="image/svg+xml" href="shared/vignettes/drew.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- Même DA que les jeux : tout le mobilier vient de shared/ -->
+<link rel="stylesheet" href="shared/style-tokens.css" />
+<link rel="stylesheet" href="shared/components.css" />
+<link rel="stylesheet" href="shared/navbar.css" />
+<link rel="stylesheet" href="shared/sidebar.css" />
+<link rel="stylesheet" href="style-hub.css" />
+</head>
+<body>
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- Barre de navigation permanente, commune au hub et aux jeux -->
+  <div id="navbar"></div>
+
+  <div class="portail">
+    <header class="banner portail-hero">
+      <h1 class="wordart" data-text="UMA Games Hub"><span>UMA Games Hub</span></h1>
+      <p class="tagline">4 personnages, 4 très mauvaises idées. Choisis ton camp.</p>
+    </header>
+
+    <div class="portail-corps">
+      <main class="portail-principal">
+        <section class="bloc">
+          <h2 class="bloc-titre">★ Tous les jeux ★</h2>
+          <div id="grille-jeux" class="grille-jeux" aria-busy="true">
+            <p class="chargement">Chargement des jeux…</p>
+          </div>
+        </section>
+      </main>
+
+      <aside class="portail-cote">
+        <!-- Même composant que la colonne des pages de jeu, titre différent -->
+        <div id="top-jeux"></div>
+
+        <section class="bloc widget">
+          <h2 class="bloc-titre">Le saviez-vous ?</h2>
+          <p class="widget-texte" id="anecdote">…</p>
+        </section>
+
+        <section class="bloc widget widget-livre-dor">
+          <h2 class="bloc-titre">Livre d'or</h2>
+          <p class="widget-texte">
+            « meilleur site de jeu de toute l'internet 10/10 »<br />
+            <span class="widget-signature">— un visiteur anonyme, 2012</span>
+          </p>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="portail-pied">
+      <div class="footer-compteur">
+        <span class="counter-label">Tu es la visiteuse n°</span>
+        <span id="counter" class="counter" aria-label="compteur de visites"
+              data-cle="uma_hub_visites" data-base="130370" data-chiffres="7"></span>
+      </div>
+      <div class="badges" aria-hidden="true">
+        <span class="badge">★ POWERED BY LE POUVOIR DE L'AMITIER ★</span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="shared/sparkle.js"></script>
+  <script src="shared/navbar.js"></script>
+  <script src="shared/sidebar.js"></script>
+  <script>
+    renderNavbar(null, "navbar");
+    renderSidebar(null, "top-jeux", { titre: "Top des jeux 💗", retour: false });
+  </script>
+<script>
+/* Le hub ne connaît aucun jeu en dur : tout vient de games-manifest.json,
+   la source unique de vérité partagée avec la navbar et la sidebar. */
+(function () {
+  "use strict";
+
+  const grille = document.getElementById("grille-jeux");
+
+  fetch("games-manifest.json")
+    .then((r) => {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    })
+    .then(afficheJeux)
+    .catch((err) => {
+      console.error("[hub] manifest illisible :", err);
+      grille.innerHTML =
+        '<p class="chargement">Impossible de charger la liste des jeux. ' +
+        "Sers le dossier avec un serveur local (python3 -m http.server).</p>";
+      grille.removeAttribute("aria-busy");
+    });
+
+  function afficheJeux(jeux) {
+    grille.innerHTML = "";
+    grille.removeAttribute("aria-busy");
+    jeux.forEach((jeu, i) => grille.appendChild(carte(jeu, i)));
+  }
+
+  function carte(jeu, index) {
+    const dispo = jeu.statut === "disponible" && jeu.url;
+
+    /* Un jeu disponible est un lien, un jeu à venir ne l'est pas : pas de href
+       bidon ni de clic à intercepter, le navigateur fait le travail. */
+    const el = document.createElement(dispo ? "a" : "div");
+    el.className = "carte-jeu" + (dispo ? "" : " bientot");
+    el.style.setProperty("--accent", jeu.couleur);
+    if (dispo) {
+      el.href = jeu.url;
+    } else {
+      el.setAttribute("aria-disabled", "true");
+    }
+
+    const cadre = document.createElement("div");
+    cadre.className = "carte-vignette";
+
+    const img = document.createElement("img");
+    img.src = jeu.vignette;
+    img.alt = "";
+    img.loading = "lazy";
+    cadre.appendChild(img);
+
+    if (dispo) {
+      const neuf = document.createElement("span");
+      neuf.className = "badge-nouveau";
+      neuf.textContent = "NOUVEAU !";
+      cadre.appendChild(neuf);
+    } else {
+      const bientot = document.createElement("span");
+      bientot.className = "badge-bientot";
+      bientot.textContent = "Bientôt disponible";
+      cadre.appendChild(bientot);
+    }
+
+    /* Étoiles clignotantes, décalées d'une carte à l'autre pour éviter
+       l'effet « guirlande synchronisée ». */
+    const etoile = document.createElement("span");
+    etoile.className = "etoile";
+    etoile.setAttribute("aria-hidden", "true");
+    etoile.textContent = "★";
+    etoile.style.animationDelay = index * 0.35 + "s";
+    cadre.appendChild(etoile);
+
+    const corps = document.createElement("div");
+    corps.className = "carte-corps";
+
+    const titre = document.createElement("h3");
+    titre.className = "carte-titre";
+    titre.textContent = jeu.titre;
+
+    const desc = document.createElement("p");
+    desc.className = "carte-desc";
+    desc.textContent = jeu.description;
+
+    const cta = document.createElement("span");
+    cta.className = "carte-cta";
+    cta.textContent = dispo ? "JOUER ▸" : "EN CHANTIER";
+
+    corps.append(titre, desc, cta);
+    el.append(cadre, corps);
+    return el;
+  }
+
+  /* Petit gadget d'ambiance : une anecdote au hasard à chaque visite. */
+  const ANECDOTES = [
+    "Ce site est optimisé pour un écran 1024×768 et une connexion pleine d'espoir.",
+    "Aucun aigle n'a été blessé pendant la fabrication de ce portail.",
+    "Les 3 jeux en chantier arrivent bientôt. « Bientôt » est une notion souple.",
+    "Astuce : le bouton « Au hasard ! » ne t'enverra jamais vers un jeu pas fini.",
+    "Meilleur score du staff : personne ne s'en souvient, mais c'était énorme.",
+  ];
+  document.getElementById("anecdote").textContent =
+    ANECDOTES[Math.floor(Math.random() * ANECDOTES.length)];
+})();
+</script>
+</body>
+</html>

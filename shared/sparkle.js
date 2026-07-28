@@ -1,7 +1,12 @@
 /* =========================================================
-   Mobilier rétro : la traînée de paillettes du curseur
+   Mobilier rétro partagé : la traînée de paillettes du curseur
    et le compteur de visites du pied de page.
-   Purement décoratif — aucun impact sur la poupée ni l'export.
+   Purement décoratif — aucun impact sur la mécanique des jeux.
+
+   Toute page qui veut l'effet inclut ce script et pose les deux crochets :
+     <div id="sparkles" aria-hidden="true"></div>
+     <span id="counter" data-cle="..." data-base="..." data-chiffres="..."></span>
+   (les attributs data-* sont optionnels, voir initCompteur)
    ========================================================= */
 
 const PAILLETTES = ["✦", "✧", "★", "✿", "❀", "•"];
@@ -38,20 +43,25 @@ function initCompteur() {
   const el = document.getElementById("counter");
   if (!el) return;
 
+  // Chaque page a son propre compteur factice : clé de stockage, valeur de
+  // départ et nombre de chiffres se règlent en HTML, sans toucher au script.
+  const CLE = el.dataset.cle || "drew_visites";
+  const BASE = Number(el.dataset.base) || 13372;
+  const CHIFFRES = Number(el.dataset.chiffres) || 6;
+
   // Le stockage peut être bloqué (navigation privée stricte, cookies refusés).
   // Le compteur doit rester affiché malgré tout, quitte à ne pas progresser.
-  const BASE = 13372;
   let n = BASE;
   try {
-    n = (Number(localStorage.getItem("drew_visites")) || BASE) + 1;
-    localStorage.setItem("drew_visites", String(n));
+    n = (Number(localStorage.getItem(CLE)) || BASE) + 1;
+    localStorage.setItem(CLE, String(n));
   } catch (e) {
     n = BASE + 1;
   }
 
   el.innerHTML = "";
   String(n)
-    .padStart(6, "0")
+    .padStart(CHIFFRES, "0")
     .split("")
     .forEach((chiffre) => {
       const c = document.createElement("span");

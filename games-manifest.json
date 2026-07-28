@@ -1,0 +1,42 @@
+[
+  {
+    "id": "drew",
+    "titre": "Dress my Drew",
+    "perso": "Drew",
+    "description": "Habille Drew. Essaie de faire pire.",
+    "vignette": "shared/vignettes/drew.svg",
+    "url": "games/drew-dress-up/index.html",
+    "couleur": "#aa6caa",
+    "statut": "disponible"
+  },
+  {
+    "id": "glinda",
+    "titre": "Pep Rally Rhythm",
+    "perso": "Glinda",
+    "description": "Mets le feu aux tribunes.",
+    "vignette": "shared/vignettes/glinda.svg",
+    "url": null,
+    "couleur": "#e91e8c",
+    "statut": "bientot"
+  },
+  {
+    "id": "elias",
+    "titre": "Sanity Whack",
+    "perso": "Elias",
+    "description": "Tape sur tout ce qui bouge avant de perdre la tête.",
+    "vignette": "shared/vignettes/elias.svg",
+    "url": null,
+    "couleur": "#6672d0",
+    "statut": "bientot"
+  },
+  {
+    "id": "eoghan",
+    "titre": "Kiss & Cache",
+    "perso": "Eoghan",
+    "description": "Vole un maximum de bisous sans te faire repérer.",
+    "vignette": "shared/vignettes/eoghan.svg",
+    "url": null,
+    "couleur": "#00d435",
+    "statut": "bientot"
+  }
+]

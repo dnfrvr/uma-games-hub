@@ -1,0 +1,123 @@
+/* =========================================================
+   Barre de navigation permanente — habillage partagé
+   À importer APRÈS shared/components.css.
+   Même DA que le reste du portail : dégradé bonbon/lilas/piscine,
+   filet d'encre, onglets à ombre dure.
+   ========================================================= */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 auto 14px;
+  padding: 7px 12px;
+  max-width: 1180px;
+  font-family: var(--font-title);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
+  border: var(--trait);
+  border-radius: 14px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), var(--ombre-dure);
+}
+
+.navbar-marque {
+  flex: 0 0 auto;
+  font-family: var(--font-deco);
+  font-size: 1.35rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: #fff;
+  text-shadow: 1px 1px 0 var(--text-color), 3px 3px 0 rgba(59, 10, 69, 0.4);
+}
+
+.navbar-marque:hover { filter: brightness(1.12); }
+
+.navbar-liens {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding: 2px;
+}
+
+/* Un onglet = une pastille blanche à ombre dure ; l'onglet courant prend la
+   couleur du perso via --accent, posé par navbar.js. */
+.navbar-lien {
+  flex: 0 0 auto;
+  padding: 5px 11px;
+  font-size: 0.72rem;
+  font-weight: bold;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: 2px solid var(--text-color);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--shadow-color);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+a.navbar-lien:hover,
+a.navbar-lien:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 0 var(--shadow-color);
+  filter: saturate(1.3);
+}
+
+.navbar-lien.actif {
+  color: #fff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%), var(--accent);
+  box-shadow: 0 3px 0 var(--shadow-color), 0 0 0 3px var(--or);
+}
+
+.navbar-lien.bientot {
+  filter: grayscale(0.9);
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.navbar-hasard {
+  flex: 0 0 auto;
+  padding: 6px 13px;
+  font-family: var(--font-title);
+  font-size: 0.72rem;
+  font-weight: bold;
+  color: var(--text-color);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--or);
+  border: 2px solid var(--text-color);
+  border-radius: 999px;
+  box-shadow: 0 3px 0 var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.navbar-hasard:hover {
+  transform: translateY(-2px) rotate(-2deg);
+  box-shadow: 0 5px 0 var(--shadow-color);
+  filter: saturate(1.4);
+}
+
+.navbar-hasard:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--shadow-color);
+}
+
+@media (max-width: 720px) {
+  .navbar { gap: 7px; padding: 6px 8px; }
+  .navbar-marque { font-size: 1.1rem; }
+  .navbar-lien { font-size: 0.66rem; padding: 4px 9px; }
+  .navbar-hasard { font-size: 0.66rem; padding: 5px 10px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-lien,
+  .navbar-hasard { transition: none; }
+}

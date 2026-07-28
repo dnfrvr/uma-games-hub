@@ -1,3 +1,11 @@
+/* =========================================================
+   DA commune du portail — variables partagées
+   La référence visuelle est le jeu de Drew (« jeux de filles » 2012 :
+   dégradés flashy, encre violette, ombres portées dures, Comic Sans).
+   Tout le hub et tous les jeux partent de ces valeurs ; un jeu ne
+   redéfinit ici que son --accent, via une classe sur <body>.
+   ========================================================= */
+
 :root {
   /* Couleurs d'accent par personnage (reprises du LORE.md) */
   --accent-drew: #aa6caa;
@@ -5,21 +13,37 @@
   --accent-eoghan: #00d435;
   --accent-elias: #6672d0;
 
-  /* Palette rétro 2012 commune (par défaut = thème neutre du hub) */
+  /* Accent par défaut (thème neutre du hub) */
   --accent: var(--accent-drew);
-  --bg-pattern-a: #ffd6f5;
-  --bg-pattern-b: #d6f0ff;
-  --panel-bg: #fff8ff;
-  --text-color: #4a1a4a;
-  --shadow-color: #4a1a4a;
+
+  /* --- Palette rétro 2012 commune -------------------------------------- */
+  --bonbon: #ff3d9a;        /* rose bonbon, couleur signature */
+  --bonbon-clair: #ff8ac4;
+  --barbe: #ffd3ef;         /* barbe à papa */
+  --lilas: #9b4dff;
+  --lilas-clair: #c9a3ff;
+  --piscine: #4de0ff;
+  --citron: #c6ff4d;
+  --or: #ffd84d;
+  --encre-clair: #5c1c6b;
+
+  /* Rôles génériques : c'est ce que les composants partagés utilisent */
+  --text-color: #3b0a45;    /* l'encre violette de tous les traits */
+  --shadow-color: #3b0a45;
+  --panel-bg: #fff0fa;      /* fond des panneaux, rose très pâle */
+  --page-bg: linear-gradient(160deg, #ffc2e8 0%, #f6b8ff 45%, #b8e7ff 100%);
 
   /* Typo */
-  --font-title: "Comic Sans MS", "Comic Sans", cursive, sans-serif;
+  --font-title: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
+  --font-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
+  --font-chiffres: "Courier New", Courier, monospace;
 
   /* Rythme visuel */
   --radius-panel: 18px;
   --radius-button: 999px;
-  --border-thick: 4px;
+  --border-thick: 3px;
+  --trait: var(--border-thick) solid var(--text-color);
+  --ombre-dure: 5px 5px 0 var(--shadow-color);
 }
 
 /* Chaque page de jeu surcharge juste --accent (et éventuellement le fond)

@@ -4,28 +4,17 @@
    la poupée occupe la scène, la garde-robe est un dock
    (rail de catégories + bande d'items) collé sur le côté
    en grand écran, en bas sur mobile.
+
+   À charger APRÈS shared/style-tokens.css et shared/components.css :
+   tout ce qui est générique (fond de page, header, footer, .tab-btn,
+   police de texte, encre, ombres portées) vient de là. Ce fichier ne
+   garde que ce qui est propre au jeu : la scène, la poupée, le dock,
+   le raid de l'aigle.
    ========================================================= */
 
 :root {
-  --bonbon: #ff3d9a;
-  --bonbon-clair: #ff8ac4;
-  --barbe: #ffd3ef;
-  --barbe-pale: #fff0fa;
-  --lilas: #9b4dff;
-  --lilas-clair: #c9a3ff;
-  --piscine: #4de0ff;
-  --citron: #c6ff4d;
-  --encre: #3b0a45;
-  --encre-clair: #5c1c6b;
-  --or: #ffd84d;
-
-  --trait: 3px solid var(--encre);
-  --ombre-dure: 5px 5px 0 var(--encre);
-
-  --police-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
-  --police-texte: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
-  --police-chiffres: "Courier New", Courier, monospace;
-
+  /* Palette, polices, ombres et rayons viennent de shared/style-tokens.css.
+     Ce fichier ne garde que les réglages propres au jeu de Drew. */
   --doll-scale: 1;
   --tuile: 88px;
 
@@ -33,109 +22,43 @@
   --aigle-duree: 1900ms;
 }
 
-* { box-sizing: border-box; }
-
-html, body { height: 100%; }
-
+/* Réglages de page propres au jeu : on est dans un jeu, pas dans un
+   document — un glissé doit attraper un vêtement, jamais surligner du texte.
+   Idem pour le halo bleu au tap et le menu « Enregistrer l'image » de
+   l'appui long mobile. */
 body {
-  margin: 0;
-  padding: 14px 12px 28px;
-  font-family: var(--police-texte);
-  font-size: 15px;
-  color: var(--encre);
-  background: linear-gradient(160deg, #ffc2e8 0%, #f6b8ff 45%, #b8e7ff 100%) fixed;
-
-  /* On est dans un jeu, pas dans un document : un glissé doit attraper un
-     vêtement, jamais surligner du texte. Idem pour le halo bleu au tap et le
-     menu « Enregistrer l'image » du appui long mobile. */
   -webkit-user-select: none;
   user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Papier peint étoiles + cœurs, sur son propre calque : il glisse en
-   transform (composité par le GPU) plutôt qu'en background-position,
-   sinon toute la page se repeint à chaque frame. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: -80px;
-  z-index: -1;
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='%23ffffff' opacity='.55'%3E%3Cpath d='M18 5l2.9 7.1L28 15l-7.1 2.9L18 25l-2.9-7.1L8 15l7.1-2.9z'/%3E%3Cpath d='M54 41l2.9 7.1L64 51l-7.1 2.9L54 61l-2.9-7.1L44 51l7.1-2.9z'/%3E%3C/g%3E%3Cg fill='%23ffd84d' opacity='.6'%3E%3Cpath d='M52 9c2.2-2.7 6.8-1.1 6.8 2.3 0 3.4-4.5 6.8-6.8 9.1-2.3-2.3-6.8-5.7-6.8-9.1C45.2 7.9 49.8 6.3 52 9z'/%3E%3Cpath d='M16 45c2.2-2.7 6.8-1.1 6.8 2.3 0 3.4-4.5 6.8-6.8 9.1-2.3-2.3-6.8-5.7-6.8-9.1C9.2 43.9 13.8 42.3 16 45z'/%3E%3C/g%3E%3Cg fill='%234de0ff' opacity='.5'%3E%3Ccircle cx='36' cy='30' r='2.4'/%3E%3Ccircle cx='4' cy='66' r='2.4'/%3E%3Ccircle cx='68' cy='66' r='2.4'/%3E%3C/g%3E%3C/svg%3E");
-  pointer-events: none;
-  will-change: transform;
-  animation: papierPeint 24s linear infinite;
-}
+/* La navbar partagée est calée sur la largeur du hub : sur une page de jeu,
+   elle doit s'aligner sur le duo jeu + sidebar, plus large. */
+.navbar { max-width: 1330px; }
 
-@keyframes papierPeint {
-  to { transform: translate3d(72px, 72px, 0); }
-}
-
-.shell {
-  max-width: 1120px;
+/* Le jeu et la colonne « Tu aimeras aussi... » du hub, côte à côte.
+   La sidebar est remplie par shared/sidebar.js depuis games-manifest.json. */
+.page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+  max-width: 1330px;
   margin: 0 auto;
-  background: var(--barbe-pale);
-  border: 5px double var(--encre);
-  border-radius: 26px;
-  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.7), 10px 12px 0 rgba(59, 10, 69, 0.35);
-  overflow: hidden;
 }
 
-/* =========================================================
-   Bandeau
-   ========================================================= */
-
-.banner {
-  text-align: center;
-  padding: 12px 16px 10px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
-    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
-  border-bottom: var(--trait);
+.colonne-sidebar {
+  flex: 0 0 196px;
+  position: sticky;
+  top: 14px;
 }
 
-/* Titre « WordArt » : remplissage doré animé, contour et ombre portée */
-.wordart {
-  position: relative;
-  margin: 0 0 10px;
-  font-family: var(--police-deco);
-  font-weight: 400;
-  font-size: clamp(2rem, 6.5vw, 3.8rem);
-  /* Le contour épais déborde du bloc de texte : on lui laisse la place. */
-  line-height: 1.25;
-}
-
-.wordart::before {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  color: #fff;
-  -webkit-text-stroke: clamp(5px, 1.6vw, 9px) var(--encre);
-  text-shadow: 4px 5px 0 rgba(59, 10, 69, 0.45);
-}
-
-.wordart span {
-  position: relative;
-  background: linear-gradient(100deg, #fff 0%, var(--or) 18%, #fff 34%, var(--barbe) 50%, var(--or) 66%, #fff 82%, var(--or) 100%);
-  background-size: 260% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: brillance 5s linear infinite;
-}
-
-@keyframes brillance {
-  to { background-position: -260% 0; }
-}
-
-.tagline {
-  margin: 0;
-  font-style: italic;
-  font-size: clamp(0.75rem, 2.4vw, 0.95rem);
-  color: #fff;
-  text-shadow: 1px 1px 0 var(--encre);
+/* Le cadre lui-même vient de components.css : ici .shell devient la colonne
+   principale, à côté de celle de la sidebar. */
+.shell {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* =========================================================
@@ -157,7 +80,7 @@ body::before {
   flex-direction: column;
   padding: 12px;
   background:
-    radial-gradient(ellipse at 50% 28%, #fff 0%, var(--barbe-pale) 45%, var(--barbe) 100%);
+    radial-gradient(ellipse at 50% 28%, #fff 0%, var(--panel-bg) 45%, var(--barbe) 100%);
 }
 
 .stage-tools {
@@ -179,16 +102,16 @@ body::before {
   place-content: center;
   gap: 1px;
   padding: 0;
-  font-family: var(--police-texte);
+  font-family: var(--font-title);
   font-size: 1.5rem;
   line-height: 1;
-  color: var(--encre);
+  color: var(--text-color);
   border: var(--trait);
   border-radius: 50%;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%),
     var(--barbe);
-  box-shadow: 3px 4px 0 var(--encre);
+  box-shadow: 3px 4px 0 var(--text-color);
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
 }
@@ -200,17 +123,12 @@ body::before {
   text-transform: uppercase;
 }
 
-.round-btn:hover { transform: translate(-1px, -2px) rotate(-4deg); box-shadow: 4px 6px 0 var(--encre); filter: saturate(1.3); }
-.round-btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--encre); }
+.round-btn:hover { transform: translate(-1px, -2px) rotate(-4deg); box-shadow: 4px 6px 0 var(--text-color); filter: saturate(1.3); }
+.round-btn:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 var(--text-color); }
 
 .round-btn.chaos   { background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0) 55%), var(--lilas-clair); }
 .round-btn.eagle   { background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0) 55%), var(--piscine); }
 .round-btn.primary { background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(255,255,255,0) 55%), var(--or); }
-
-:focus-visible {
-  outline: 4px solid var(--lilas);
-  outline-offset: 3px;
-}
 
 /* --- Poupée : mise à l'échelle pour toujours tenir dans la scène ---
    Positionnement absolu + translate(-50%,-50%) : le cadre reste
@@ -232,7 +150,7 @@ body::before {
   padding: 6px;
   border: 4px dashed var(--bonbon);
   border-radius: 18px;
-  background: repeating-linear-gradient(45deg, #fff 0 10px, var(--barbe-pale) 10px 20px);
+  background: repeating-linear-gradient(45deg, #fff 0 10px, var(--panel-bg) 10px 20px);
   transform: translate(-50%, -50%) scale(var(--doll-scale));
   transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
@@ -246,7 +164,7 @@ body::before {
   position: relative;
   width: 400px;
   height: 600px;
-  background: var(--barbe-pale) center / cover no-repeat;
+  background: var(--panel-bg) center / cover no-repeat;
   border: 2px dotted var(--lilas-clair);
   border-radius: 12px;
   overflow: hidden;
@@ -320,7 +238,7 @@ body::before {
   display: block;
   font-size: 2.4rem;
   line-height: 1;
-  filter: drop-shadow(2px 2px 0 var(--encre));
+  filter: drop-shadow(2px 2px 0 var(--text-color));
 }
 
 #eagle-anim.fly { animation: volPique var(--aigle-duree) linear forwards; }
@@ -510,12 +428,12 @@ body::before {
   flex: 0 0 336px;
   display: flex;
   align-items: stretch;
-  background: linear-gradient(180deg, var(--encre-clair), var(--encre));
+  background: linear-gradient(180deg, var(--encre-clair), var(--text-color));
   border-left: var(--trait);
 }
 
 .dock.drop-retour {
-  background: repeating-linear-gradient(45deg, var(--encre-clair) 0 14px, var(--encre) 14px 28px);
+  background: repeating-linear-gradient(45deg, var(--encre-clair) 0 14px, var(--text-color) 14px 28px);
 }
 
 /* Rail vertical d'icônes, comme les tranches latérales des jeux d'habillage */
@@ -539,7 +457,7 @@ body::before {
   gap: 2px;
   width: 100%;
   padding: 7px 2px 5px;
-  font-family: var(--police-texte);
+  font-family: var(--font-title);
   font-size: 1.25rem;
   line-height: 1;
   color: #fff;
@@ -583,7 +501,7 @@ body::before {
   height: 8px;
   border-radius: 50%;
   background: var(--citron);
-  border: 1px solid var(--encre);
+  border: 1px solid var(--text-color);
   box-shadow: 0 0 6px var(--citron);
 }
 
@@ -620,12 +538,12 @@ body::before {
   gap: 4px;
   width: var(--tuile);
   padding: 5px 4px 4px;
-  font-family: var(--police-texte);
+  font-family: var(--font-title);
   font-size: 0.58rem;
   line-height: 1.15;
   text-align: center;
-  color: var(--encre);
-  background: linear-gradient(180deg, #fff, var(--barbe-pale));
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
   border: 2px solid #fff;
   border-radius: 12px;
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4);
@@ -645,7 +563,7 @@ body::before {
 .item-swatch {
   width: 100%;
   height: 52px;
-  border: 2px solid var(--encre);
+  border: 2px solid var(--text-color);
   border-radius: 8px;
   background: #fff center / contain no-repeat;
   pointer-events: none;
@@ -706,13 +624,13 @@ body::before {
   transform: translate(-50%, -50%) rotate(-7deg);
   width: 92px;
   padding: 6px 6px 7px;
-  font-family: var(--police-texte);
+  font-family: var(--font-title);
   font-size: 0.58rem;
   line-height: 1.15;
   text-align: center;
-  color: var(--encre);
+  color: var(--text-color);
   background: #fff;
-  border: 3px solid var(--encre);
+  border: 3px solid var(--text-color);
   border-radius: 12px;
   box-shadow: 4px 6px 0 rgba(59, 10, 69, 0.5), 0 0 24px var(--or);
   pointer-events: none;
@@ -726,104 +644,27 @@ body::before {
 }
 
 /* =========================================================
-   Pied de page
-   ========================================================= */
-
-footer {
-  text-align: center;
-  padding: 14px;
-  border-top: var(--trait);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon));
-}
-
-.footer-compteur {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.counter-label { font-size: 0.7rem; }
-
-.counter {
-  display: inline-flex;
-  gap: 3px;
-  padding: 4px;
-  background: #111;
-  border: 2px solid var(--encre);
-  border-radius: 5px;
-}
-
-.counter span {
-  font-family: var(--police-chiffres);
-  font-size: 0.95rem;
-  font-weight: bold;
-  color: var(--citron);
-  background: #000;
-  padding: 1px 5px;
-  border-radius: 2px;
-  text-shadow: 0 0 6px var(--citron);
-}
-
-.badges {
-  display: flex;
-  justify-content: center;
-  margin-top: 12px;
-}
-
-/* Un seul badge, et lisible : les trois anciens 88×31 en police 7 px ne se
-   déchiffraient qu'à la loupe. On garde le style bouton d'époque, mais la
-   largeur suit le texte au lieu de l'écraser. */
-.badge {
-  padding: 7px 18px;
-  font-family: var(--police-chiffres);
-  font-size: 11px;
-  font-weight: bold;
-  line-height: 1.5;
-  letter-spacing: 0.04em;
-  text-align: center;
-  white-space: nowrap;
-  color: #000;
-  background: linear-gradient(180deg, var(--or), #ff9d00);
-  border: 2px solid #000;
-  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
-}
-
-/* =========================================================
-   Paillettes du curseur (élément signature)
-   ========================================================= */
-
-#sparkles {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-}
-
-.paillette {
-  position: absolute;
-  font-size: 14px;
-  will-change: transform, opacity;
-  animation: tombe 900ms ease-out forwards;
-}
-
-@keyframes tombe {
-  0%   { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-  100% { opacity: 0; transform: translate(-50%, 34px) scale(0.25) rotate(160deg); }
-}
-
-/* =========================================================
    Écrans étroits : le dock passe en bas, comme sur mobile
    ========================================================= */
 
-@media (max-width: 860px) {
-  body { padding: 8px 6px 16px; }
-  .shell { border-radius: 18px; border-width: 4px; }
-  .banner { padding-top: 10px; }
+/* Dès qu'il n'y a plus la place pour deux colonnes, la sidebar passe sous
+   le jeu et sa liste s'étale en ligne : on ne rogne jamais la scène. */
+@media (max-width: 1180px) {
+  .page { flex-direction: column; align-items: stretch; }
 
+  .colonne-sidebar {
+    flex: 0 0 auto;
+    position: static;
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .colonne-sidebar .sidebar-liste { flex-direction: row; flex-wrap: wrap; }
+  .colonne-sidebar .sidebar-item { flex: 1 1 180px; }
+}
+
+@media (max-width: 860px) {
   /* Pile verticale en flux normal : le dock pousse le footer vers le bas
      au lieu de passer dessous. */
   .game { flex-direction: column; min-height: 0; }
@@ -875,7 +716,6 @@ footer {
   :root { --tuile: 66px; }
   .round-btn { width: 44px; height: 44px; font-size: 1.1rem; }
   .round-label { font-size: 0.42rem; }
-  .badge { padding: 6px 12px; font-size: 10px; }
 }
 
 /* =========================================================
@@ -883,10 +723,7 @@ footer {
    ========================================================= */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation: none !important;
-    transition: none !important;
-  }
+  /* La coupure générale des animations est dans components.css ; ici on
+     rattrape la bulle, qui n'apparaît normalement qu'en s'animant. */
   #flavor-text { opacity: 1; }
-  #sparkles { display: none; }
 }

@@ -9,7 +9,7 @@ un par personnage principal, chacun exploitant un trait de personnalité goofy :
 | Drew    | Dress-up (mauvais goût vestimentaire)              | En cours, projet séparé `dress-my-drew` |
 | Glinda  | **Pep Rally Rhythm** — jeu de rythme cheerleader   | À spec ci-dessous |
 | Elias   | **Sanity Whack** — whack-a-mole aliens/creepypasta | À spec ci-dessous |
-| Eoghan  | Office-kissing-like (embrasser des garçons discrètement) | À spec plus tard |
+| Eoghan  | **Kiss & Cache** — infiltration/bisous en vue de dessus | À spec ci-dessous |
 
 Le **hub** (page d'accueil) affiche les 4 jeux en grille de vignettes façon site de jeux
 2012. Sur **chaque page de jeu**, une **sidebar** liste les 3 autres jeux (vignette +
@@ -214,6 +214,159 @@ géant dans le ciel, petit gris générique, ombre humanoïde, ovni, chèvre sus
 5. **Phase 4** — Vagues/rounds avec vitesse croissante + habillage rétro 2012 (déco
    type Xfiles/complot).
 6. **Phase 5** — Intégration au hub (sidebar, lien retour, manifest).
+
+---
+
+# Jeu Eoghan — "Kiss & Cache"
+
+## Concept
+Jeu d'infiltration comique en vue de dessus, façon mini-jeu flash 2012 « vole un bisou
+sans te faire voir ». Eoghan se déplace dans un décor rempli de PNJ qui regardent
+autour d'eux, et doit embrasser un maximum de garçons **partants** avant la fin du
+chrono, sans jamais être pris sur le fait.
+
+Le trait exploité : Eoghan drague tout ce qui bouge et se croit d'une discrétion
+absolue. Il ne l'est pas. Ton fun et bienveillant, jamais gênant : **seuls les garçons
+qui affichent un cœur 💗 au-dessus de la tête sont partants** — ce sont les seules
+cibles valides du jeu, et c'est aussi la règle de game design (voir Mécanique). Un
+garçon sans cœur n'est pas une cible : l'approcher fait juste apparaître une réplique
+goofy du style « Salut. Non. », sans pénalité.
+
+**Important droits d'auteur** : le genre est librement inspiré des vieux jeux flash de
+bisous, mais **rien n'est repris** — nom, décors, PNJ et assets sont originaux, et
+aucun décor ne représente un lieu, une marque ou une personne réelle.
+
+## Mécanique
+- **Vue de dessus**, décor d'un seul écran (pas de scrolling), avec des **obstacles**
+  (meubles, tables, casiers, buissons) derrière lesquels se cacher.
+- **Déplacement** : flèches / ZQSD au clavier, et clic/tap sur une case pour la version
+  tactile (Eoghan marche jusqu'au point visé). Une touche **« s'accroupir »** (Maj)
+  ralentit Eoghan mais le rend invisible derrière un obstacle bas.
+- **PNJ à cônes de vision** : chaque PNJ porte un cône (triangle CSS/canvas) qui balaye
+  selon un motif propre — rotation régulière, va-et-vient, ou orientation fixe avec des
+  micro-pauses. Le cône est **toujours visible à l'écran** : le jeu est un puzzle de
+  timing, pas une devinette.
+- **Embrasser** : se placer sur la case adjacente à un garçon partant et **maintenir la
+  touche Espace** pendant une courte durée (~0,8 s, réglable par décor). Une jauge
+  circulaire se remplit au-dessus du couple.
+  - Pendant le bisou, Eoghan **ne peut pas bouger** et une petite bulle de cœurs
+    apparaît : c'est le moment de vulnérabilité du jeu.
+  - Bisou terminé sans être vu = **réussi**, le garçon devient tout rouge et sort de la
+    liste des cibles (un bisou par garçon, pas de harcèlement de score).
+- **Se faire repérer** : si un cône de vision touche Eoghan **pendant un bisou**, ou
+  si Eoghan reste dans un cône plus de ~1 s en temps normal :
+  - la **jauge de ragots** monte d'un cran (elle ne redescend jamais toute seule) ;
+  - le PNJ lâche une réplique goofy (« J'AI TOUT VU ») et les PNJ voisins tournent leur
+    cône vers Eoghan pendant 3 s : une bourde peut en déclencher une autre.
+- **Fin de partie** :
+  - **Game over** si la jauge de ragots atteint le maximum (3 crans en Campus, 4 en
+    Soirée, 2 en Vestiaire) → écran comique : « Toute la fac est au courant. Eoghan
+    trouve ça flatteur. »
+  - **Victoire** si tous les garçons partants du décor ont été embrassés avant la fin
+    du chrono → écran de score + rang goofy.
+  - Fin du chrono sans game over = score final tel quel.
+- **Score et combo** :
+  - Bisou réussi = 100 pts.
+  - **Combo** : chaque bisou enchaîné sans se faire repérer entre-temps ajoute +50 par
+    palier (100, 150, 200…). Un repérage remet le combo à zéro, jamais le score.
+  - **Bonus discrétion** : +200 si le bisou a lieu alors qu'un cône passe à moins d'une
+    case sans toucher Eoghan (« bisou sous le nez »).
+  - **Bonus rapidité** : temps restant × 5 en cas de victoire.
+  - Rangs de fin : « Fantôme romantique 👻💗 » > « Discret… ish » > « Tout le monde a vu ».
+- **Données** : chaque décor est un objet JSON (grille, obstacles, liste de PNJ avec
+  motif de cône, liste de garçons, chrono, seuil de ragots). Ajouter un décor = ajouter
+  une entrée, **pas de code à écrire**.
+  ```json
+  {
+    "id": "campus",
+    "titre": "Le campus",
+    "grille": [12, 8],
+    "chrono_s": 90,
+    "ragots_max": 3,
+    "duree_bisou_ms": 800,
+    "obstacles": [{ "x": 3, "y": 2, "type": "banc" }],
+    "garcons":  [{ "x": 9, "y": 5, "nom": "Le type du club d'échecs" }],
+    "pnj":      [{ "x": 6, "y": 3, "type": "bibliothecaire", "motif": "rotation", "vitesse": 1 }]
+  }
+  ```
+
+## Décors
+Trois décors au choix depuis un **écran de sélection de niveau** (trois vignettes façon
+« choisis ton terrain »). Même moteur pour les trois, mais agencement, PNJ et rythme
+différents — c'est ce qui fait la progression de difficulté.
+
+### 1. Le campus ☀️ (facile, rythme lent)
+- **Agencement** : grande pelouse ouverte, quelques bancs, arbres et panneaux
+  d'affichage comme seuls abris. Peu d'obstacles, mais beaucoup d'espace pour contourner.
+- **Ambiance** : plein jour, oiseaux, affiches « CLUB DE THÉÂTRE : AUDITIONS ».
+- **PNJ obstacles** : 📚 la bibliothécaire (cône lent en rotation continue), 🧹 l'agent
+  d'entretien (va-et-vient sur une allée, cône court), 🐿️ l'écureuil (cône minuscule,
+  se déplace au hasard — inoffensif seul, traître au mauvais moment).
+- **Difficulté** : cônes lents, 3 crans de ragots, chrono confortable (90 s). C'est le
+  décor d'apprentissage.
+
+### 2. La soirée 🎉 (moyen, rythme irrégulier)
+- **Agencement** : intérieur encombré — canapés, table de boissons, enceintes, un
+  couloir étroit. Beaucoup d'abris, mais des passages obligés très surveillés.
+- **Ambiance** : lumière tamisée traversée de flashs colorés, basses qui font vibrer
+  l'écran. Toutes les ~10 s, un **flash de lumière** éclaire toute la pièce : pendant
+  1,5 s, tous les cônes voient partout. C'est le gimmick du décor.
+- **PNJ obstacles** : 🕺 le danseur (cône qui tourne en rythme, donc prévisible si on
+  écoute), 🥤 le roi de la table de boissons (cône fixe, mais large), 📱 la fille qui
+  filme des stories (son cône suit son téléphone, mouvements saccadés).
+- **Difficulté** : 4 crans de ragots (on pardonne plus), mais mouvements irréguliers et
+  flashs. Chrono 75 s, bisous un peu plus longs (1 s) : la musique déconcentre Eoghan.
+
+### 3. Le vestiaire de sport 🏀 (difficile, rythme rapide)
+- **Agencement** : couloirs étroits entre des rangées de casiers, une seule grande
+  salle au fond. Cachettes nombreuses mais culs-de-sac fréquents.
+- **Ambiance** : néons, buée, sifflet au loin. Un **compteur de douches** : toutes les
+  20 s, un groupe traverse le couloir central de part en part — il faut être planqué.
+- **PNJ obstacles** : 🏐 le coach (cône long et rapide, patrouille les couloirs),
+  🧦 le capitaine d'équipe (immobile mais cône très large devant les casiers),
+  🚿 le groupe de la douche (mur mouvant : ne « voit » pas, mais bloque le passage et
+  pousse Eoghan hors de sa cachette).
+- **Difficulté** : 2 crans de ragots seulement, chrono serré (60 s), cônes rapides,
+  bisou raccourci (0,6 s) pour compenser. Décor le plus nerveux des trois.
+
+### Roster minimal (placeholders V1)
+- **Garçons partants (cibles, cœur 💗 au-dessus)** — 2 à 4 par décor, tirés d'un petit
+  casting original : 🎸 le gars à la guitare, ♟️ le type du club d'échecs, 🧁 le gars
+  qui a apporté les gâteaux, 🏊 le nageur, 🎨 l'artiste plein de peinture, 📖 le poète
+  du fond de la salle. Chacun a une réplique de remerciement goofy après le bisou
+  (« Cool. On refait ça jamais ? Si ? D'accord. »).
+- **PNJ obstacles** — ceux listés par décor ci-dessus. Aucun n'est méchant : ils sont
+  juste très, très bavards.
+
+## Assets nécessaires (prototype → placeholders d'abord)
+- Sprite d'Eoghan vu de dessus, 4 orientations (V1 : un rond de couleur avec un point
+  pour le nez suffit, comme les silhouettes de Drew).
+- Un sprite/emoji par garçon du roster + une icône cœur 💗 clignotante au-dessus des
+  cibles encore disponibles.
+- Un sprite/emoji par PNJ obstacle (les emoji du roster suffisent en V1).
+- **Cônes de vision** : générés en CSS/canvas (triangle semi-transparent, rouge quand le
+  cône touche Eoghan) — aucun asset à produire.
+- Tuiles de décor : aplats colorés + rectangles d'obstacles en V1, remplaçables plus
+  tard par de vraies images sans toucher au code (mêmes conventions que Drew).
+- Vignettes de sélection de niveau : réutiliser une capture de chaque décor.
+- Jauge de ragots (barre segmentée) et jauge circulaire de bisou : CSS pur.
+
+## Plan de phases
+1. **Phase 0** — Scaffolding du dossier `games/eoghan-office/`, structure HTML/CSS/JS,
+   format JSON d'un décor figé dans un fichier.
+2. **Phase 1** — Moteur de base : grille, déplacement d'Eoghan, obstacles bloquants,
+   rendu du **décor Campus** uniquement (placeholders colorés).
+3. **Phase 2** — PNJ + cônes de vision (motifs rotation / va-et-vient / fixe), détection
+   de repérage, jauge de ragots, game over.
+4. **Phase 3** — Bisous : cibles avec cœur, maintien de touche, jauge circulaire, score,
+   combo, bonus discrétion, écrans de fin goofy.
+5. **Phase 4** — **Ajout des décors Soirée et Vestiaire** + écran de sélection de niveau.
+   Le moteur étant piloté par le JSON depuis la phase 1, un décor devient du contenu :
+   agencement, PNJ, chrono, seuil de ragots. On y ajoute les deux gimmicks propres
+   (flash de lumière en Soirée, groupe de la douche au Vestiaire) et l'habillage
+   rétro 2012 des trois décors.
+6. **Phase 5** — Intégration au hub (sidebar, lien retour, manifest) + bonus éventuels
+   (meilleur score en `localStorage`, réplique aléatoire des PNJ).
 
 ---
 
