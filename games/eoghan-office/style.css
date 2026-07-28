@@ -1,0 +1,463 @@
+/* =========================================================
+   Kiss & Cache — habillage propre au jeu
+   À charger APRÈS shared/style-tokens.css et shared/components.css.
+   Ici : le terrain vu de dessus, les cônes de vision, les acteurs
+   et le tableau de bord.
+   ========================================================= */
+
+:root {
+  --colonnes: 12;
+  --lignes: 8;
+}
+
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game {
+  display: flex;
+  align-items: stretch;
+  min-height: 620px;
+}
+
+/* =========================================================
+   La scène
+   ========================================================= */
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  background: radial-gradient(ellipse at 50% 0%, #d9ffe4 0%, #a8e6b8 45%, #6fc98a 100%);
+}
+
+.ambiance {
+  margin: 0;
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--text-color);
+}
+
+.terrain-cadre {
+  width: 100%;
+  max-width: 720px;
+  padding: 8px;
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: var(--trait);
+  border-radius: 16px;
+  box-shadow: var(--ombre-dure);
+}
+
+/* Le terrain : une grille de cases carrées. Les acteurs flottent au-dessus
+   dans un calque en position absolue, ce qui permet de les déplacer d'une
+   case à l'autre avec une simple translation animée. */
+.terrain {
+  position: relative;
+  width: 100%;
+  aspect-ratio: var(--colonnes) / var(--lignes);
+  border: 2px solid var(--text-color);
+  border-radius: 10px;
+  overflow: hidden;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.tuiles {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes), 1fr);
+  grid-template-rows: repeat(var(--lignes), 1fr);
+}
+
+.tuile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  font-size: clamp(0.7rem, 2vw, 1.3rem);
+  line-height: 1;
+}
+
+/* --- Les sols, un par décor : c'est ce qui donne l'ambiance --- */
+.tuile-sol { background: #cdeccd; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06); }
+.tuile-mur { background: linear-gradient(180deg, #6b5744, #4a3a2c); }
+.tuile-table, .tuile-arbre, .tuile-casier, .tuile-canape { background: #b6dcb6; }
+
+.terrain[data-decor="soiree"] .tuile-sol { background: #4b3a63; }
+.terrain[data-decor="soiree"] .tuile-table,
+.terrain[data-decor="soiree"] .tuile-arbre,
+.terrain[data-decor="soiree"] .tuile-casier,
+.terrain[data-decor="soiree"] .tuile-canape { background: #3d2f52; }
+.terrain[data-decor="soiree"] .tuile-mur { background: linear-gradient(180deg, #2a1f3d, #191227); }
+
+.terrain[data-decor="vestiaire"] .tuile-sol { background: #cfd8e6; }
+.terrain[data-decor="vestiaire"] .tuile-table,
+.terrain[data-decor="vestiaire"] .tuile-arbre,
+.terrain[data-decor="vestiaire"] .tuile-casier,
+.terrain[data-decor="vestiaire"] .tuile-canape { background: #b3c0d4; }
+.terrain[data-decor="vestiaire"] .tuile-mur { background: linear-gradient(180deg, #5c6a80, #3c4658); }
+
+/* --- Les cônes de vision : toujours visibles, c'est la règle du jeu --- */
+.tuile.vu::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 236, 120, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.tuile.vu-danger::after {
+  background: rgba(255, 70, 70, 0.55);
+  animation: coneAlerte 0.4s steps(2) infinite;
+}
+
+@keyframes coneAlerte {
+  50% { background: rgba(255, 70, 70, 0.25); }
+}
+
+/* --- Les acteurs --- */
+.acteurs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.acteur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--colonnes));
+  height: calc(100% / var(--lignes));
+  display: grid;
+  place-items: center;
+  font-size: clamp(0.9rem, 2.6vw, 1.7rem);
+  line-height: 1;
+  transition: transform 0.12s linear;
+  filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.4));
+}
+
+.acteur-eoghan { z-index: 3; }
+.acteur-pnj { z-index: 2; }
+
+/* Le cœur des garçons partants : c'est le signal « il est d'accord ». */
+.acteur-garcon::after {
+  content: "💗";
+  position: absolute;
+  top: -6%;
+  font-size: 0.7em;
+  animation: coeurClignote 1.1s ease-in-out infinite;
+}
+
+.acteur-garcon.embrasse::after { content: "✔"; color: #0a7d2c; animation: none; }
+.acteur-garcon.en-bisou { animation: trembleBisou 0.3s ease-in-out infinite; }
+
+@keyframes coeurClignote {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.25); opacity: 0.7; }
+}
+
+@keyframes trembleBisou {
+  0%, 100% { transform: translate(var(--tx, 0), var(--ty, 0)) rotate(-4deg); }
+  50%      { transform: translate(var(--tx, 0), var(--ty, 0)) rotate(4deg); }
+}
+
+body.accroupi .acteur-eoghan { filter: drop-shadow(1px 2px 0 rgba(0, 0, 0, 0.4)) brightness(0.85); }
+body.repere .acteur-eoghan { animation: repereClignote 0.3s steps(2) infinite; }
+
+@keyframes repereClignote {
+  50% { opacity: 0.35; }
+}
+
+/* Les cœurs qui s'envolent après un bisou réussi */
+.coeur {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--colonnes));
+  height: calc(100% / var(--lignes));
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  z-index: 4;
+  animation: envoleCoeur 0.9s ease-out forwards;
+}
+
+@keyframes envoleCoeur {
+  0%   { opacity: 1; }
+  100% { opacity: 0; margin-top: -46px; margin-left: var(--decalage, 0); }
+}
+
+/* Le groupe de la douche : un mur mouvant, pas un regard. */
+.acteur-douche {
+  z-index: 4;
+  font-size: clamp(1rem, 3vw, 1.9rem);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.8));
+}
+
+/* Le flash de la soirée : pendant 1,5 s, plus aucune cachette ne protège —
+   il faut que ça se voie immédiatement. */
+.terrain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: #fff;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+body.flash .terrain::after { opacity: 0.55; animation: clignoteFlash 0.3s steps(2) infinite; }
+
+@keyframes clignoteFlash {
+  50% { opacity: 0.25; }
+}
+
+/* --- La jauge circulaire du bisou --- */
+.jauge-bisou {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 74px;
+  height: 74px;
+  z-index: 5;
+  display: none;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid var(--text-color);
+  background: conic-gradient(
+    var(--bonbon) calc(var(--bisou, 0) * 360deg),
+    rgba(255, 255, 255, 0.75) 0
+  );
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), var(--ombre-dure);
+}
+
+.jauge-bisou::after {
+  content: "💋";
+  position: absolute;
+  inset: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 1.6rem;
+  background: var(--panel-bg);
+  border-radius: 50%;
+}
+
+body.bisou-en-cours .jauge-bisou { display: block; }
+
+/* --- Textes --- */
+.commentaire {
+  min-height: 1.4em;
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--text-color);
+  text-shadow: 1px 1px 0 #fff;
+  opacity: 0;
+}
+
+.commentaire.pop { animation: popCommentaire 2.6s ease-out forwards; }
+
+@keyframes popCommentaire {
+  0%   { opacity: 0; transform: scale(0.9); }
+  8%   { opacity: 1; transform: scale(1.05); }
+  16%  { transform: scale(1); }
+  85%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.aide {
+  margin: 0;
+  max-width: 720px;
+  text-align: center;
+  font-size: 0.68rem;
+  line-height: 1.4;
+  color: var(--text-color);
+  opacity: 0.85;
+}
+
+/* =========================================================
+   Écrans superposés
+   ========================================================= */
+
+.ecran {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: none;
+  place-items: center;
+  padding: 16px;
+  background: rgba(10, 61, 22, 0.82);
+}
+
+.ecran.visible { display: grid; }
+
+.ecran-boite {
+  width: min(520px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+  text-align: center;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: 20px;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.5), var(--ombre-dure);
+}
+
+.ecran-titre {
+  margin: 0 0 6px;
+  font-family: var(--font-deco);
+  font-weight: 400;
+  font-size: 1.7rem;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #fff, 2px 2px 0 var(--text-color);
+}
+
+.ecran-texte {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.ecran-decors { display: grid; gap: 8px; }
+
+.decor-btn {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 2px 10px;
+  padding: 8px 12px;
+  text-align: left;
+  font-family: var(--font-title);
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: var(--trait);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.decor-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--shadow-color);
+  filter: saturate(1.3);
+}
+
+.decor-emoji { grid-row: 1 / 3; font-size: 1.8rem; align-self: center; }
+.decor-nom { font-weight: bold; font-size: 1rem; }
+.decor-etoiles { color: var(--or); text-shadow: 1px 1px 0 var(--text-color); }
+.decor-detail { grid-column: 2 / -1; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.decor-resume { grid-column: 1 / -1; font-size: 0.74rem; font-style: italic; }
+
+/* =========================================================
+   Tableau de bord
+   ========================================================= */
+
+.dock {
+  flex: 0 0 216px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: linear-gradient(180deg, #0f5c26, #073d17);
+  border-left: var(--trait);
+}
+
+.dock-bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 12px;
+}
+
+.dock-etiquette {
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #bff7cd;
+}
+
+.dock-valeur {
+  font-family: var(--font-chiffres);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--or);
+  text-shadow: 0 0 8px rgba(255, 216, 77, 0.6);
+}
+
+.dock-valeur.chrono { color: #fff; text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+
+.dock-duo {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.dock-duo span { display: flex; flex-direction: column; gap: 2px; }
+.dock-duo b { font-family: var(--font-chiffres); font-size: 1.1rem; color: var(--or); }
+
+.ragots { display: flex; gap: 5px; }
+
+.cran {
+  flex: 1 1 auto;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #fff;
+  border-radius: 5px;
+}
+
+.cran.plein {
+  background: linear-gradient(180deg, #ff6b6b, #c40000);
+  box-shadow: 0 0 8px rgba(255, 60, 60, 0.8);
+}
+
+.dock-hint {
+  margin: 0;
+  font-size: 0.65rem;
+  font-style: italic;
+  line-height: 1.3;
+  color: #bff7cd;
+}
+
+.dock-actions { background: none; border: none; padding: 0; }
+.dock-actions .fun-btn { width: 100%; font-size: 0.72rem; }
+
+/* =========================================================
+   Écrans étroits
+   ========================================================= */
+
+@media (max-width: 860px) {
+  .game { flex-direction: column; min-height: 0; }
+  .stage { min-height: 0; }
+
+  .dock {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-left: none;
+    border-top: var(--trait);
+  }
+
+  .dock-bloc { flex: 1 1 130px; }
+  .dock-actions { flex: 1 1 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acteur { transition: none; }
+  .acteur-garcon::after,
+  .tuile.vu-danger::after { animation: none; }
+}

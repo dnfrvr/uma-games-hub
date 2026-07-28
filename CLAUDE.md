@@ -95,9 +95,22 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       de Drew : `components.css` porte désormais le fond, le cadre, le bandeau, le
       pied de page et les paillettes).
 - [x] Jeu d'Eoghan : spécifié (« Kiss & Cache », voir `uma-games-hub-SPEC.md`).
-- [ ] Jeu de Glinda (Pep Rally Rhythm) : à coder.
-- [ ] Jeu d'Elias (Sanity Whack) : à coder.
-- [ ] Jeu d'Eoghan (Kiss & Cache) : à coder.
+- [x] Jeu de Glinda (Pep Rally Rhythm) : prototype jouable — 3 chorégraphies,
+      jugement Parfait/Bien/Raté, jauge de hype, combo, son synthétisé (WebAudio).
+- [x] Jeu d'Elias (Sanity Whack) : prototype jouable — grille 4×3, pièges,
+      jauge de sanity, dégradation VHS par palier, vagues.
+- [x] Jeu d'Eoghan (Kiss & Cache) : prototype jouable — 3 décors, cônes de vision,
+      bisous à maintien de touche, jauge de ragots, score/combo.
+- [x] Les 4 jeux sont branchés au hub (manifest « disponible », navbar, sidebar).
+- [ ] Remplacer les placeholders (emoji, formes CSS, vignettes SVG) par de vrais
+      assets — aucun changement de code nécessaire, tout passe par les manifests.
+
+### Où en est chaque jeu par rapport à sa spec
+- **Glinda** : phases 0 à 4 faites (moteur, hype, combo, habillage). Restent les
+  vraies chorégraphies audio et un sprite dessiné à la place de l'emoji.
+- **Elias** : phases 0 à 4 faites. Reste l'habillage « dossier secret » plus poussé.
+- **Eoghan** : phases 0 à 5 faites, les trois décors sont là dès le départ (le
+  moteur est piloté par `decors.js`, ajouter un terrain ne demande aucun code).
 
 Mets à jour cette liste à la fin de chaque tâche importante, pour que la prochaine
 session Claude Code sache exactement où en est le projet sans qu'on ait à tout

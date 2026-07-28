@@ -33,34 +33,6 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* La navbar partagée est calée sur la largeur du hub : sur une page de jeu,
-   elle doit s'aligner sur le duo jeu + sidebar, plus large. */
-.navbar { max-width: 1330px; }
-
-/* Le jeu et la colonne « Tu aimeras aussi... » du hub, côte à côte.
-   La sidebar est remplie par shared/sidebar.js depuis games-manifest.json. */
-.page {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 14px;
-  max-width: 1330px;
-  margin: 0 auto;
-}
-
-.colonne-sidebar {
-  flex: 0 0 196px;
-  position: sticky;
-  top: 14px;
-}
-
-/* Le cadre lui-même vient de components.css : ici .shell devient la colonne
-   principale, à côté de celle de la sidebar. */
-.shell {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
 /* =========================================================
    Aire de jeu : scène + dock
    ========================================================= */
@@ -646,23 +618,6 @@ body {
 /* =========================================================
    Écrans étroits : le dock passe en bas, comme sur mobile
    ========================================================= */
-
-/* Dès qu'il n'y a plus la place pour deux colonnes, la sidebar passe sous
-   le jeu et sa liste s'étale en ligne : on ne rogne jamais la scène. */
-@media (max-width: 1180px) {
-  .page { flex-direction: column; align-items: stretch; }
-
-  .colonne-sidebar {
-    flex: 0 0 auto;
-    position: static;
-    width: 100%;
-    max-width: 1120px;
-    margin: 0 auto;
-  }
-
-  .colonne-sidebar .sidebar-liste { flex-direction: row; flex-wrap: wrap; }
-  .colonne-sidebar .sidebar-item { flex: 1 1 180px; }
-}
 
 @media (max-width: 860px) {
   /* Pile verticale en flux normal : le dock pousse le footer vers le bas

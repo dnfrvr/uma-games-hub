@@ -15,9 +15,9 @@
     "perso": "Glinda",
     "description": "Mets le feu aux tribunes.",
     "vignette": "shared/vignettes/glinda.svg",
-    "url": null,
+    "url": "games/glinda-cheer/index.html",
     "couleur": "#e91e8c",
-    "statut": "bientot"
+    "statut": "disponible"
   },
   {
     "id": "elias",
@@ -25,9 +25,9 @@
     "perso": "Elias",
     "description": "Tape sur tout ce qui bouge avant de perdre la tête.",
     "vignette": "shared/vignettes/elias.svg",
-    "url": null,
+    "url": "games/elias-whack/index.html",
     "couleur": "#6672d0",
-    "statut": "bientot"
+    "statut": "disponible"
   },
   {
     "id": "eoghan",
@@ -35,8 +35,8 @@
     "perso": "Eoghan",
     "description": "Vole un maximum de bisous sans te faire repérer.",
     "vignette": "shared/vignettes/eoghan.svg",
-    "url": null,
+    "url": "games/eoghan-office/index.html",
     "couleur": "#00d435",
-    "statut": "bientot"
+    "statut": "disponible"
   }
 ]

@@ -1,0 +1,517 @@
+/* =========================================================
+   Pep Rally Rhythm — habillage propre au jeu
+   À charger APRÈS shared/style-tokens.css et shared/components.css :
+   fond de page, cadre, bandeau, pied de page et boutons viennent de là.
+   Ici : les tribunes, Glinda, la piste de notes et le tableau de bord.
+   ========================================================= */
+
+:root {
+  --hauteur-piste: 300px;
+  --largeur-couloir: 76px;
+}
+
+body {
+  /* Un jeu de rythme : le glissé ne doit jamais sélectionner du texte. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game {
+  display: flex;
+  align-items: stretch;
+  min-height: 620px;
+}
+
+/* =========================================================
+   La scène : tribunes en fond, Glinda, piste de notes
+   ========================================================= */
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #2a1140 0%, #5c1c6b 55%, #8b2a7a 100%);
+}
+
+/* --- Les tribunes ------------------------------------------------------
+   Trois rangs de silhouettes qui sautent : plus la hype monte, plus elles
+   sautent haut et vite (variables pilotées par [data-hype] sur <body>). */
+.tribune {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 46%;
+  padding-top: 10px;
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 3px, transparent 3px 26px),
+    linear-gradient(180deg, #1b0b2a 0%, #3a1550 100%);
+  border-bottom: 4px solid rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+}
+
+.foule {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  justify-content: flex-end;
+  padding-bottom: 8px;
+}
+
+.foule-rang {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.foule-rang-0 { opacity: 0.55; }
+.foule-rang-1 { opacity: 0.78; }
+
+.spectateur {
+  width: 22px;
+  height: 30px;
+  border-radius: 11px 11px 4px 4px;
+  background: linear-gradient(180deg, var(--bonbon-clair), var(--lilas));
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.25);
+  animation: saute var(--saut-duree, 1.4s) ease-in-out infinite;
+}
+
+.foule-rang-1 .spectateur { background: linear-gradient(180deg, var(--piscine), #1aa6cc); }
+.foule-rang-2 .spectateur { background: linear-gradient(180deg, var(--or), #ff9d00); }
+
+@keyframes saute {
+  0%, 100% { transform: translateY(0) scaleY(1); }
+  50%      { transform: translateY(var(--saut-hauteur, -4px)) scaleY(1.04); }
+}
+
+/* Paliers de hype : la tribune s'emballe par cran. */
+body[data-hype="0"] { --saut-duree: 2.4s; --saut-hauteur: -2px; }
+body[data-hype="1"] { --saut-duree: 1.5s; --saut-hauteur: -7px; }
+body[data-hype="2"] { --saut-duree: 0.9s; --saut-hauteur: -14px; }
+body[data-hype="3"] { --saut-duree: 0.5s; --saut-hauteur: -24px; }
+
+body[data-hype="3"] .tribune {
+  box-shadow: inset 0 0 60px rgba(255, 216, 77, 0.55);
+}
+
+/* --- Confettis (palier maximum uniquement) --- */
+.confettis {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  animation: tombeConfetti 1.9s linear forwards;
+}
+
+@keyframes tombeConfetti {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(360px) rotate(540deg); opacity: 0; }
+}
+
+/* --- Glinda : elle pulse et prend la pose de la touche jouée --- */
+.glinda {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  filter: drop-shadow(3px 4px 0 rgba(0, 0, 0, 0.45));
+}
+
+.glinda-corps {
+  font-size: 3.4rem;
+  line-height: 1;
+  animation: pulseGlinda 0.9s ease-in-out infinite;
+}
+
+.pompon {
+  font-size: 1.9rem;
+  line-height: 1;
+  animation: pulseGlinda 0.9s ease-in-out infinite;
+}
+
+.pompon-droit { animation-delay: 0.45s; }
+
+@keyframes pulseGlinda {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50%      { transform: scale(1.08) rotate(3deg); }
+}
+
+/* La pose : un petit décalage dans la direction jouée, rien de plus —
+   en V1 Glinda est un emoji, l'important est de sentir la réponse. */
+.glinda-corps.bouge { animation: poseGlinda 0.28s ease-out; }
+
+.glinda-corps[data-pose="gauche"].bouge { --pose-x: -16px; --pose-y: 0px; }
+.glinda-corps[data-pose="droite"].bouge { --pose-x: 16px;  --pose-y: 0px; }
+.glinda-corps[data-pose="haut"].bouge   { --pose-x: 0px;   --pose-y: -14px; }
+.glinda-corps[data-pose="bas"].bouge    { --pose-x: 0px;   --pose-y: 10px; }
+
+@keyframes poseGlinda {
+  0%   { transform: translate(0, 0) scale(1); }
+  45%  { transform: translate(var(--pose-x, 0), var(--pose-y, 0)) scale(1.18); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+/* =========================================================
+   La piste : 4 couloirs, notes qui tombent, ligne de jugement
+   ========================================================= */
+
+.piste {
+  position: relative;
+  z-index: 2;
+  height: var(--hauteur-piste);
+  margin: 0 auto;
+  padding-top: 4px;
+  width: calc(var(--largeur-couloir) * 4 + 24px);
+  max-width: 100%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.15));
+  border: var(--trait);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.5);
+}
+
+.couloirs {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+}
+
+.couloir {
+  position: relative;
+  width: var(--largeur-couloir);
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.16));
+}
+
+.couloir-gauche { --teinte: var(--bonbon); }
+.couloir-haut   { --teinte: var(--or); }
+.couloir-droite { --teinte: var(--piscine); }
+.couloir-bas    { --teinte: var(--citron); }
+
+/* Les notes vivent dans cette boîte : sa hauteur est la course exacte
+   entre le haut de la piste et la ligne de jugement. */
+.couloir-notes {
+  position: absolute;
+  inset: 0 0 62px 0;
+}
+
+.note {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 52px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--teinte));
+  border: 3px solid var(--text-color);
+  border-radius: 10px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.45);
+  will-change: transform;
+}
+
+.note.touchee { animation: noteReussie 0.2s ease-out forwards; }
+.note.ratee { animation: noteRatee 0.2s ease-out forwards; }
+
+@keyframes noteReussie {
+  from { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  to   { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+
+@keyframes noteRatee {
+  from { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  to   { transform: translate(-50%, 20%) scale(0.7) rotate(18deg); opacity: 0; }
+}
+
+/* La ligne de jugement : c'est là que la note doit être frappée. */
+.ligne-jugement {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 62px;
+  height: 5px;
+  background: repeating-linear-gradient(90deg, #fff 0 10px, var(--or) 10px 20px);
+  box-shadow: 0 0 12px var(--or);
+  border-radius: 3px;
+}
+
+/* --- Les cibles : pompons cliquables au pied de chaque couloir --- */
+.cible {
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%);
+  width: 62px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  gap: 0;
+  padding: 0;
+  font-family: var(--font-title);
+  line-height: 1;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--teinte));
+  border: var(--trait);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  touch-action: none;
+}
+
+.cible-pompon { font-size: 1.1rem; }
+.cible-fleche { font-size: 0.9rem; }
+
+.cible.frappe { animation: frappeCible 0.16s ease-out; }
+
+@keyframes frappeCible {
+  0%   { transform: translateX(-50%) scale(1); }
+  45%  { transform: translateX(-50%) scale(0.88) translateY(4px); box-shadow: 0 1px 0 rgba(0,0,0,.5); }
+  100% { transform: translateX(-50%) scale(1); }
+}
+
+/* --- Le verdict qui clignote au-dessus de la piste --- */
+.jugement {
+  position: absolute;
+  top: -6px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 0 var(--text-color);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.jugement.parfait { color: var(--or); }
+.jugement.bien { color: var(--piscine); }
+.jugement.rate { color: #ff7b7b; }
+
+.jugement.pop { animation: popJugement 0.55s ease-out forwards; }
+
+@keyframes popJugement {
+  0%   { opacity: 0; transform: scale(0.7); }
+  25%  { opacity: 1; transform: scale(1.15); }
+  70%  { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1) translateY(-10px); }
+}
+
+/* =========================================================
+   Écrans superposés : choix de chorégraphie et fin de partie
+   ========================================================= */
+
+.ecran {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: none;
+  place-items: center;
+  padding: 16px;
+  background: rgba(26, 8, 40, 0.82);
+}
+
+.ecran.visible { display: grid; }
+
+.ecran-boite {
+  width: min(520px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 16px;
+  text-align: center;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: 20px;
+  box-shadow: 0 0 0 5px rgba(255, 255, 255, 0.5), var(--ombre-dure);
+}
+
+.ecran-titre {
+  margin: 0 0 6px;
+  font-family: var(--font-deco);
+  font-weight: 400;
+  font-size: 1.7rem;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #fff, 2px 2px 0 var(--text-color);
+}
+
+.ecran-texte {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.ecran-charts {
+  display: grid;
+  gap: 8px;
+}
+
+.chart-btn {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+  padding: 8px 12px;
+  text-align: left;
+  font-family: var(--font-title);
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: var(--trait);
+  border-radius: 14px;
+  box-shadow: 0 4px 0 var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+}
+
+.chart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--shadow-color);
+  filter: saturate(1.3);
+}
+
+.chart-nom { font-weight: bold; font-size: 1rem; }
+.chart-etoiles { color: var(--or); text-shadow: 1px 1px 0 var(--text-color); }
+.chart-detail { grid-column: 1 / -1; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.chart-resume { grid-column: 1 / -1; font-size: 0.75rem; font-style: italic; }
+
+.ecran-rejouer { margin-top: 12px; }
+
+/* =========================================================
+   Tableau de bord (colonne de droite)
+   ========================================================= */
+
+.dock {
+  flex: 0 0 216px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  background: linear-gradient(180deg, var(--encre-clair), var(--text-color));
+  border-left: var(--trait);
+}
+
+.dock-bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-radius: 12px;
+}
+
+.dock-etiquette {
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--barbe);
+}
+
+.dock-valeur {
+  font-family: var(--font-chiffres);
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--citron);
+  text-shadow: 0 0 8px rgba(198, 255, 77, 0.6);
+}
+
+.dock-valeur.combo { color: var(--or); text-shadow: 0 0 8px rgba(255, 216, 77, 0.6); }
+
+.hype-cadre {
+  height: 18px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid #fff;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.hype-barre {
+  height: 100%;
+  width: 20%;
+  background: linear-gradient(90deg, var(--piscine), var(--or), var(--bonbon));
+  transition: width 0.18s ease-out;
+}
+
+.dock-hint {
+  margin: 0;
+  font-size: 0.65rem;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--barbe);
+}
+
+.dock-stats {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.68rem;
+  color: #fff;
+}
+
+.dock-stats b { color: var(--or); }
+
+.dock-actions {
+  flex-direction: row;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.dock-actions .fun-btn { flex: 1 1 auto; font-size: 0.7rem; padding: 6px 8px; }
+
+/* =========================================================
+   Écrans étroits : le tableau de bord passe sous la scène
+   ========================================================= */
+
+@media (max-width: 860px) {
+  :root { --largeur-couloir: 62px; --hauteur-piste: 250px; }
+
+  .game { flex-direction: column; min-height: 0; }
+  .stage { min-height: 440px; }
+
+  .dock {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    border-left: none;
+    border-top: var(--trait);
+  }
+
+  .dock-bloc { flex: 1 1 130px; }
+  .dock-actions { flex: 1 1 100%; }
+}
+
+@media (max-width: 460px) {
+  :root { --largeur-couloir: 52px; --hauteur-piste: 210px; }
+  .glinda-corps { font-size: 2.6rem; }
+  .cible { width: 50px; height: 44px; }
+}
+
+/* =========================================================
+   Confort : on coupe ce qui bouge si l'OS le demande
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .spectateur, .glinda-corps, .pompon { animation: none !important; }
+}

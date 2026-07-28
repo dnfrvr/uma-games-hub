@@ -25,6 +25,11 @@
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), var(--ombre-dure);
 }
 
+/* Sur une page de jeu (celles qui utilisent .page), la barre s'aligne sur le
+   duo jeu + colonne « autres jeux », plus large que le hub. Si le navigateur
+   ne connaît pas :has(), la règle est simplement ignorée. */
+body:has(.page) .navbar { max-width: 1330px; }
+
 .navbar-marque {
   flex: 0 0 auto;
   font-family: var(--font-deco);

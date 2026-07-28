@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>📡 Sanity Whack 📡</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-elias" data-sanity="0">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- Barre de navigation permanente du portail -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="shell">
+      <header class="banner">
+        <h1 class="wordart" data-text="Sanity Whack"><span>Sanity Whack</span></h1>
+        <p class="tagline">Tape sur tout ce qui bouge. Sauf sur ta grand-mère.</p>
+      </header>
+
+      <div class="game">
+        <!-- ===== Scène : la grille de trous ===== -->
+        <section class="stage">
+          <!-- Dégradation visuelle : bruit VHS + décalage chromatique -->
+          <div class="vhs" aria-hidden="true"></div>
+          <div class="scanlines" aria-hidden="true"></div>
+
+          <div class="terrain">
+            <p class="ambiance" id="ambiance">Tout va bien. Enfin, presque.</p>
+            <div id="grille" class="grille" aria-label="Terrain de jeu"></div>
+            <p id="commentaire" class="commentaire" role="status"></p>
+          </div>
+
+          <!-- Écrans superposés : accueil et fin de partie -->
+          <div id="ecran" class="ecran visible">
+            <div class="ecran-boite">
+              <h2 id="ecran-titre" class="ecran-titre">Sanity Whack</h2>
+              <p id="ecran-texte" class="ecran-texte">
+                Tape les créatures avant qu'elles ne disparaissent.<br />
+                <b>Ne tape jamais</b> le chat 🐈, la grand-mère 👵 ou la pizza 🍕 :
+                Elias panique déjà bien assez tout seul.
+              </p>
+              <button id="btn-jouer" class="fun-btn primary">Commencer l'enquête</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Tableau de bord ===== -->
+        <aside class="dock">
+          <div class="dock-bloc">
+            <span class="dock-etiquette">Score</span>
+            <span id="score" class="dock-valeur">0</span>
+          </div>
+
+          <div class="dock-bloc">
+            <span class="dock-etiquette">Vague</span>
+            <span id="vague" class="dock-valeur vague">1</span>
+          </div>
+
+          <div class="dock-bloc">
+            <span class="dock-etiquette">Sanity</span>
+            <div class="sanity-cadre">
+              <div id="sanity-barre" class="sanity-barre"></div>
+            </div>
+            <span class="dock-hint">Elle ne redescend qu'à petits pas. Vise juste.</span>
+          </div>
+
+          <div class="dock-bloc dock-stats">
+            <span>Touchées <b id="stat-ok">0</b></span>
+            <span>Manquées <b id="stat-rate">0</b></span>
+            <span>Bourdes <b id="stat-bourde">0</b></span>
+          </div>
+
+          <div class="dock-bloc dock-actions">
+            <button id="btn-stop" class="fun-btn">⏹ Arrêter</button>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        <div class="footer-compteur">
+          <span class="counter-label">Tu es la visiteuse n°</span>
+          <span id="counter" class="counter" aria-label="compteur de visites"
+                data-cle="elias_visites" data-base="1147" data-chiffres="6"></span>
+        </div>
+        <div class="badges" aria-hidden="true">
+          <span class="badge">★ LA VÉRITÉ EST AILLEURS (VERS 3 H DU MATIN) ★</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+    <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
+  </div>
+
+  <script src="roster.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script>
+    renderNavbar("elias", "navbar");
+    renderSidebar("elias", "sidebar-autres-jeux");
+  </script>
+</body>
+</html>

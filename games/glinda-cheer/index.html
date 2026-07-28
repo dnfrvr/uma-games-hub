@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>✦ Pep Rally Rhythm ✦</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-glinda">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- Barre de navigation permanente du portail -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="shell">
+      <header class="banner">
+        <h1 class="wordart" data-text="Pep Rally Rhythm"><span>Pep Rally Rhythm</span></h1>
+        <p class="tagline">La foule ne demande qu'à hurler. Donne-lui une raison.</p>
+      </header>
+
+      <div class="game">
+        <!-- ===== Scène : tribunes, Glinda, couloirs de notes ===== -->
+        <section class="stage">
+          <!-- Tribunes animées, remplies par main.js -->
+          <div class="tribune" aria-hidden="true">
+            <div id="foule" class="foule"></div>
+            <div id="confettis" class="confettis"></div>
+          </div>
+
+          <!-- Glinda, qui prend la pose de la touche jouée -->
+          <div class="glinda" aria-hidden="true">
+            <span class="pompon pompon-gauche">🎀</span>
+            <span id="glinda-corps" class="glinda-corps">📣</span>
+            <span class="pompon pompon-droit">🎀</span>
+          </div>
+
+          <!-- Piste de jeu : 4 couloirs + ligne de jugement -->
+          <div id="piste" class="piste">
+            <div class="ligne-jugement" aria-hidden="true"></div>
+            <div class="couloirs" id="couloirs"></div>
+            <p id="jugement" class="jugement" role="status"></p>
+          </div>
+
+          <!-- Écrans superposés : accueil, sélection, fin de partie -->
+          <div id="ecran" class="ecran">
+            <div class="ecran-boite">
+              <h2 id="ecran-titre" class="ecran-titre">Choisis ta chorégraphie</h2>
+              <p id="ecran-texte" class="ecran-texte">
+                Appuie sur ← ↑ → ↓ (ou tape les pompons) quand la note passe sur la ligne.
+              </p>
+              <div id="ecran-charts" class="ecran-charts"></div>
+              <button id="btn-rejouer" class="fun-btn primary ecran-rejouer" hidden>Rejouer</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===== Tableau de bord ===== -->
+        <aside class="dock">
+          <div class="dock-bloc">
+            <span class="dock-etiquette">Score</span>
+            <span id="score" class="dock-valeur">0</span>
+          </div>
+
+          <div class="dock-bloc">
+            <span class="dock-etiquette">Combo</span>
+            <span id="combo" class="dock-valeur combo">×1</span>
+          </div>
+
+          <div class="dock-bloc">
+            <span class="dock-etiquette">Hype</span>
+            <div class="hype-cadre">
+              <div id="hype-barre" class="hype-barre"></div>
+            </div>
+            <span id="hype-texte" class="dock-hint">La foule regarde son téléphone.</span>
+          </div>
+
+          <div class="dock-bloc dock-stats">
+            <span>Parfait <b id="stat-parfait">0</b></span>
+            <span>Bien <b id="stat-bien">0</b></span>
+            <span>Raté <b id="stat-rate">0</b></span>
+          </div>
+
+          <div class="dock-bloc dock-actions">
+            <button id="btn-son" class="fun-btn" aria-pressed="true">🔊 Son</button>
+            <button id="btn-stop" class="fun-btn">⏹ Arrêter</button>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        <div class="footer-compteur">
+          <span class="counter-label">Tu es la visiteuse n°</span>
+          <span id="counter" class="counter" aria-label="compteur de visites"
+                data-cle="glinda_visites" data-base="4212" data-chiffres="6"></span>
+        </div>
+        <div class="badges" aria-hidden="true">
+          <span class="badge">★ SPIRIT SQUAD 4 EVER ★</span>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+    <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
+  </div>
+
+  <script src="charts.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script>
+    renderNavbar("glinda", "navbar");
+    renderSidebar("glinda", "sidebar-autres-jeux");
+  </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#00d435"/>
+  <rect x="3" y="3" width="58" height="58" rx="12" fill="none" stroke="#0a3d16" stroke-width="4"/>
+  <!-- cône de vision -->
+  <path d="M56 12 22 30 56 46z" fill="#ffffff" opacity=".5"/>
+  <!-- deux têtes vues de dessus -->
+  <g stroke="#0a3d16" stroke-width="4">
+    <circle cx="22" cy="40" r="9" fill="#ffd9b3"/>
+    <circle cx="38" cy="40" r="9" fill="#ffc2a1"/>
+  </g>
+  <!-- coeur -->
+  <path d="M30 20c3-5 11-2 11 4 0 6-8 10-11 14-3-4-11-8-11-14 0-6 8-9 11-4z"
+        fill="#ff3d9a" stroke="#0a3d16" stroke-width="4" stroke-linejoin="round"/>
+</svg>

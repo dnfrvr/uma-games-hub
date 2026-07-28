@@ -53,6 +53,45 @@ body::before {
   overflow: hidden;
 }
 
+/* Mise en page d'une page de jeu : le cadre du jeu, et à sa droite la
+   colonne « Tu aimeras aussi... ». Toutes les pages de jeu l'utilisent. */
+.page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+  max-width: 1330px;
+  margin: 0 auto;
+}
+
+.page > .shell {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.colonne-sidebar {
+  flex: 0 0 196px;
+  position: sticky;
+  top: 14px;
+}
+
+/* Dès qu'il n'y a plus la place pour deux colonnes, la sidebar passe sous
+   le jeu et sa liste s'étale en ligne : on ne rogne jamais la scène. */
+@media (max-width: 1180px) {
+  .page { flex-direction: column; align-items: stretch; }
+
+  .colonne-sidebar {
+    flex: 0 0 auto;
+    position: static;
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+  }
+
+  .colonne-sidebar .sidebar-liste { flex-direction: row; flex-wrap: wrap; }
+  .colonne-sidebar .sidebar-item { flex: 1 1 180px; }
+}
+
 /* =========================================================
    Bandeau + titre WordArt
    ========================================================= */
