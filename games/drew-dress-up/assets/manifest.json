@@ -1,0 +1,181 @@
+{
+  "decor": [],
+  "body": [],
+  "calecon": [
+    {
+      "id": "calecon_01",
+      "nom": "Caleçon à petits cœurs",
+      "forme": "calecon",
+      "couleurPlaceholder": "#FF8AC4"
+    },
+    {
+      "id": "calecon_02",
+      "nom": "Boxer de la fac, élastique mort",
+      "forme": "calecon",
+      "couleurPlaceholder": "#2F4B7C"
+    },
+    {
+      "id": "calecon_03",
+      "nom": "Slip léopard",
+      "forme": "slip",
+      "couleurPlaceholder": "#D9A441"
+    },
+    {
+      "id": "calecon_04",
+      "nom": "Caleçon de Noël, en juin",
+      "forme": "calecon",
+      "couleurPlaceholder": "#C0392B"
+    }
+  ],
+  "bas": [
+    {
+      "id": "bas_01",
+      "nom": "Jean moche",
+      "forme": "pantalon",
+      "couleurPlaceholder": "#5B7BA8"
+    },
+    {
+      "id": "bas_02",
+      "nom": "Short à carreaux douteux",
+      "forme": "short",
+      "couleurPlaceholder": "#C97B84"
+    },
+    {
+      "id": "bas_03",
+      "nom": "Jupe en jean trop courte",
+      "forme": "jupe",
+      "couleurPlaceholder": "#7FA0C4"
+    }
+  ],
+  "chaussures": [
+    {
+      "id": "chaussures_01",
+      "nom": "Tongs en hiver",
+      "forme": "tongs",
+      "couleurPlaceholder": "#3A6EA5"
+    },
+    {
+      "id": "chaussures_02",
+      "nom": "Sandales + chaussettes",
+      "forme": "sandales",
+      "couleurPlaceholder": "#8B5E3C"
+    },
+    {
+      "id": "chaussures_03",
+      "nom": "Baskets jamais lavées",
+      "forme": "baskets",
+      "couleurPlaceholder": "#D9D4C5"
+    }
+  ],
+  "haut": [
+    {
+      "id": "haut_01",
+      "nom": "Chemise à carreaux douteuse",
+      "forme": "chemise",
+      "couleurPlaceholder": "#7E9680"
+    },
+    {
+      "id": "haut_02",
+      "nom": "T-shirt trop grand",
+      "forme": "tshirt",
+      "couleurPlaceholder": "#B33951"
+    },
+    {
+      "id": "haut_03",
+      "nom": "Polo du club de bowling",
+      "forme": "tshirt",
+      "couleurPlaceholder": "#E8C547"
+    }
+  ],
+  "veste_manteau": [
+    {
+      "id": "veste_01",
+      "nom": "Coupe-vent flashy",
+      "forme": "veste",
+      "couleurPlaceholder": "#F2A65A"
+    },
+    {
+      "id": "veste_02",
+      "nom": "Veste en cuir d'un oncle",
+      "forme": "veste",
+      "couleurPlaceholder": "#4A3B33"
+    }
+  ],
+  "ceinture_accessoire_taille": [
+    {
+      "id": "ceinture_01",
+      "nom": "Ceinture cloutée random",
+      "forme": "ceinture",
+      "couleurPlaceholder": "#4A4A4A"
+    },
+    {
+      "id": "ceinture_02",
+      "nom": "Ceinture blanche vernie",
+      "forme": "ceinture",
+      "couleurPlaceholder": "#F2F0E8"
+    }
+  ],
+  "bijoux": [
+    {
+      "id": "bijoux_01",
+      "nom": "Collier de nouilles",
+      "forme": "collier",
+      "couleurPlaceholder": "#E8C547"
+    },
+    {
+      "id": "bijoux_02",
+      "nom": "Chaîne bien trop grosse",
+      "forme": "collier",
+      "couleurPlaceholder": "#C0C0C0"
+    }
+  ],
+  "coiffure": [
+    {
+      "id": "coiffure_01",
+      "nom": "Coupe au bol",
+      "forme": "bol",
+      "couleurPlaceholder": "#5C4033"
+    },
+    {
+      "id": "coiffure_02",
+      "nom": "Mèche rebelle mal taillée",
+      "forme": "meche",
+      "couleurPlaceholder": "#2E2E2E"
+    },
+    {
+      "id": "coiffure_03",
+      "nom": "Blond décoloré maison",
+      "forme": "bol",
+      "couleurPlaceholder": "#E3C77B"
+    }
+  ],
+  "chapeau_couvre_chef": [
+    {
+      "id": "chapeau_01",
+      "nom": "Casquette à l'envers",
+      "forme": "casquette_envers",
+      "couleurPlaceholder": "#1F6F8B"
+    },
+    {
+      "id": "chapeau_02",
+      "nom": "Casquette de la fac, tachée",
+      "forme": "casquette",
+      "couleurPlaceholder": "#8F3F2F"
+    }
+  ],
+  "visage_extra": [
+    {
+      "id": "lunettes_01",
+      "nom": "Lunettes de soleil en intérieur",
+      "forme": "lunettes",
+      "couleurPlaceholder": "#111111"
+    },
+    {
+      "id": "lunettes_02",
+      "nom": "Lunettes rouges de piscine",
+      "forme": "lunettes",
+      "couleurPlaceholder": "#D1232A"
+    }
+  ],
+  "sticker_overlay": []
+}
