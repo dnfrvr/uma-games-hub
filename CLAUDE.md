@@ -132,12 +132,52 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
 - [x] Bancs d'essai rangés dans `outils/` : ils tournent sans navigateur et
       remplacent ce que les captures d'écran ne savent pas vérifier.
 
-### Ce qu'il reste à faire (par ordre d'intérêt)
+### PROCHAINE ÉTAPE : remplacer tous les SVG par de vraies illustrations
+C'est la priorité annoncée. Aujourd'hui **tout est dessiné en code** (SVG généré par
+`shared/perso.js` et par les fichiers de données de chaque jeu) : c'était fait pour
+tenir sans art, pas pour rester.
+
+**Méthode à suivre** — la même que pour la garde-robe de Drew : le code ne doit jamais
+connaître le contenu artistique. Pour chaque famille de dessins, on ajoute un champ
+`image` à côté du champ `svg` existant, et le moteur affiche l'image **si elle
+existe**, sinon il retombe sur le SVG. Ça permet de remplacer les dessins **un par
+un**, sans jamais casser un jeu à moitié converti.
+
+**Inventaire de ce qu'il y a à produire** (état au 2026-07-28) :
+
+| Jeu | À dessiner | Nombre | Où le brancher |
+|-----|-----------|--------|----------------|
+| Kiss & Cache | mobilier (bureau, plante, casier, canapé, arbre, banc, enceinte, buvette) | 8 | `games/eoghan-office/decors.js` → `PROPS` |
+| Kiss & Cache | garçons à embrasser | 10 (3 décors) | `decors.js` → `garcons[].look` |
+| Kiss & Cache | PNJ avec téléphone | 11 | `decors.js` → `pnj[].look` |
+| Kiss & Cache | Eoghan : debout, marche, accroupi, bisou | 4 états | `main.js` → `chargeDecor` / `tenteBisou` |
+| Kiss & Cache | fonds de salle (ciel + 2 sols) | 3 décors | `style.css` → `.salle`, `.fond` |
+| Sanity Whack | cibles (petit gris, ovni, silhouette, œil, chèvre, ombre, Pennywise, Slenderman) | 8 | `games/elias-whack/roster.js` → `CIBLES` |
+| Sanity Whack | pièges (Toto, mamie, pizza, Drew, Eoghan, Glinda) | 6 | `roster.js` → `PIEGES` |
+| Sanity Whack | avatar d'Elias | 6 expressions | `main.js` → `HUMEURS` |
+| Pep Rally | Glinda et sa camarade | 5 poses chacune | `games/glinda-cheer/main.js` → `POSES_GLINDA` |
+| Pep Rally | supporters de tribune | 3 variantes × 6 maillots | `shared/perso.js` → `spectateurSVG` |
+| Pep Rally | décor du stade (ciel, tribune, pelouse, poteaux, panneau) | 5 morceaux | `style.css` + `index.html` |
+| Hub | vignettes des 4 jeux | 4 | `games-manifest.json` → `vignette` (déjà prêt) |
+| Hub | favicons | 4 | `<link rel="icon">` de chaque page |
+
+**Conventions à fixer avant de dessiner** :
+- **Personnages** : même cadrage et même hauteur d'un dessin à l'autre (le SVG actuel
+  fait 48 × 72, pieds posés en bas du cadre). Fond transparent, PNG ou WebP.
+- **Mobilier de Kiss & Cache** : chaque meuble a déjà une `largeur`/`hauteur` en unités
+  de salle dans `PROPS` — l'image doit respecter ce ratio, posée au sol.
+- **Créatures de Sanity Whack** : cadre carré (le SVG fait 64 × 64), le personnage
+  sortant par le bas du trou.
+- **Vignettes du hub** : 4/3, ~320 × 240, c'est le seul endroit déjà 100 % piloté par
+  le manifest (changer le chemin suffit).
+
+Tant que les images n'existent pas, **ne pas supprimer les SVG** : ils servent de
+solution de repli et de référence de cadrage.
+
+### Le reste, ensuite (par ordre d'intérêt)
 - [ ] **Musique** pour Pep Rally Rhythm. Aujourd'hui : métronome + blips synthétisés
       en WebAudio, aucun fichier audio. Une vraie piste demanderait de caler les
       `temps_ms` des charts dessus (`games/glinda-cheer/charts.js`).
-- [ ] **Vignettes du hub** : les 4 sont des SVG placeholder (`shared/vignettes/`).
-      Les remplacer ne demande que de changer le chemin dans `games-manifest.json`.
 - [ ] **Sauvegarde des meilleurs scores** en `localStorage` (aucun jeu n'en garde),
       et éventuellement un tableau des records sur le hub.
 - [ ] **Habillage « dossier secret »** plus poussé pour Sanity Whack (phase 4 de sa
