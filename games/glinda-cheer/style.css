@@ -279,7 +279,9 @@ body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.
   z-index: 2;
   height: var(--hauteur-piste);
   margin: 0 auto;
-  padding-top: 4px;
+  /* De quoi loger la jauge d'avancement au-dessus des couloirs sans qu'elle
+     se fasse traverser par la première note. */
+  padding-top: 9px;
   width: calc(var(--largeur-couloir) * 4 + 24px);
   max-width: 100%;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.75));
@@ -308,6 +310,39 @@ body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.
 .couloir-haut   { --teinte: var(--or); }
 .couloir-droite { --teinte: var(--piscine); }
 .couloir-bas    { --teinte: var(--citron); }
+
+/* Le couloir s'allume à la frappe. Sur une rafale à 200 ms, la note
+   disparaît trop vite pour qu'on la voie exploser : c'est la colonne
+   entière qui doit accuser le coup. */
+.couloir.eclat { animation: eclatCouloir 0.24s ease-out; }
+.couloir.eclat.eclat-parfait { animation-duration: 0.34s; }
+
+@keyframes eclatCouloir {
+  0%   { background: linear-gradient(180deg, var(--teinte), #fff); box-shadow: inset 0 0 0 3px #fff, 0 0 22px var(--teinte); }
+  100% { background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.6)); box-shadow: inset 0 0 0 2px rgba(255,255,255,.7); }
+}
+
+/* --- Avancement dans la chorégraphie ---------------------------------
+   Un jeu de rythme sans repère de durée se joue en aveugle : on ne sait
+   pas s'il faut tenir dix secondes ou une minute. */
+.cadre-avancement {
+  position: absolute;
+  top: 0;
+  left: 8px;
+  right: 8px;
+  height: 5px;
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 0 0 3px 3px;
+  overflow: hidden;
+}
+
+/* Pas de `transition` ici : la largeur est recalculée à chaque frame par la
+   boucle de jeu, une transition ne ferait que courir derrière elle. */
+.avancement {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--piscine), var(--or), var(--bonbon));
+}
 
 /* Les notes vivent dans cette boîte : sa hauteur est la course exacte
    entre le haut de la piste et la ligne de jugement. */
@@ -423,6 +458,36 @@ body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.
   100% { opacity: 0; transform: scale(1) translateY(-10px); }
 }
 
+/* --- Le cri de la foule aux crans de combo ---------------------------
+   Posé en travers du stade, au-dessus de la piste et sous les écrans :
+   c'est la récompense qu'on voit du coin de l'œil sans lâcher les notes. */
+.cri {
+  position: absolute;
+  top: 26%;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-deco);
+  font-size: clamp(1.4rem, 4vw, 2.4rem);
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 0 12px var(--bonbon), 3px 3px 0 var(--text-color);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cri.pop { animation: popCri 1.1s ease-out forwards; }
+
+@keyframes popCri {
+  0%   { opacity: 0; transform: scale(0.5) rotate(-6deg); }
+  18%  { opacity: 1; transform: scale(1.2) rotate(3deg); }
+  30%  { transform: scale(1) rotate(0deg); }
+  75%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.05) translateY(-24px); }
+}
+
 /* =========================================================
    Écrans superposés : choix de chorégraphie et fin de partie
    ========================================================= */
@@ -468,14 +533,17 @@ body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.
 
 .ecran-charts {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
+/* Serré exprès : quatre chorégraphies portant chacune leur record, plus le
+   bilan de la partie qui vient de finir, ça ne tient dans le cadre du jeu
+   qu'à cette densité. */
 .chart-btn {
   display: grid;
   grid-template-columns: 1fr auto;
-  gap: 2px 8px;
-  padding: 8px 12px;
+  gap: 1px 8px;
+  padding: 6px 10px;
   text-align: left;
   font-family: var(--font-title);
   color: var(--text-color);
@@ -493,10 +561,97 @@ body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.
   filter: saturate(1.3);
 }
 
-.chart-nom { font-weight: bold; font-size: 1rem; }
+.chart-nom { font-weight: bold; font-size: 0.92rem; }
 .chart-etoiles { color: var(--or); text-shadow: 1px 1px 0 var(--text-color); }
-.chart-detail { grid-column: 1 / -1; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.chart-detail { grid-column: 1 / -1; font-family: var(--font-ui); font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.05em; }
 .chart-resume { grid-column: 1 / -1; font-size: 0.75rem; font-style: italic; }
+
+/* La ligne de record : c'est elle qui donne une raison de relancer une
+   chorégraphie déjà finie. En police d'interface, comme toute métadonnée. */
+.chart-record {
+  grid-column: 1 / -1;
+  margin-top: 4px;
+  padding-top: 4px;
+  border-top: 2px dotted var(--shadow-color);
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  color: var(--encre-clair);
+}
+
+.chart-mention { color: var(--accent); font-weight: bold; }
+
+/* Une chorégraphie pas encore ouverte reste lisible mais visiblement
+   éteinte : on doit comprendre qu'elle existe, pas croire à un bug. */
+.chart-verrouillee {
+  filter: grayscale(0.85);
+  opacity: 0.72;
+  cursor: not-allowed;
+  box-shadow: 0 2px 0 var(--shadow-color);
+}
+
+.chart-verrouillee:hover { transform: none; box-shadow: 0 2px 0 var(--shadow-color); filter: grayscale(0.85); }
+
+/* --- Le bilan de fin de partie --------------------------------------- */
+.ecran-bilan:empty { display: none; }
+
+.ecran-bilan {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.bilan-mention {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: var(--trait);
+  border-radius: 14px;
+}
+
+.bilan-lettre {
+  font-family: var(--font-deco);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--text-color);
+}
+
+/* Les mentions du haut du panier se paient une couleur à elles : une
+   lettre qui ne change jamais de tête ne récompense rien. */
+.mention-S .bilan-lettre { color: var(--or); text-shadow: 2px 2px 0 #fff, 4px 4px 0 var(--text-color), 0 0 18px var(--or); }
+.mention-A .bilan-lettre { color: var(--bonbon); }
+.mention-E .bilan-lettre, .mention-D .bilan-lettre { color: var(--encre-clair); }
+
+.bilan-phrase { font-size: 0.8rem; font-style: italic; text-align: left; }
+
+.bilan-chiffres {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px 10px;
+  font-family: var(--font-ui);
+  font-size: 0.68rem;
+}
+
+.bilan-chiffres b { font-family: var(--font-chiffres); font-size: 0.9rem; color: var(--accent); }
+
+.bilan-exploit {
+  margin: 0;
+  font-family: var(--font-deco);
+  font-size: 1.1rem;
+  color: var(--or);
+  text-shadow: 1px 1px 0 var(--text-color);
+  animation: clignoteExploit 0.8s steps(2) infinite;
+}
+
+.bilan-note { margin: 0; font-family: var(--font-ui); font-size: 0.66rem; color: var(--encre-clair); }
+
+@keyframes clignoteExploit {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
 
 .ecran-rejouer { margin-top: 12px; }
 
@@ -620,4 +775,7 @@ body[data-hype="3"] .tribunes { box-shadow: inset 0 0 60px rgba(255, 61, 154, 0.
 
 @media (prefers-reduced-motion: reduce) {
   .spectateur, .glinda svg { animation: none !important; }
+  /* Un texte clignotant est le pire de ce qu'on peut afficher ici : il
+     reste lisible, il arrête juste de battre. */
+  .bilan-exploit { animation: none !important; }
 }

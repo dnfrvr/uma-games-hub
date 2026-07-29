@@ -48,9 +48,11 @@
           <div class="stade" aria-hidden="true">
             <div class="ciel"></div>
 
+            <!-- Le panneau n'est pas un décor figé : Augusta marque à chaque
+                 cran de combo et le chrono descend avec la chorégraphie. -->
             <div class="panneau-score">
-              <span class="panneau-ligne">AUGUSTA <b>21</b> — <b>14</b> VISITEURS</span>
-              <span class="panneau-ligne petite">4<sup>e</sup> QUART · 02:14</span>
+              <span class="panneau-ligne">AUGUSTA <b id="tableau-augusta">21</b> — <b>14</b> VISITEURS</span>
+              <span class="panneau-ligne petite">4<sup>e</sup> QUART · <span id="tableau-chrono">2:14</span></span>
             </div>
 
             <div class="tribunes">
@@ -76,8 +78,15 @@
           <div id="glinda" class="glinda" aria-hidden="true"></div>
           <div id="copine" class="copine" aria-hidden="true"></div>
 
+          <!-- Ce que la foule hurle quand un cran de combo tombe : son propre
+               calque, sinon il efface le « PARFAIT ! » qui l'a déclenché. -->
+          <p id="cri" class="cri" aria-hidden="true"></p>
+
           <!-- Piste de jeu : 4 couloirs + ligne de jugement -->
           <div id="piste" class="piste">
+            <div class="cadre-avancement" aria-hidden="true">
+              <div id="avancement" class="avancement"></div>
+            </div>
             <div class="ligne-jugement" aria-hidden="true"></div>
             <div class="couloirs" id="couloirs"></div>
             <p id="jugement" class="jugement" role="status"></p>
@@ -90,6 +99,8 @@
               <p id="ecran-texte" class="ecran-texte">
                 Appuie sur ← ↑ → ↓ (ou tape les pompons) quand la note passe sur la ligne.
               </p>
+              <!-- Bilan de fin de partie : mention, chiffres, record -->
+              <div id="ecran-bilan" class="ecran-bilan"></div>
               <div id="ecran-charts" class="ecran-charts"></div>
               <button id="btn-rejouer" class="fun-btn primary ecran-rejouer" hidden>Rejouer</button>
             </div>
@@ -120,6 +131,8 @@
             <span>Parfait <b id="stat-parfait">0</b></span>
             <span>Bien <b id="stat-bien">0</b></span>
             <span>Raté <b id="stat-rate">0</b></span>
+            <!-- C'est la précision, pas la hype, qui décide de la mention -->
+            <span>Précision <b id="stat-precision">100 %</b></span>
           </div>
 
           <div class="dock-bloc dock-actions">

@@ -90,7 +90,28 @@ const verifie = (nom, cond, detail) => (cond ? ok : ko).push(nom + (detail ? " �
   const demarre = lit("demarre"), joue = lit("joue"), boucle = lit("boucle");
   const multiplicateur = lit("multiplicateur"), majHype = lit("majHype");
 
-  verifie("3 chorégraphies", CHARTS.length === 3);
+  /* Une chart hors règles ne plante pas : elle devient juste injouable en
+     silence (la finale était à 101 ms entre deux notes). On mesure donc,
+     pour chacune : le plancher de 200 ms entre deux INSTANTS de jeu, la
+     rafale de 4 notes maximum près de ce plancher suivie d'au moins 400 ms,
+     et 2 pompons simultanés au maximum. */
+  const equilibrees = CHARTS.every((chart) => {
+    const paquets = new Map();
+    chart.notes.forEach((n) => paquets.set(n.temps_ms, (paquets.get(n.temps_ms) || 0) + 1));
+    if ([...paquets.values()].some((n) => n > 2)) return false;
+    const temps = [...paquets.keys()].sort((a, b) => a - b);
+    let debut = 0;
+    for (let i = 1; i <= temps.length; i++) {
+      if (i < temps.length && temps[i] - temps[i - 1] < 200) return false;
+      if (i !== temps.length && temps[i] - temps[i - 1] <= 260) continue; // rafale en cours
+      const taille = i - debut;
+      if (taille > 4) return false;
+      if (taille === 4 && i < temps.length && temps[i] - temps[i - 1] < 400) return false;
+      debut = i;
+    }
+    return true;
+  });
+  verifie("4 chorégraphies, toutes dans les clous", CHARTS.length === 4 && equilibrees);
   verifie("les notes sont chronologiques",
     CHARTS[0].notes.every((n, i, a) => i === 0 || n.temps_ms >= a[i - 1].temps_ms));
   verifie("la difficulté monte", CHARTS[2].notes.length > CHARTS[0].notes.length,
@@ -174,7 +195,7 @@ const verifie = (nom, cond, detail) => (cond ? ok : ko).push(nom + (detail ? " �
   const gereDetection = lit("gereDetection"), tenteBisou = lit("tenteBisou");
   const avanceBisou = lit("avanceBisou"), bourde = lit("bourde"), vueBloquee = lit("vueBloquee");
 
-  verifie("3 décors", DECORS.length === 3);
+  verifie("4 décors", DECORS.length === 4);
   verifie("chaque meuble a un dessin",
     Object.values(PROPS).every((p) => p.svg.includes("<svg") && p.largeur > 0));
 

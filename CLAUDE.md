@@ -468,10 +468,32 @@ solution de repli et de référence de cadrage.
   test l'était. Le rendu des deux créations de départ, lui, est vérifié.
 
 ### Repères d'équilibrage (à revérifier après toute retouche)
-- **Glinda** : écart minimum entre deux notes ≥ 200 ms, rafale de 4 notes maximum
-  suivie d'une respiration. Densité moyenne : 1,1 / 2,1 / 3,3 notes par seconde.
-- **Elias** : vague 1 laisse 1,75 s pour viser, vague 8 tombe à 0,8 s. Série de bons
-  coups : ×2 à 5 d'affilée, ×3 à 10, remise à zéro à la moindre bourde.
+- **Glinda** : écart minimum entre deux INSTANTS de jeu ≥ 200 ms, 2 pompons
+  simultanés au maximum, et **rafale de 4 notes maximum suivie d'une
+  respiration**. Cette dernière règle était ambiguë et a été précisée : une
+  rafale, ce sont des notes espacées de **260 ms ou moins** (donc collées au
+  plancher), et la respiration qui la suit fait **au moins 400 ms**. Le seuil
+  compte : trois chorégraphies sur quatre n'enchaînent jamais plus de 4 notes
+  quel que soit le seuil, mais « Encore ! Encore ! » aligne 9 notes en 2,6 s à
+  327 ms d'écart moyen — légal parce que ses écarts alternent au-dessus de
+  260 ms, et cohérent avec les 3,10 notes/s que la finale tient déjà de bout en
+  bout. Densité moyenne : **1,1 / 2,1 / 3,1 / 3,2** notes par seconde.
+  Plafond mathématique de la règle : 4 notes + 400 ms de respiration = 3,33
+  notes/s — c'est pourquoi une chorégraphie plus dure que la finale ne peut
+  pas être plus DENSE, seulement plus retorse (contretemps, notes doubles).
+  `node outils/test-jeux.js` vérifie les trois règles sur chaque chart.
+- **Elias** : la difficulté ne doit **jamais plafonner**. L'ancienne courbe était
+  une droite bornée qui atteignait son minimum à la vague 11 (88 s de jeu) :
+  passé là, un expert ne mourait plus jamais. Trois leviers la remplacent, qui
+  saturent à des moments différents — la vitesse (fenêtre 1750 → 420 ms, cadence
+  1150 → 330 ms), puis les **salves multiples** à partir de la vague 9 quand la
+  vitesse sature, puis la part de pièges (18 → 42 %). Une vague dure une **durée**
+  (~12 s) et non un nombre d'apparitions, sinon le compteur s'emballe avec elle.
+  Repères : vague 1 laisse 1,75 s pour viser, vague 8 tombe à 0,80 s, vague 20 à
+  0,46 s avec 6,8 créatures/s. Le plancher de 420 ms est assumé : en dessous le
+  jeu ne serait plus difficile, il serait aléatoire. Série de bons coups : ×2 à 5
+  d'affilée, ×3 à 10, remise à zéro à la moindre bourde.
+  `node outils/test-serie-elias.js` interdit tout plateau jusqu'à la vague 60.
 - **Eoghan** : part de la salle surveillée par les téléphones, en moyenne dans le
   temps — campus 24 %, soirée 48 %, vestiaire 56 %. Chaque décor doit rester
   au-dessus du précédent.
