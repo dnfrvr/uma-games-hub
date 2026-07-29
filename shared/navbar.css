@@ -37,8 +37,8 @@ body:has(.page) .navbar { max-width: 1330px; }
 
 /* Le logo : nom en lettrage doré cerné d'encre, accroche en petites capitales
    dessous. Le cerne est fait de quatre ombres portées d'un pixel plutôt qu'en
-   `-webkit-text-stroke` : un contour posé par-dessus mange le tracé, alors
-   qu'une ombre reste derrière la lettre. */
+   `-webkit-text-stroke` : le tracé fin de Lobster se fait manger par un
+   contour posé par-dessus, alors qu'une ombre reste derrière la lettre. */
 .navbar-marque {
   flex: 0 0 auto;
   display: flex;

@@ -59,12 +59,11 @@
 
   /* Typo */
   --font-title: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
-  /* La police d'enseigne du SITE : le logo et le héros de l'accueil, rien
-     d'autre. Chaque jeu a la sienne (voir shared/skins.css) — plus aucune
-     police de titre n'est partagée entre eux. Titan One est la grosse
-     display arrondie des jeux occasionnels de 2012 ; Lobster, qu'elle
-     remplace, traînait partout et finissait par tout aplatir. */
-  --font-deco: "Titan One", "Arial Rounded MT Bold", Impact, sans-serif;
+  /* L'enseigne du SITE : le logo de l'en-tête et le héros de l'accueil,
+     rien d'autre. Lobster est LA police d'affiche de 2012, elle est à sa
+     place ici — mais elle ne sert plus dans aucun jeu : chacun a la sienne,
+     choisie pour coller à son univers (voir shared/skins.css). */
+  --font-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
   --font-chiffres: "Courier New", Courier, monospace;
   /* Le mobilier d'un portail (menus, notes, mentions, compteurs) ne s'écrit
      pas en Comic Sans : à 11 px il devient illisible, et surtout ce n'est pas

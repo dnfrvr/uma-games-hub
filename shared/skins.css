@@ -22,7 +22,8 @@
       pied de page et colonne latérale sont identiques partout : c'est ce qui
       fait qu'on reste sur le même site. Seul l'INTÉRIEUR du cadre change.
    2. **On reste en 2012.** Polices déjà présentes sur les machines de
-      l'époque (Comic Sans, Impact, Courier New, Georgia) ou déjà chargées,
+      l'époque (Comic Sans, Impact, Courier New, Georgia). Lobster est
+      réservée à l'enseigne du site : aucun jeu ne l'emploie,
       contours épais, dégradés verticaux, aucune subtilité typographique.
 
    Un remplissage plat s'écrit en dégradé d'une seule couleur
@@ -34,7 +35,7 @@
    Dégradé bonbon et remplissage doré qui scintille : la DA de référence. Son
    titre est en Comic Sans énorme et cerné d'encre — c'est littéralement le
    lettrage des sites de jeux de filles de l'époque, et ça le sépare de
-   l'enseigne du site, qui est la seule à garder --font-deco. */
+   l'enseigne du site (Lobster), qui reste réservée à l'en-tête et au hub. */
 body.theme-drew {
   --titre-police: var(--font-title);
   --titre-graisse: 700;

@@ -214,9 +214,9 @@ de couleur d'un jeu à l'autre.
 | Eoghan | couverture de magazine à potins, rose vers vert, semé de cœurs | Georgia italique | blancs cerclés de vert épais, encre rose |
 
 **Aucune police de titre n'est partagée entre deux jeux.** `--font-deco`
-(Titan One) est l'enseigne du SITE — le logo et le héros de l'accueil — et rien
-d'autre. Elle a remplacé Lobster, qui traînait sur le logo, sur le hub et sur les
-titres de jeux à la fois, et finissait par tout aplatir.
+(Lobster) est l'enseigne du SITE — le logo de l'en-tête et le héros de l'accueil —
+et rien d'autre : **aucun jeu ne l'emploie**. Avant, elle servait au logo, au hub
+et aux titres de jeux à la fois, si bien que tous les jeux avaient la même voix.
 
 Deux garde-fous en ajoutant un jeu :
 1. **La coque du portail ne bouge pas.** En-tête, lecteur, fil d'Ariane, pied de
