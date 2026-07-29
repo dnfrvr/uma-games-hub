@@ -219,3 +219,178 @@ body.theme-uma-bros {
   --btn-fond-primaire: linear-gradient(180deg, #ffe98a, var(--or));
   --btn-encre-primaire: #14395c;
 }
+
+/* =========================================================
+   Les habillages des jeux en cours de création
+   ---------------------------------------------------------
+   Posés d'avance pour que chaque jeu arrive avec sa voix, et pour qu'aucun
+   ne partage sa police de titre avec un autre — c'est la règle du fichier.
+   Le récapitulatif des polices déjà prises est dans CLAUDE.md.
+   ========================================================= */
+
+/* --- UMA Memory — le jeu de société sur la table du salon --- */
+body.theme-memory {
+  --banner-fond:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0 28px, rgba(255, 255, 255, 0) 28px 56px),
+    linear-gradient(180deg, #6d4bb5 0%, #9b4dff 60%, #c9a3ff 100%);
+  --banner-trait: 3px solid #3d2470;
+
+  --font-deco: "Trebuchet MS", "Lucida Grande", sans-serif;
+  --titre-police: var(--font-deco);
+  --titre-graisse: 700;
+  --titre-taille: clamp(1.9rem, 6vw, 3.3rem);
+  --titre-cerne: #2c1a52;
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
+  --titre-remplissage: linear-gradient(180deg, #fff 0%, #f0e4ff 55%, #d8c2ff 100%);
+
+  --tagline-couleur: #efe6ff;
+
+  --panel-bg: #f7f2ff;
+  --trait: 3px solid #3d2470;
+  --radius-panel: 12px;
+
+  --btn-fond: linear-gradient(180deg, #b98cff, #7a3fd6);
+  --btn-cadre: 2px solid #3d2470;
+  --btn-encre: #ffffff;
+  --btn-rayon: 6px;
+  --btn-ombre: 0 3px 0 #2c1a52;
+  --btn-fond-primaire: linear-gradient(180deg, #ffe98a, var(--or));
+  --btn-encre-primaire: #3d2470;
+}
+
+/* --- Run, Glinda, Run — l'affiche de course, penchée par la vitesse --- */
+body.theme-glinda-run {
+  --banner-fond:
+    repeating-linear-gradient(105deg, rgba(255, 255, 255, 0.12) 0 10px, rgba(255, 255, 255, 0) 10px 30px),
+    linear-gradient(100deg, #b3005e 0%, #e91e8c 55%, #ff8ac4 100%);
+  --banner-trait: 3px solid #6d0038;
+
+  --font-deco: Verdana, Geneva, "DejaVu Sans", sans-serif;
+  --titre-police: var(--font-deco);
+  --titre-graisse: 700;
+  --titre-style: italic;
+  --titre-taille: clamp(1.6rem, 5vw, 2.9rem);
+  --titre-casse: uppercase;
+  --titre-espacement: -0.02em;
+  --titre-cerne: #5c002f;
+  --titre-cerne-epaisseur: clamp(2px, 0.6vw, 3px);
+  --titre-remplissage: linear-gradient(180deg, #fff 0%, #ffe4f3 52%, #ffb3d9 100%);
+
+  --tagline-casse: uppercase;
+  --tagline-espacement: 0.12em;
+  --tagline-style: normal;
+  --tagline-couleur: #ffe4f3;
+
+  --panel-bg: #fff2f8;
+  --trait: 3px solid #6d0038;
+  --radius-panel: 10px;
+
+  --btn-fond: linear-gradient(180deg, #ff6fb1, #c4006a);
+  --btn-cadre: 2px solid #5c002f;
+  --btn-encre: #ffffff;
+  --btn-casse: uppercase;
+  --btn-rayon: 5px;
+  --btn-ombre: 0 3px 0 #5c002f;
+  --btn-fond-primaire: linear-gradient(180deg, #fff3a8, var(--or));
+  --btn-encre-primaire: #5c002f;
+}
+
+/* --- Derry Driver — le panneau routier --- */
+body.theme-derry-driver {
+  --banner-fond:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0 40px, rgba(255, 255, 255, 0) 40px 90px),
+    linear-gradient(180deg, #1f6b33 0%, #2f9e44 62%, #58c46a 100%);
+  --banner-trait: 3px solid #123f1e;
+
+  --font-deco: "Arial Narrow", "Helvetica Narrow", "Liberation Sans Narrow", sans-serif;
+  --titre-police: var(--font-deco);
+  --titre-graisse: 700;
+  --titre-taille: clamp(2rem, 6.4vw, 3.6rem);
+  --titre-casse: uppercase;
+  --titre-espacement: 0.04em;
+  --titre-cerne: #0d2e15;
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
+  --titre-remplissage: linear-gradient(180deg, #ffffff 0%, #ffffff 50%, #d8f3dd 52%, #a9e0b6 100%);
+
+  --tagline-casse: uppercase;
+  --tagline-espacement: 0.14em;
+  --tagline-style: normal;
+  --tagline-couleur: #dcf6e2;
+
+  --panel-bg: #f2fbf4;
+  --trait: 3px solid #123f1e;
+  --radius-panel: 6px;
+
+  --btn-fond: linear-gradient(180deg, #4ad66d, #1f7a33);
+  --btn-cadre: 2px solid #0d2e15;
+  --btn-encre: #ffffff;
+  --btn-casse: uppercase;
+  --btn-rayon: 4px;
+  --btn-ombre: 0 3px 0 #0d2e15;
+  --btn-fond-primaire: linear-gradient(180deg, #fff3a8, var(--or));
+  --btn-encre-primaire: #0d2e15;
+}
+
+/* --- Love Tester — la machine à sous du centre commercial --- */
+body.theme-love-tester {
+  --banner-fond:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M13 20C8 16.2 5 13.8 5 10.7 5 8.4 6.8 6.6 9 6.6c1.4 0 2.8.7 4 2 1.2-1.3 2.6-2 4-2 2.2 0 4 1.8 4 4.1 0 3.1-3 5.5-8 9.3z' fill='%23ffffff' opacity='.2'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #ff2f93 0%, #ff6fb1 55%, #ffc2dd 100%);
+  --banner-trait: 3px solid #8c0040;
+
+  --font-deco: "Brush Script MT", "Segoe Script", "Bradley Hand", cursive;
+  --titre-police: var(--font-deco);
+  --titre-graisse: 700;
+  --titre-taille: clamp(2.2rem, 7vw, 4rem);
+  --titre-cerne: #6d0033;
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
+  --titre-remplissage: linear-gradient(180deg, #fff 0%, #ffe4f3 50%, #ff9ecb 100%);
+
+  --tagline-style: italic;
+  --tagline-couleur: #fff0f7;
+
+  --panel-bg: #fff4fa;
+  --trait: 3px solid #8c0040;
+  --radius-panel: 18px;
+
+  --btn-fond: linear-gradient(180deg, #ff8ac4, #e01f7f);
+  --btn-cadre: 2px solid #6d0033;
+  --btn-encre: #ffffff;
+  --btn-rayon: 999px; /* la seule pilule du portail : c'est une machine à bonbons */
+  --btn-ombre: 0 3px 0 #6d0033;
+  --btn-fond-primaire: linear-gradient(180deg, #fff3a8, var(--or));
+  --btn-encre-primaire: #6d0033;
+}
+
+/* --- Balance ta tomate — l'affiche de fête foraine --- */
+body.theme-tomates {
+  --banner-fond:
+    repeating-conic-gradient(from 0deg at 50% 130%, rgba(255, 255, 255, 0.14) 0 6deg, rgba(255, 255, 255, 0) 6deg 12deg),
+    linear-gradient(180deg, #a51111 0%, #e03131 58%, #ff7a6b 100%);
+  --banner-trait: 3px solid #5e0a0a;
+
+  --font-deco: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  --titre-police: var(--font-deco);
+  --titre-graisse: 700;
+  --titre-taille: clamp(1.9rem, 6vw, 3.4rem);
+  --titre-casse: uppercase;
+  --titre-espacement: 0.03em;
+  --titre-cerne: #4a0808;
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
+  --titre-remplissage: linear-gradient(180deg, #fff6d8 0%, var(--or) 52%, #e09400 100%);
+
+  --tagline-style: italic;
+  --tagline-couleur: #ffe4de;
+
+  --panel-bg: #fff5f2;
+  --trait: 3px solid #5e0a0a;
+  --radius-panel: 8px;
+
+  --btn-fond: linear-gradient(180deg, #ff6b5c, #c92a2a);
+  --btn-cadre: 2px solid #4a0808;
+  --btn-encre: #ffffff;
+  --btn-rayon: 5px;
+  --btn-ombre: 0 3px 0 #4a0808;
+  --btn-fond-primaire: linear-gradient(180deg, #fff3a8, var(--or));
+  --btn-encre-primaire: #4a0808;
+}

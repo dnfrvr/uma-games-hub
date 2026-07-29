@@ -74,12 +74,25 @@
   function ecranChoix() {
     jeu.enCours = false;
     ecran.className = "ecran visible";
+    /* La consigne nommait le cafard, du temps où il était le seul ennemi.
+       On déduit maintenant les inécrasables du bestiaire : le moteur ne
+       connaît toujours aucun nom propre, et la phrase reste vraie si on
+       ajoute ou retire un ennemi dans niveaux.js. */
+    const inecrasables = Object.keys(ENNEMIS)
+      .filter((cle) => ENNEMIS[cle].ecrasable === false)
+      .map((cle) => ENNEMIS[cle].nom);
+    const exception = inecrasables.length
+      ? " Tout ne s'écrase pas : <b>" +
+        inecrasables.join("</b> et <b>") +
+        "</b>, on ne peut que les éviter."
+      : "";
+
     ecran.innerHTML =
       '<div class="ecran-boite">' +
-      '<h2 class="ecran-titre">Qui traverse le campus ?</h2>' +
+      '<h2 class="ecran-titre">Qui prend la route ?</h2>' +
       '<p class="ecran-texte">Flèches ou <b>Q</b>/<b>D</b> pour courir, ' +
-      "<b>Espace</b> pour sauter. Retombe sur un cafard pour l'écraser ; " +
-      "le toucher autrement coûte une vie.</p>" +
+      "<b>Espace</b> pour sauter. Retombe sur un ennemi pour l'écraser ; " +
+      "le toucher autrement coûte une vie." + exception + "</p>" +
       '<div class="choix" id="choix"></div>' +
       "</div>";
 

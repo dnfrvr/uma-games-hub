@@ -571,16 +571,45 @@ a.pub-cadre:hover .pub-bouton { background: linear-gradient(180deg, #fff, var(--
   box-shadow: none;
 }
 
+/* --- Plein écran ----------------------------------------------------------
+   Deux pièges, qui se cumulaient pour rendre le plein écran PLUS PETIT que la
+   navigation normale — l'exact contraire de ce qu'on attend du bouton :
+
+   1. la scène passait en grille avec `place-content: center`, ce qui
+      dimensionne la colonne sur son CONTENU au lieu de la faire remplir : le
+      cadre du jeu rétrécissait jusqu'à sa largeur minimale, centré dans du
+      vide ;
+   2. `.shell` garde son `max-width: 1120px`, qui a du sens dans une page de
+      site mais aucun sur un écran entier — il plafonnait la largeur à celle
+      qu'on avait déjà.
+
+   Donc : la scène remplit, le cadre perd sa laisse et son décor de widget
+   (trait, rayon, ombre n'ont plus d'objet quand il n'y a plus de page
+   autour), et c'est la zone de jeu qui prend la place restante sous le
+   bandeau-titre. Les jeux suivent : leur `.game` est déjà un conteneur flex
+   dont la scène grandit. */
 .lecteur-scene:fullscreen {
-  display: grid;
-  place-content: center;
+  display: block;
   padding: 0;
+  overflow: auto;
   background: var(--coque);
 }
 
 .lecteur-scene:fullscreen > .shell {
-  max-height: 100vh;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: none;
+  min-height: 100%;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Le bandeau-titre garde sa hauteur, la scène prend tout le reste. */
+.lecteur-scene:fullscreen > .shell > .game {
+  flex: 1 1 auto;
 }
 
 /* =========================================================

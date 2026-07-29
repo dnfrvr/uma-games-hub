@@ -174,7 +174,8 @@
     stats.innerHTML =
       "<b>" + nombre(jeu.parties) + "</b> parties jouées · " + jeu.categorie;
 
-    hote.append(note, gauche, stats);
+    if (typeof jeu.note === "number") hote.appendChild(note);
+    hote.append(gauche, stats);
   }
 
   function boutonPleinEcran(scene) {
@@ -222,12 +223,17 @@
 
     const dl = document.createElement("dl");
     dl.className = "fiche";
-    [
+    /* Un jeu pas encore sorti n a ni note ni votes : on n affiche pas une
+       ligne vide, on n affiche pas la ligne. */
+    const lignes = [
       ["Personnage", jeu.perso],
       ["Catégorie", jeu.categorie],
       ["Contrôles", jeu.controles],
-      ["Note", virgule(jeu.note) + "/10 sur " + nombre(jeu.votes) + " votes"],
-    ].forEach(([cle, valeur]) => {
+    ];
+    if (typeof jeu.note === "number") {
+      lignes.push(["Note", virgule(jeu.note) + "/10 sur " + nombre(jeu.votes) + " votes"]);
+    }
+    lignes.forEach(([cle, valeur]) => {
       const dt = document.createElement("dt");
       dt.textContent = cle;
       const dd = document.createElement("dd");

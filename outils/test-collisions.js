@@ -32,13 +32,11 @@ const COQUE = [
 ];
 
 /* Les feuilles propres à un jeu, chargées en dernier — donc prioritaires. */
-const JEUX = [
-  "games/drew-dress-up/style.css",
-  "games/glinda-cheer/style.css",
-  "games/elias-whack/style.css",
-  "games/eoghan-office/style.css",
-  "games/uma-bros/style.css",
-];
+const JEUX = fs
+  .readdirSync(path.join(RACINE, "games"))
+  .map((d) => "games/" + d + "/style.css")
+  .filter((f) => fs.existsSync(path.join(RACINE, f)))
+  .sort();
 
 /* `.css` dans une URL ou un commentaire n'est pas un sélecteur. */
 const FAUX_AMIS = new Set(["css"]);
