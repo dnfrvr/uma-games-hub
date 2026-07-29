@@ -4,6 +4,7 @@ const selection = {};
 LAYER_ORDER.forEach((cat) => (selection[cat] = null));
 
 let decorActuel = DECORS[0].id;
+let catActive = "decor"; // l'onglet ouvert dans la garde-robe (= RAIL_ORDER[0])
 
 // Ordre d'affichage du rail : de la tête aux pieds, pour suivre le regard.
 // (LAYER_ORDER, lui, reste l'ordre d'empilement des calques et ne bouge pas.)
@@ -21,72 +22,14 @@ const RAIL_ORDER = [
   "chaussures",
 ];
 
-const PHRASES_CHAOS = [
-  "Drew pense que ça matche. Drew a tort.",
-  "L'aigle regarde déjà cette tenue avec intérêt.",
-  "Un vrai crime de mode, signé Drew.",
-  "Quelqu'un a laissé Drew choisir seul. On voit le résultat.",
-  "Même les mannequins de vitrine refuseraient ça.",
-  "Le hasard a fait de son mieux. Le hasard a échoué.",
-  "Drew sort comme ça. Drew assume. Drew a tort d'assumer.",
-  "Trois styles se battent sur ce corps. Aucun ne gagne.",
-  "C'est audacieux. C'est surtout illégal dans quatre États.",
-  "Le miroir a demandé une pause.",
-  "On dirait une penderie qui a explosé sur quelqu'un.",
-  "Drew appelle ça « une vibe ». On appelle ça autrement.",
-  "Quelque part, un styliste vient de se réveiller en sueur.",
-  "Cette tenue a été validée par personne.",
-];
-
-const PHRASES_ENFILE = [
-  "Drew enfile ça sans hésiter une seconde.",
-  "Voilà. C'est fait. On ne peut plus revenir en arrière.",
-  "Drew trouve que ça lui va très bien.",
-  "Ce choix sera commenté à la table.",
-  "Drew est ravi. Drew est seul à l'être.",
-  "Drew se regarde. Drew approuve. Drew est le seul juge ici.",
-  "Décision prise en zéro seconde de réflexion.",
-  "Ça change tout. Pas en mieux, mais ça change tout.",
-  "Drew hoche la tête devant le miroir. Personne d'autre ne hoche.",
-  "Noté. Le jury délibère encore.",
-  "Ce vêtement a attendu son heure. Son heure est peut-être mal choisie.",
-  "Drew appelle ça une signature. On appelle ça un aveu.",
-  "Ajouté à la tenue, et au dossier.",
-];
-
-const PHRASES_RETIRE = [
-  "Drew récupère un peu de dignité.",
-  "Retiré. La garde-robe respire.",
-  "Bien vu, ça n'allait avec rien.",
-  "Une pièce en moins, un problème en moins.",
-  "Drew fait semblant de ne l'avoir jamais portée.",
-  "Sage. Vraiment sage.",
-  "Le miroir souffle un peu.",
-  "Rangé. On n'en reparlera plus.",
-  "Drew hésite, puis l'enlève. Bonne pioche.",
-];
-
-/* L'aigle parle deux fois : quand il fond sur Drew, puis quand il repart. */
-const PHRASES_AIGLE_ARRIVEE = [
-  "L'aigle a repéré la tenue. Il descend. 🦅",
-  "Un cri dans le ciel. L'aigle a vu. 🦅",
-  "L'aigle plonge. Drew n'a rien vu venir. 🦅",
-  "Une ombre passe sur Drew. Ce n'est pas un nuage. 🦅",
-  "L'aigle en a assez vu. Il arrive. 🦅",
-  "Trop tard pour se changer : l'aigle est déjà en piqué. 🦅",
-];
-
-const PHRASES_AIGLE_BILAN = [
-  "L'aigle a fondu sur la garde-robe de Drew. Il ne lui reste que son caleçon. 🦅",
-  "Tenue confisquée. Drew reste en caleçon, comme la dernière fois. 🦅",
-  "L'aigle repart les serres pleines. Drew repart en caleçon. 🦅",
-  "Plus rien. Juste un caleçon et beaucoup de questions. 🦅",
-  "Le ciel a repris ce qui lui appartenait. Drew garde le caleçon. 🦅",
-];
+/* Les listes de phrases, le barème et les combos sont dans gout.js :
+   c'est du contenu, pas de la mécanique. Ce fichier ne fait que les lire. */
 
 async function init() {
+  recordGout = litRecord();
   appliquerDecor();
   renderDoll(); // Drew s'affiche même si la garde-robe ne charge pas
+  rendGout(evalueGout());
 
   try {
     const res = await fetch("assets/manifest.json");
@@ -104,6 +47,7 @@ async function init() {
   buildWardrobeTabs();
   appliquerDecor();
   renderDoll();
+  rendGout(evalueGout());
   prechargeGardeRobe();
   showFlavorText("Attrape une pièce dans la garde-robe et lâche-la sur Drew.");
 }
@@ -151,6 +95,9 @@ function buildWardrobeTabs() {
 
     panelsEl.appendChild(panel);
   });
+
+  catActive = RAIL_ORDER[0];
+  rendEnteteDock();
 }
 
 function buildDecorButton(decor) {
@@ -176,7 +123,9 @@ function buildDecorButton(decor) {
 function choisirDecor(id) {
   decorActuel = id;
   appliquerDecor();
-  showFlavorText(`Drew pose devant : ${trouveDecor(id).nom}.`);
+  // Certains combos dépendent du lieu (des lunettes de soleil en intérieur,
+  // une tenue de plage sous la pluie) : changer de décor change le score.
+  tenueChangee(`Drew pose devant : ${trouveDecor(id).nom}.`);
 }
 
 function appliquerDecor() {
@@ -187,12 +136,15 @@ function appliquerDecor() {
   document.querySelectorAll(".decor-btn").forEach((b) => {
     b.classList.toggle("selected", b.dataset.decor === decorActuel);
   });
+  rendEnteteDock();
 }
 
 function buildItemButton(cat, item) {
+  const laideur = item.laideur || 0;
+
   const btn = document.createElement("button");
   btn.className = "item-btn";
-  btn.title = item.nom + " — attrape-la et lâche-la sur Drew";
+  btn.title = `${item.nom} — ${laideur}/10 de mauvais goût. Attrape-la et lâche-la sur Drew.`;
   btn.dataset.id = item.id;
   btn.dataset.cat = cat;
 
@@ -200,14 +152,27 @@ function buildItemButton(cat, item) {
   swatch.className = "item-swatch";
   swatch.style.backgroundImage = `url("${urlItem(cat, item, true)}")`;
 
+  // La note de la pièce, en clair sur la tuile : sans elle, choisir revient
+  // à tirer au sort, et le Drewmètre n'est plus un jeu mais une surprise.
+  const note = document.createElement("span");
+  note.className = "item-laideur niveau-" + niveauLaideur(laideur);
+  note.textContent = laideur;
+  note.setAttribute("aria-hidden", "true");
+
   const nom = document.createElement("span");
   nom.className = "item-nom";
   nom.textContent = item.nom;
 
-  btn.append(swatch, nom);
+  btn.append(swatch, note, nom);
   btn.onclick = () => toggleItem(cat, item.id);
   enableDragVersDrew(btn, cat, item);
   return btn;
+}
+
+function niveauLaideur(laideur) {
+  if (laideur >= SEUIL_HORRIBLE) return "haut";
+  if (laideur < SEUIL_SOBRE) return "bas";
+  return "moyen";
 }
 
 // Une icône par catégorie, façon rail latéral des jeux d'habillage.
@@ -269,19 +234,50 @@ function naviguerRail(e, cat) {
 }
 
 function switchTab(cat) {
+  catActive = cat;
   document.querySelectorAll(".tab-btn").forEach((b) => {
     const actif = b.dataset.cat === cat;
     b.classList.toggle("active", actif);
     b.setAttribute("aria-selected", actif ? "true" : "false");
   });
   document.querySelectorAll(".wardrobe-panel").forEach((p) => p.classList.toggle("active", p.dataset.cat === cat));
+  rendEnteteDock();
+}
+
+/* Le rail n'a la place que d'un mot par catégorie. L'en-tête rattrape le
+   reste : le nom complet, le nombre de pièces, et surtout ce que Drew
+   porte déjà à cet endroit — l'information qui manquait le plus quand on
+   fait défiler une bande de vignettes. */
+function rendEnteteDock() {
+  const entete = document.getElementById("dock-entete");
+  if (!entete) return;
+
+  const nom = labelCategorie(catActive);
+  const porte = catActive === "decor" ? trouveDecor(decorActuel) : findItem(catActive, selection[catActive]);
+  const total = catActive === "decor" ? DECORS.length : (manifest[catActive] || []).length;
+
+  entete.innerHTML = "";
+  const titre = document.createElement("b");
+  titre.className = "dock-entete-nom";
+  titre.textContent = nom;
+
+  const compte = document.createElement("span");
+  compte.className = "dock-entete-compte";
+  compte.textContent = total + (total > 1 ? " pièces" : " pièce");
+
+  const choix = document.createElement("span");
+  choix.className = "dock-entete-choix" + (porte ? "" : " dock-entete-vide");
+  choix.textContent = porte ? porte.nom : "rien pour l'instant";
+
+  entete.append(titre, compte, choix);
 }
 
 function toggleItem(cat, id) {
   const retire = selection[cat] === id;
+  const item = findItem(cat, id);
   selection[cat] = retire ? null : id;
   renderDoll(retire ? null : cat);
-  showFlavorText(piocheVariee(retire ? PHRASES_RETIRE : PHRASES_ENFILE));
+  tenueChangee(retire ? phraseRetire(item) : phraseEnfile(item));
 }
 
 function findItem(cat, id) {
@@ -309,6 +305,183 @@ function piocheVariee(liste) {
 }
 
 /* =========================================================
+   Le Drewmètre
+
+   Le moteur ne sait pas ce qui est laid : il additionne les laideurs
+   déclarées avec chaque pièce (manifest.json), applique les combos de
+   gout.js, et compare le total à un palier. Tout le contenu est donc
+   modifiable sans toucher une ligne d'ici — c'est la même séparation
+   que pour les silhouettes.
+   ========================================================= */
+
+const CLE_RECORD = "drew_gout_record"; // préfixé : le portail partage le localStorage
+const SEUIL_SOBRE = 5; // en dessous, la pièce est « portable »
+const SEUIL_HORRIBLE = 7; // à partir de là, on la commente autrement
+
+let recordGout = 0;
+let recordEnCours = false; // on ne félicite qu'une fois par montée
+let combosActifs = new Set();
+let dernierSeuil = 0;
+
+function litRecord() {
+  try {
+    return parseInt(localStorage.getItem(CLE_RECORD), 10) || 0;
+  } catch (e) {
+    return 0; // navigation privée, ou page ouverte en file:// : on joue sans record
+  }
+}
+
+function ecrisRecord(valeur) {
+  try {
+    localStorage.setItem(CLE_RECORD, String(valeur));
+  } catch (e) {
+    /* pas de stockage : le record vit le temps de la session, c'est tout */
+  }
+}
+
+/* La tenue portée, dans l'ordre d'empilement. */
+function tenuePortee() {
+  const pieces = [];
+  LAYER_ORDER.forEach((cat) => {
+    if (cat === "body" || cat === "sticker_overlay") return;
+    const item = selection[cat] && findItem(cat, selection[cat]);
+    if (item) pieces.push({ cat, item });
+  });
+  return pieces;
+}
+
+/* Le « lecteur de tenue » passé aux règles de gout.js. Il expose des
+   questions (porte-t-il ceci ?), jamais la structure interne : une règle
+   écrite aujourd'hui continuera de marcher si `selection` change de forme. */
+function lecteurDeTenue(pieces) {
+  const etiquettes = pieces.reduce((acc, p) => acc.concat(p.item.tags || []), []);
+  return {
+    pieces,
+    nb: pieces.length,
+    decor: decorActuel,
+    porte: (id) => pieces.some((p) => p.item.id === id),
+    forme: (nom) => pieces.some((p) => (p.item.forme || FORME_PAR_DEFAUT[p.cat]) === nom),
+    cat: (c) => (pieces.find((p) => p.cat === c) || {}).item || null,
+    nu: (c) => !pieces.some((p) => p.cat === c),
+    tag: (e) => etiquettes.indexOf(e) !== -1,
+    compte: (e) => etiquettes.filter((x) => x === e).length,
+  };
+}
+
+function evalueGout() {
+  const pieces = tenuePortee();
+  const t = lecteurDeTenue(pieces);
+  const base = pieces.reduce((somme, p) => somme + (p.item.laideur || 0), 0);
+
+  // Une règle mal écrite ne doit pas emporter le jeu avec elle : elle est
+  // simplement ignorée, et signalée en console pour qu'on la corrige.
+  const combos = COMBOS.filter((c) => {
+    try {
+      return !!c.quand(t);
+    } catch (e) {
+      console.warn("Combo ignoré, sa règle a levé :", c.id, e);
+      return false;
+    }
+  });
+
+  const score = base + combos.reduce((somme, c) => somme + c.points, 0);
+  return { score, base, combos, palier: palierPour(score) };
+}
+
+function palierPour(score) {
+  let trouve = PALIERS[0];
+  PALIERS.forEach((p) => {
+    if (score >= p.seuil) trouve = p;
+  });
+  return trouve;
+}
+
+function rendGout(etat) {
+  const part = Math.min(etat.score / GOUT_MAX, 1) * 100;
+  const jauge = document.getElementById("gout-remplissage");
+  const marque = document.getElementById("gout-marque");
+  const score = document.getElementById("gout-score");
+  const palier = document.getElementById("gout-palier");
+  const record = document.getElementById("gout-record");
+  const combos = document.getElementById("gout-combos");
+  if (!jauge) return;
+
+  jauge.style.width = part.toFixed(1) + "%";
+  score.textContent = etat.score;
+  palier.textContent = etat.palier.titre;
+  record.textContent = recordGout ? "record " + recordGout : "";
+
+  // Le repère du record ne se dessine que s'il y en a un, et jamais
+  // au-delà du bout de la jauge.
+  marque.hidden = !recordGout;
+  marque.style.left = Math.min(recordGout / GOUT_MAX, 1) * 100 + "%";
+
+  combos.innerHTML = "";
+  etat.combos.forEach((c) => {
+    const puce = document.createElement("span");
+    puce.className = "gout-combo";
+    puce.textContent = c.nom;
+    puce.title = c.nom + " : +" + c.points + " points de mauvais goût";
+    combos.appendChild(puce);
+  });
+  combos.classList.toggle("gout-combos-vide", etat.combos.length === 0);
+}
+
+/* Le passage obligé après TOUT changement de tenue. Il remet la jauge à
+   jour et choisit ce qui mérite d'être dit : une phrase de circonstance
+   (`defaut`) ne passe que si rien de plus intéressant ne vient d'arriver.
+   `imperatif` sert aux moments qui ont leur propre mise en scène — le raid
+   de l'aigle ne doit pas se faire voler sa réplique par un combo. */
+function tenueChangee(defaut, imperatif = false) {
+  const etat = evalueGout();
+  rendGout(etat);
+
+  const nouveaux = etat.combos.filter((c) => !combosActifs.has(c.id));
+  const monte = etat.palier.seuil > dernierSeuil;
+  const bat = etat.score > recordGout && etat.score > 0;
+  // On ne crie au record que s'il y en avait un à battre : le premier
+  // vêtement d'un joueur qui découvre le jeu bat forcément « zéro ».
+  const premiereFois = bat && !recordEnCours && recordGout > 0;
+
+  combosActifs = new Set(etat.combos.map((c) => c.id));
+  dernierSeuil = etat.palier.seuil;
+  if (bat) {
+    recordGout = etat.score;
+    recordEnCours = true;
+    ecrisRecord(recordGout);
+    rendGout(etat); // le repère du record vient de bouger
+  } else if (etat.score < recordGout) {
+    recordEnCours = false;
+  }
+
+  if (imperatif) showFlavorText(defaut);
+  else if (premiereFois) showFlavorText(piocheVariee(PHRASES_RECORD));
+  else if (nouveaux.length) showFlavorText(nouveaux[nouveaux.length - 1].texte);
+  else if (monte) showFlavorText(etat.palier.texte);
+  else showFlavorText(defaut);
+}
+
+/* Le ton du commentaire suit la pièce qu'on vient d'enfiler : mettre une
+   chemise blanche et mettre un pull de Noël ne se commentent pas pareil. */
+function phraseEnfile(item) {
+  const laideur = item.laideur || 0;
+  if (laideur >= SEUIL_HORRIBLE) return piocheVariee(PHRASES_ENFILE.horrible);
+  if (laideur < SEUIL_SOBRE) return piocheVariee(PHRASES_ENFILE.sobre);
+  return piocheVariee(PHRASES_ENFILE.moyen);
+}
+
+/* Retirer la pièce la plus laide de la tenue est un renoncement, pas un
+   nettoyage : le jeu le fait remarquer. À égalité aussi — la pièce était
+   quand même ce que la tenue avait de mieux à offrir. */
+function phraseRetire(item) {
+  const pire = tenuePortee().reduce((max, p) => Math.max(max, p.item.laideur || 0), 0);
+  if ((item.laideur || 0) >= SEUIL_HORRIBLE && (item.laideur || 0) >= pire) {
+    return piocheVariee(PHRASES_RETIRE_TRESOR);
+  }
+  return piocheVariee(PHRASES_RETIRE);
+}
+
+/* =========================================================
    Glisser-déposer (souris + tactile, via les événements pointer)
    - une vignette de la garde-robe → sur Drew  = on l'enfile
    - une pièce portée par Drew → sur la garde-robe = on la retire
@@ -325,7 +498,7 @@ function enableDragVersDrew(el, cat, item) {
     onDepot: () => {
       selection[cat] = item.id;
       renderDoll(cat);
-      showFlavorText(piocheVariee(PHRASES_ENFILE));
+      tenueChangee(phraseEnfile(item));
     },
   }));
 }
@@ -339,7 +512,7 @@ function optsRetrait(calque) {
     onDepot: () => {
       selection[calque.cat] = null;
       renderDoll();
-      showFlavorText(piocheVariee(PHRASES_RETIRE));
+      tenueChangee(phraseRetire(calque.item));
     },
   };
 }
@@ -568,6 +741,7 @@ function updateWardrobeSelectionStyles() {
   document.querySelectorAll(".tab-btn").forEach((tab) => {
     tab.classList.toggle("porte", !!selection[tab.dataset.cat]);
   });
+  rendEnteteDock();
 }
 
 /* Drew garde ses coordonnées de calques en 400×600 : on ne redimensionne
@@ -639,10 +813,13 @@ function deshabilleDrew() {
   selection.calecon = choisi || (tire ? tire.id : null);
 
   renderDoll(tire ? "calecon" : null);
-  showFlavorText(
+  // `imperatif` : le raid est une mise en scène, sa réplique ne se fait pas
+  // voler par un combo ou un changement de palier.
+  tenueChangee(
     tire
       ? `L'aigle a tout emporté. Il laisse à Drew un « ${tire.nom} ». 🦅`
-      : piocheVariee(PHRASES_AIGLE_BILAN)
+      : piocheVariee(PHRASES_AIGLE_BILAN),
+    true
   );
 }
 
@@ -708,7 +885,7 @@ function chaosOutfit() {
   if (!selection.calecon && calecons.length) selection.calecon = pioche(calecons).id;
 
   renderDoll("*"); // tout a changé : toute la tenue s'anime
-  showFlavorText(piocheVariee(PHRASES_CHAOS));
+  tenueChangee(piocheVariee(PHRASES_CHAOS));
 }
 
 function showFlavorText(text) {

@@ -78,6 +78,23 @@ const FORMES = {
       <g fill="${LUEUR}"><circle cx="200" cy="204" r="4"/><circle cx="200" cy="240" r="4"/><circle cx="200" cy="276" r="4"/></g>`,
   },
 
+  pull: {
+    cadre: "112 144 176 210",
+    dessin: (c) => `
+      ${miroir(`<path d="M150 166 L124 188 Q116 262 126 338 L152 338 Q146 258 158 216 L158 322 L200 322 L200 158 Q172 158 150 166 Z" fill="${c}" ${contour()}/>`)}
+      <rect x="176" y="148" width="48" height="22" rx="10" fill="${c}" ${contour(3)}/>
+      ${miroir(`<path d="M128 326 q12 5 22 2" fill="none" stroke="${OMBRE}" stroke-width="5"/>`)}
+      <path d="M158 310 h84" stroke="${OMBRE}" stroke-width="4" fill="none"/>`,
+  },
+
+  debardeur: {
+    cadre: "150 148 100 168",
+    dessin: (c) => `
+      ${miroir(`<path d="M172 158 L162 174 L158 306 L200 306 L200 186 Q184 186 179 172 L177 158 Z" fill="${c}" ${contour()}/>`)}
+      <path d="M179 172 q21 18 42 0" fill="none" stroke="${OMBRE}" stroke-width="5"/>
+      <path d="M158 296 h84" stroke="${OMBRE}" stroke-width="3" fill="none"/>`,
+  },
+
   /* --------------------------------------------- veste/manteau */
   veste: {
     cadre: "116 150 168 200",
@@ -85,6 +102,15 @@ const FORMES = {
       ${miroir(`<path d="M150 168 L122 190 L130 338 L160 338 L152 208 Z" fill="${c}" ${contour()}/>`)}
       ${miroir(`<path d="M152 166 Q176 156 196 158 L188 200 L180 320 L142 320 L138 190 Z" fill="${c}" ${contour()}/>`)}
       ${miroir(`<path d="M196 158 L200 200 L184 204 Z" fill="${LUEUR}" ${contour(3)}/>`)}`,
+  },
+
+  /* Sans manches : le col fourrure (LUEUR) sert de doublure. */
+  gilet: {
+    cadre: "132 146 136 200",
+    dessin: (c) => `
+      ${miroir(`<path d="M152 166 Q176 156 196 158 L188 200 L182 336 L142 336 L138 190 Z" fill="${c}" ${contour()}/>`)}
+      ${miroir(`<path d="M152 162 Q174 150 196 154 L196 174 Q174 170 158 182 Z" fill="${LUEUR}" ${contour(3)}/>`)}
+      <path d="M200 172 V332" stroke="${OMBRE}" stroke-width="4" fill="none"/>`,
   },
 
   /* ------------------------------------------------------ bas */
@@ -112,6 +138,26 @@ const FORMES = {
       <g stroke="${OMBRE}" stroke-width="3" fill="none"><path d="M178 306 L168 410M200 306 V410M222 306 L232 410"/></g>`,
   },
 
+  /* Coupe large, bandes latérales et bas de jambe resserré. */
+  jogging: {
+    cadre: "134 280 132 292",
+    dessin: (c) => `
+      <path d="M150 302 L250 302 L256 356 L242 552 L204 552 L200 400 L196 552 L158 552 L144 356 Z" fill="${c}" ${contour()}/>
+      <rect x="150" y="284" width="100" height="24" rx="9" fill="${c}" ${contour()}/>
+      ${miroir(`<path d="M158 320 L168 544" fill="none" stroke="#ffffff" stroke-width="6"/>`)}
+      ${miroir(`<path d="M158 534 h40" fill="none" stroke="${OMBRE}" stroke-width="5"/>`)}`,
+  },
+
+  /* S'arrête à mi-mollet : de quoi bien exposer les chaussettes. */
+  pantacourt: {
+    cadre: "140 280 120 240",
+    dessin: (c) => `
+      <path d="M154 302 L246 302 L250 354 L240 502 L206 502 L200 402 L194 502 L160 502 L150 354 Z" fill="${c}" ${contour()}/>
+      <rect x="154" y="288" width="92" height="20" rx="5" fill="${c}" ${contour()}/>
+      ${miroir(`<path d="M162 490 h38" fill="none" stroke="${OMBRE}" stroke-width="4"/>`)}
+      <path d="M200 402 V330" stroke="${OMBRE}" stroke-width="3" fill="none"/>`,
+  },
+
   /* ----------------------------------------------- chaussures */
   baskets: {
     cadre: "150 524 100 60",
@@ -135,6 +181,25 @@ const FORMES = {
       ${miroir(`<path d="M170 522 h24" stroke="#ff3d9a" stroke-width="4" fill="none"/>`)}
       ${miroir(`<path d="M160 556 h36 q6 0 6 7 v6 q0 7 -6 7 h-36 q-7 0 -7 -7 v-6 q0 -7 7 -7 z" fill="${c}" ${contour()}/>`)}
       ${miroir(`<g fill="none" stroke="${TRAIT_SVG}" stroke-width="4"><path d="M160 560 h36M164 568 h30"/></g>`)}`,
+  },
+
+  /* Montantes jusqu'au mollet : le seul modèle qui remonte plus haut
+     que le bas de jambe du pantacourt, exprès. */
+  bottes: {
+    cadre: "138 466 124 120",
+    dessin: (c) => `
+      ${miroir(`<path d="M162 476 h36 v100 h-50 q-6 0 -6 -8 v-10 q0 -8 8 -10 l12 -4 z" fill="${c}" ${contour()}/>`)}
+      ${miroir(`<path d="M160 476 h40 v16 h-40 z" fill="${LUEUR}" ${contour(3)}/>`)}
+      ${miroir(`<path d="M144 566 h54" fill="none" stroke="${TRAIT_SVG}" stroke-width="5"/>`)}`,
+  },
+
+  chaussons: {
+    cadre: "144 522 112 64",
+    dessin: (c) => `
+      ${miroir(`<circle cx="162" cy="538" r="9" fill="${c}" ${contour(3)}/><circle cx="192" cy="538" r="9" fill="${c}" ${contour(3)}/>`)}
+      ${miroir(`<path d="M154 540 h36 q9 0 9 10 v18 q0 10 -10 10 h-35 q-10 0 -10 -10 v-18 q0 -10 10 -10 z" fill="${c}" ${contour()}/>`)}
+      ${miroir(`<g fill="${TRAIT_SVG}"><circle cx="166" cy="556" r="3.5"/><circle cx="184" cy="556" r="3.5"/></g>
+                <path d="M170 566 q5 5 10 0" fill="none" stroke="${TRAIT_SVG}" stroke-width="3"/>`)}`,
   },
 
   /* ---------------------------------------------------- caleçon */
@@ -163,6 +228,24 @@ const FORMES = {
       <rect x="197" y="288" width="8" height="16" rx="3" fill="${c}"/>`,
   },
 
+  banane: {
+    cadre: "140 272 120 72",
+    dessin: (c) => `
+      <rect x="154" y="284" width="92" height="16" rx="6" fill="${c}" ${contour()}/>
+      <path d="M164 298 h72 q12 0 12 13 v14 q0 13 -13 13 h-70 q-13 0 -13 -13 v-14 q0 -13 12 -13 z" fill="${c}" ${contour()}/>
+      <path d="M162 318 h76" fill="none" stroke="${OMBRE}" stroke-width="4"/>
+      <circle cx="232" cy="318" r="5" fill="${LUEUR}" ${contour(2)}/>`,
+  },
+
+  /* Deux sangles épaules→taille : c'est la seule pièce de « taille »
+     qui se voit encore quand Drew ne porte pas de haut. */
+  bretelles: {
+    cadre: "146 152 108 164",
+    dessin: (c) => `
+      ${miroir(`<path d="M170 160 L186 296 L173 298 L157 166 Z" fill="${c}" ${contour(3)}/>`)}
+      ${miroir(`<rect x="170" y="288" width="16" height="18" rx="4" fill="#ffd84d" ${contour(2)}/>`)}`,
+  },
+
   /* ---------------------------------------------------- bijoux */
   collier: {
     cadre: "164 138 72 52",
@@ -173,6 +256,22 @@ const FORMES = {
         <circle cx="212" cy="160" r="6"/><circle cx="220" cy="150" r="6"/>
       </g>
       <circle cx="200" cy="180" r="9" fill="${c}" ${contour(3)}/>`,
+  },
+
+  cravate: {
+    cadre: "172 144 56 144",
+    dessin: (c) => `
+      <path d="M186 150 h28 l10 16 -24 14 -24 -14 z" fill="${c}" ${contour(3)}/>
+      <path d="M190 180 h20 l9 74 -19 26 -19 -26 z" fill="${c}" ${contour(3)}/>
+      <g fill="none" stroke="${OMBRE}" stroke-width="4"><path d="M191 210 h18M194 238 h14"/></g>`,
+  },
+
+  echarpe: {
+    cadre: "152 138 96 152",
+    dessin: (c) => `
+      <path d="M168 148 q32 24 64 0 l6 24 q-38 26 -76 0 z" fill="${c}" ${contour()}/>
+      <path d="M184 172 l-8 102 h28 l-5 -100 z" fill="${c}" ${contour(3)}/>
+      <g fill="none" stroke="${OMBRE}" stroke-width="4"><path d="M178 206 h24M180 236 h24M182 266 h24"/></g>`,
   },
 
   /* -------------------------------------------------- coiffure */
@@ -188,6 +287,23 @@ const FORMES = {
     dessin: (c) => `
       <path d="M158 96 Q158 42 200 40 Q242 38 246 88 Q236 60 208 58 Q186 82 158 96 Z" fill="${c}" ${contour()}/>
       <path d="M208 58 Q198 74 176 88" fill="none" stroke="${OMBRE}" stroke-width="4"/>`,
+  },
+
+  /* Les deux mèches de nuque descendent SOUS les épaules : c'est ce
+     qui distingue le mulet d'une coupe au bol vue de face. */
+  mulet: {
+    cadre: "142 30 116 176",
+    dessin: (c) => `
+      ${miroir(`<path d="M160 88 q-14 62 -4 108 q19 -6 21 -31 q-9 -40 -3 -77 z" fill="${c}" ${contour()}/>`)}
+      <path d="M158 104 L158 84 Q158 40 200 40 Q242 40 242 84 L242 104 L230 104 Q228 72 200 68 Q172 72 170 104 Z" fill="${c}" ${contour()}/>`,
+  },
+
+  /* Crânes rasés sur les côtés (le voile à 40 %) + l'arête, en pointes. */
+  crete: {
+    cadre: "156 6 88 118",
+    dessin: (c) => `
+      <path d="M168 112 Q168 66 200 60 Q232 66 232 112 L219 112 Q219 82 200 78 Q181 82 181 112 Z" fill="${c}" opacity=".4"/>
+      <path d="M186 78 L180 14 L196 44 L200 8 L206 46 L220 16 L214 80 Z" fill="${c}" ${contour()}/>`,
   },
 
   /* ---------------------------------------------------- chapeau */
@@ -207,6 +323,23 @@ const FORMES = {
       <circle cx="200" cy="46" r="6" fill="${LUEUR}" ${contour(2)}/>`,
   },
 
+  bob: {
+    cadre: "140 34 120 82",
+    dessin: (c) => `
+      <path d="M166 92 Q164 44 200 44 Q236 44 234 92 Z" fill="${c}" ${contour()}/>
+      <path d="M150 88 q50 20 100 0 q6 16 -6 21 q-44 13 -88 0 q-12 -5 -6 -21 z" fill="${c}" ${contour()}/>
+      <path d="M168 90 h64" fill="none" stroke="${OMBRE}" stroke-width="4"/>`,
+  },
+
+  bonnet: {
+    cadre: "150 12 100 96",
+    dessin: (c) => `
+      <circle cx="200" cy="28" r="14" fill="${LUEUR}" ${contour(3)}/>
+      <path d="M160 82 Q160 40 200 40 Q240 40 240 82 Z" fill="${c}" ${contour()}/>
+      <rect x="156" y="78" width="88" height="24" rx="9" fill="${c}" ${contour()}/>
+      <path d="M160 90 h80" fill="none" stroke="${OMBRE}" stroke-width="3"/>`,
+  },
+
   /* ----------------------------------------------- visage extra */
   lunettes: {
     cadre: "150 78 100 38",
@@ -218,6 +351,22 @@ const FORMES = {
       <g fill="none" stroke="${TRAIT_SVG}" stroke-width="4" stroke-linecap="round">
         <path d="M194 94 h12M166 92 l-9 -3M234 92 l9 -3"/>
       </g>`,
+  },
+
+  /* Le tracé part de l'axe (x=200) et file vers la gauche : `miroir`
+     recompose la seconde moitié sans raccord visible. */
+  moustache: {
+    cadre: "160 104 80 38",
+    dessin: (c) =>
+      miroir(`<path d="M200 112 q-11 -6 -23 -1 q-15 6 -13 15 q3 9 13 5 q13 -5 23 -13 z" fill="${c}" ${contour(3)}/>`),
+  },
+
+  lunettes_ski: {
+    cadre: "142 74 116 46",
+    dessin: (c) => `
+      <path d="M158 86 q42 -11 84 0 q7 21 -6 26 q-36 9 -72 0 q-13 -5 -6 -26 z" fill="${c}" ${contour()}/>
+      <path d="M168 92 q32 -7 64 0 q4 12 -4 15 q-28 6 -56 0 q-8 -3 -4 -15 z" fill="#8fd0ff" ${contour(2)}/>
+      <g fill="none" stroke="${TRAIT_SVG}" stroke-width="6" stroke-linecap="round"><path d="M156 98 h-8M244 98 h8"/></g>`,
   },
 };
 

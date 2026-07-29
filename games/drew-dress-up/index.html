@@ -67,11 +67,27 @@
         </div>
 
         <p id="flavor-text" role="status"><span id="flavor-texte"></span></p>
+
+        <!-- Le Drewmètre. Hauteur FIXE, comme la bulle : si ce bloc grandit,
+             la scène rétrécit et Drew change de taille à chaque pièce. -->
+        <div class="gout" id="gout">
+          <div class="gout-tete">
+            <span class="gout-nom">Drewmètre</span>
+            <span class="gout-palier" id="gout-palier">—</span>
+            <span class="gout-chiffres"><b id="gout-score">0</b><small id="gout-record"></small></span>
+          </div>
+          <div class="gout-jauge">
+            <i class="gout-remplissage" id="gout-remplissage"></i>
+            <i class="gout-marque" id="gout-marque" hidden></i>
+          </div>
+          <div class="gout-combos gout-combos-vide" id="gout-combos"></div>
+        </div>
       </section>
 
       <aside class="dock">
         <div id="wardrobe-tabs" class="dock-cats" role="tablist" aria-label="Catégories de vêtements"></div>
         <div class="dock-items">
+          <div id="dock-entete" class="dock-entete"></div>
           <div id="wardrobe-panels" class="dock-panels"></div>
           <p class="dock-hint">Attrape une pièce et lâche-la sur Drew. Renvoie-la ici pour la retirer.</p>
         </div>
@@ -101,6 +117,7 @@
   <script src="layers.js"></script>
   <script src="decors.js"></script>
   <script src="silhouettes.js"></script>
+  <script src="gout.js"></script>
   <script src="main.js"></script>
   <script src="export.js"></script>
   <script src="../../shared/favoris.js"></script>

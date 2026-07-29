@@ -209,10 +209,14 @@
     titre.className = "rubrique";
     titre.innerHTML =
       '<span class="rubrique-icone" aria-hidden="true">▤</span> À propos de ce jeu';
-    const info = document.createElement("span");
-    info.className = "rubrique-info";
-    info.textContent = "ajouté le " + enDate(jeu.ajoute_le);
-    titre.appendChild(info);
+    /* Pas de date tant que le jeu n'est pas sorti : mieux vaut ne rien dire
+       que d'annoncer « ajouté le undefined ». */
+    if (jeu.ajoute_le) {
+      const info = document.createElement("span");
+      info.className = "rubrique-info";
+      info.textContent = "ajouté le " + enDate(jeu.ajoute_le);
+      titre.appendChild(info);
+    }
 
     const corps = document.createElement("div");
     corps.className = "fiche-corps";

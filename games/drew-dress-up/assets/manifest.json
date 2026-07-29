@@ -6,25 +6,41 @@
       "id": "calecon_01",
       "nom": "Caleçon à petits cœurs",
       "forme": "calecon",
-      "couleurPlaceholder": "#FF8AC4"
+      "couleurPlaceholder": "#FF8AC4",
+      "laideur": 4,
+      "tags": ["motif", "fete"]
     },
     {
       "id": "calecon_02",
       "nom": "Boxer de la fac, élastique mort",
       "forme": "calecon",
-      "couleurPlaceholder": "#2F4B7C"
+      "couleurPlaceholder": "#2F4B7C",
+      "laideur": 5,
+      "tags": ["fac", "sale"]
     },
     {
       "id": "calecon_03",
       "nom": "Slip léopard",
       "forme": "slip",
-      "couleurPlaceholder": "#D9A441"
+      "couleurPlaceholder": "#D9A441",
+      "laideur": 8,
+      "tags": ["motif", "fete"]
     },
     {
       "id": "calecon_04",
       "nom": "Caleçon de Noël, en juin",
       "forme": "calecon",
-      "couleurPlaceholder": "#C0392B"
+      "couleurPlaceholder": "#C0392B",
+      "laideur": 7,
+      "tags": ["motif", "hiver"]
+    },
+    {
+      "id": "calecon_05",
+      "nom": "Slip de bain deux tailles trop petit",
+      "forme": "slip",
+      "couleurPlaceholder": "#1FA8A0",
+      "laideur": 7,
+      "tags": ["ete", "plage"]
     }
   ],
   "bas": [
@@ -32,19 +48,49 @@
       "id": "bas_01",
       "nom": "Jean moche",
       "forme": "pantalon",
-      "couleurPlaceholder": "#5B7BA8"
+      "couleurPlaceholder": "#5B7BA8",
+      "laideur": 4,
+      "tags": ["annees90"]
     },
     {
       "id": "bas_02",
       "nom": "Short à carreaux douteux",
       "forme": "short",
-      "couleurPlaceholder": "#C97B84"
+      "couleurPlaceholder": "#C97B84",
+      "laideur": 6,
+      "tags": ["motif", "ete"]
     },
     {
       "id": "bas_03",
       "nom": "Jupe en jean trop courte",
       "forme": "jupe",
-      "couleurPlaceholder": "#7FA0C4"
+      "couleurPlaceholder": "#7FA0C4",
+      "laideur": 7,
+      "tags": ["annees90", "ete"]
+    },
+    {
+      "id": "bas_04",
+      "nom": "Jogging à bandes, jamais lavé",
+      "forme": "jogging",
+      "couleurPlaceholder": "#3A3F4A",
+      "laideur": 6,
+      "tags": ["sport", "sale"]
+    },
+    {
+      "id": "bas_05",
+      "nom": "Pantacourt de randonnée",
+      "forme": "pantacourt",
+      "couleurPlaceholder": "#7D8B5A",
+      "laideur": 8,
+      "tags": ["sport", "ete"]
+    },
+    {
+      "id": "bas_06",
+      "nom": "Pantalon en cuir qui grince",
+      "forme": "pantalon",
+      "couleurPlaceholder": "#2B2320",
+      "laideur": 7,
+      "tags": ["cuir", "fete"]
     }
   ],
   "chaussures": [
@@ -52,19 +98,49 @@
       "id": "chaussures_01",
       "nom": "Tongs en hiver",
       "forme": "tongs",
-      "couleurPlaceholder": "#3A6EA5"
+      "couleurPlaceholder": "#3A6EA5",
+      "laideur": 7,
+      "tags": ["ete", "plage"]
     },
     {
       "id": "chaussures_02",
       "nom": "Sandales + chaussettes",
       "forme": "sandales",
-      "couleurPlaceholder": "#8B5E3C"
+      "couleurPlaceholder": "#8B5E3C",
+      "laideur": 9,
+      "tags": ["ete", "plage"]
     },
     {
       "id": "chaussures_03",
       "nom": "Baskets jamais lavées",
       "forme": "baskets",
-      "couleurPlaceholder": "#D9D4C5"
+      "couleurPlaceholder": "#D9D4C5",
+      "laideur": 5,
+      "tags": ["sport", "sale"]
+    },
+    {
+      "id": "chaussures_04",
+      "nom": "Bottes de pluie fluo",
+      "forme": "bottes",
+      "couleurPlaceholder": "#D9FF2E",
+      "laideur": 7,
+      "tags": ["neon", "hiver"]
+    },
+    {
+      "id": "chaussures_05",
+      "nom": "Chaussons dinosaure",
+      "forme": "chaussons",
+      "couleurPlaceholder": "#6FCF72",
+      "laideur": 8,
+      "tags": ["fait-maison", "hiver"]
+    },
+    {
+      "id": "chaussures_06",
+      "nom": "Claquettes de piscine",
+      "forme": "tongs",
+      "couleurPlaceholder": "#1F6F8B",
+      "laideur": 6,
+      "tags": ["sport", "plage", "ete"]
     }
   ],
   "haut": [
@@ -72,19 +148,49 @@
       "id": "haut_01",
       "nom": "Chemise à carreaux douteuse",
       "forme": "chemise",
-      "couleurPlaceholder": "#7E9680"
+      "couleurPlaceholder": "#7E9680",
+      "laideur": 5,
+      "tags": ["motif", "annees90"]
     },
     {
       "id": "haut_02",
       "nom": "T-shirt trop grand",
       "forme": "tshirt",
-      "couleurPlaceholder": "#B33951"
+      "couleurPlaceholder": "#B33951",
+      "laideur": 4,
+      "tags": ["trop-grand"]
     },
     {
       "id": "haut_03",
       "nom": "Polo du club de bowling",
       "forme": "tshirt",
-      "couleurPlaceholder": "#E8C547"
+      "couleurPlaceholder": "#E8C547",
+      "laideur": 6,
+      "tags": ["fac", "annees90"]
+    },
+    {
+      "id": "haut_04",
+      "nom": "Pull de Noël tricoté par mamie",
+      "forme": "pull",
+      "couleurPlaceholder": "#B8332E",
+      "laideur": 8,
+      "tags": ["hiver", "motif", "fait-maison"]
+    },
+    {
+      "id": "haut_05",
+      "nom": "Débardeur de salle de sport",
+      "forme": "debardeur",
+      "couleurPlaceholder": "#E8E2D2",
+      "laideur": 6,
+      "tags": ["sport", "ete"]
+    },
+    {
+      "id": "haut_06",
+      "nom": "Chemise blanche du bal de promo",
+      "forme": "chemise",
+      "couleurPlaceholder": "#F7F3EA",
+      "laideur": 3,
+      "tags": ["formel", "fac"]
     }
   ],
   "veste_manteau": [
@@ -92,13 +198,41 @@
       "id": "veste_01",
       "nom": "Coupe-vent flashy",
       "forme": "veste",
-      "couleurPlaceholder": "#F2A65A"
+      "couleurPlaceholder": "#F2A65A",
+      "laideur": 6,
+      "tags": ["sport", "neon"]
     },
     {
       "id": "veste_02",
       "nom": "Veste en cuir d'un oncle",
       "forme": "veste",
-      "couleurPlaceholder": "#4A3B33"
+      "couleurPlaceholder": "#4A3B33",
+      "laideur": 5,
+      "tags": ["cuir", "trop-grand"]
+    },
+    {
+      "id": "veste_03",
+      "nom": "Gilet polaire sans manches",
+      "forme": "gilet",
+      "couleurPlaceholder": "#7D8B5A",
+      "laideur": 7,
+      "tags": ["sport", "hiver"]
+    },
+    {
+      "id": "veste_04",
+      "nom": "Blouson doré de soirée",
+      "forme": "veste",
+      "couleurPlaceholder": "#FFD84D",
+      "laideur": 8,
+      "tags": ["neon", "fete"]
+    },
+    {
+      "id": "veste_05",
+      "nom": "Veste de survêtement de la fac",
+      "forme": "veste",
+      "couleurPlaceholder": "#2F4B7C",
+      "laideur": 4,
+      "tags": ["sport", "fac"]
     }
   ],
   "ceinture_accessoire_taille": [
@@ -106,13 +240,41 @@
       "id": "ceinture_01",
       "nom": "Ceinture cloutée random",
       "forme": "ceinture",
-      "couleurPlaceholder": "#4A4A4A"
+      "couleurPlaceholder": "#4A4A4A",
+      "laideur": 6,
+      "tags": ["annees90"]
     },
     {
       "id": "ceinture_02",
       "nom": "Ceinture blanche vernie",
       "forme": "ceinture",
-      "couleurPlaceholder": "#F2F0E8"
+      "couleurPlaceholder": "#F2F0E8",
+      "laideur": 7,
+      "tags": ["annees90", "formel"]
+    },
+    {
+      "id": "ceinture_03",
+      "nom": "Banane portée devant",
+      "forme": "banane",
+      "couleurPlaceholder": "#B8332E",
+      "laideur": 7,
+      "tags": ["sport", "annees90"]
+    },
+    {
+      "id": "ceinture_04",
+      "nom": "Bretelles à motif",
+      "forme": "bretelles",
+      "couleurPlaceholder": "#7E4B2A",
+      "laideur": 8,
+      "tags": ["motif", "formel"]
+    },
+    {
+      "id": "ceinture_05",
+      "nom": "Ceinture fluo de festival",
+      "forme": "ceinture",
+      "couleurPlaceholder": "#D9FF2E",
+      "laideur": 7,
+      "tags": ["neon", "fete"]
     }
   ],
   "bijoux": [
@@ -120,13 +282,41 @@
       "id": "bijoux_01",
       "nom": "Collier de nouilles",
       "forme": "collier",
-      "couleurPlaceholder": "#E8C547"
+      "couleurPlaceholder": "#E8C547",
+      "laideur": 8,
+      "tags": ["fait-maison"]
     },
     {
       "id": "bijoux_02",
       "nom": "Chaîne bien trop grosse",
       "forme": "collier",
-      "couleurPlaceholder": "#C0C0C0"
+      "couleurPlaceholder": "#C0C0C0",
+      "laideur": 7,
+      "tags": ["trop-grand", "fete"]
+    },
+    {
+      "id": "bijoux_03",
+      "nom": "Cravate à poissons",
+      "forme": "cravate",
+      "couleurPlaceholder": "#2E6F8F",
+      "laideur": 8,
+      "tags": ["motif", "formel"]
+    },
+    {
+      "id": "bijoux_04",
+      "nom": "Écharpe de la fac, en août",
+      "forme": "echarpe",
+      "couleurPlaceholder": "#8F3F2F",
+      "laideur": 6,
+      "tags": ["hiver", "fac"]
+    },
+    {
+      "id": "bijoux_05",
+      "nom": "Collier lumineux de boîte",
+      "forme": "collier",
+      "couleurPlaceholder": "#D9FF2E",
+      "laideur": 7,
+      "tags": ["neon", "fete"]
     }
   ],
   "coiffure": [
@@ -134,19 +324,49 @@
       "id": "coiffure_01",
       "nom": "Coupe au bol",
       "forme": "bol",
-      "couleurPlaceholder": "#5C4033"
+      "couleurPlaceholder": "#5C4033",
+      "laideur": 6,
+      "tags": ["fait-maison"]
     },
     {
       "id": "coiffure_02",
       "nom": "Mèche rebelle mal taillée",
       "forme": "meche",
-      "couleurPlaceholder": "#2E2E2E"
+      "couleurPlaceholder": "#2E2E2E",
+      "laideur": 5,
+      "tags": []
     },
     {
       "id": "coiffure_03",
       "nom": "Blond décoloré maison",
       "forme": "bol",
-      "couleurPlaceholder": "#E3C77B"
+      "couleurPlaceholder": "#E3C77B",
+      "laideur": 7,
+      "tags": ["fait-maison"]
+    },
+    {
+      "id": "coiffure_04",
+      "nom": "Mulet assumé",
+      "forme": "mulet",
+      "couleurPlaceholder": "#5C4033",
+      "laideur": 8,
+      "tags": ["annees90"]
+    },
+    {
+      "id": "coiffure_05",
+      "nom": "Crête ratée",
+      "forme": "crete",
+      "couleurPlaceholder": "#9B4DFF",
+      "laideur": 8,
+      "tags": ["neon", "fait-maison"]
+    },
+    {
+      "id": "coiffure_06",
+      "nom": "Mulet platine du dimanche",
+      "forme": "mulet",
+      "couleurPlaceholder": "#E3C77B",
+      "laideur": 9,
+      "tags": ["annees90", "fait-maison"]
     }
   ],
   "chapeau_couvre_chef": [
@@ -154,13 +374,41 @@
       "id": "chapeau_01",
       "nom": "Casquette à l'envers",
       "forme": "casquette_envers",
-      "couleurPlaceholder": "#1F6F8B"
+      "couleurPlaceholder": "#1F6F8B",
+      "laideur": 5,
+      "tags": ["annees90", "sport"]
     },
     {
       "id": "chapeau_02",
       "nom": "Casquette de la fac, tachée",
       "forme": "casquette",
-      "couleurPlaceholder": "#8F3F2F"
+      "couleurPlaceholder": "#8F3F2F",
+      "laideur": 5,
+      "tags": ["fac", "sale"]
+    },
+    {
+      "id": "chapeau_03",
+      "nom": "Bob à imprimé tropical",
+      "forme": "bob",
+      "couleurPlaceholder": "#2FAE6B",
+      "laideur": 7,
+      "tags": ["motif", "ete", "plage"]
+    },
+    {
+      "id": "chapeau_04",
+      "nom": "Bonnet à pompon, en juillet",
+      "forme": "bonnet",
+      "couleurPlaceholder": "#B8332E",
+      "laideur": 7,
+      "tags": ["hiver"]
+    },
+    {
+      "id": "chapeau_05",
+      "nom": "Bob fluo de festival",
+      "forme": "bob",
+      "couleurPlaceholder": "#D9FF2E",
+      "laideur": 8,
+      "tags": ["neon", "fete", "ete"]
     }
   ],
   "visage_extra": [
@@ -168,13 +416,41 @@
       "id": "lunettes_01",
       "nom": "Lunettes de soleil en intérieur",
       "forme": "lunettes",
-      "couleurPlaceholder": "#111111"
+      "couleurPlaceholder": "#111111",
+      "laideur": 6,
+      "tags": ["ete"]
     },
     {
       "id": "lunettes_02",
       "nom": "Lunettes rouges de piscine",
       "forme": "lunettes",
-      "couleurPlaceholder": "#D1232A"
+      "couleurPlaceholder": "#D1232A",
+      "laideur": 7,
+      "tags": ["sport", "plage"]
+    },
+    {
+      "id": "lunettes_03",
+      "nom": "Masque de ski, en ville",
+      "forme": "lunettes_ski",
+      "couleurPlaceholder": "#2F4B7C",
+      "laideur": 8,
+      "tags": ["hiver", "sport"]
+    },
+    {
+      "id": "lunettes_04",
+      "nom": "Fausse moustache",
+      "forme": "moustache",
+      "couleurPlaceholder": "#3B2B20",
+      "laideur": 8,
+      "tags": ["fete", "fait-maison"]
+    },
+    {
+      "id": "lunettes_05",
+      "nom": "Lunettes à monture fluo",
+      "forme": "lunettes",
+      "couleurPlaceholder": "#D9FF2E",
+      "laideur": 7,
+      "tags": ["neon", "fete"]
     }
   ],
   "sticker_overlay": []

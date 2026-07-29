@@ -37,10 +37,12 @@ body {
    Aire de jeu : scène + dock
    ========================================================= */
 
+/* 700 px et non 620 : le Drewmètre a pris de la hauteur sous la bulle, et
+   sans ça c'est la place de Drew qui aurait été rognée d'autant. */
 .game {
   display: flex;
   align-items: stretch;
-  min-height: 620px;
+  min-height: 700px;
 }
 
 /* --- La scène : Drew en grand, boutons ronds aux coins --- */
@@ -393,6 +395,145 @@ body {
 }
 
 /* =========================================================
+   Le Drewmètre : la note de mauvais goût de la tenue
+
+   Hauteur FIXE, pour la même raison que la bulle : ce bloc est sous la
+   scène, donc tout ce qu'il prend en hauteur, Drew le perd. La ligne de
+   combos défile latéralement au lieu de passer à la ligne.
+   ========================================================= */
+
+.gout {
+  flex: 0 0 auto;
+  height: 82px;
+  width: 100%;
+  max-width: 420px;
+  margin: 2px auto 0;
+  padding: 5px 10px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: 0 3px 0 rgba(59, 10, 69, 0.35);
+}
+
+.gout-tete {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.gout-nom {
+  flex: 0 0 auto;
+  font-family: var(--font-deco);
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--text-color);
+}
+
+/* Le titre du palier : c'est lui qu'on lit, donc il prend la place qui
+   reste et se coupe proprement plutôt que de pousser les chiffres dehors. */
+.gout-palier {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--encre-clair);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gout-chiffres {
+  flex: 0 0 auto;
+  font-family: var(--font-chiffres);
+  font-size: 0.95rem;
+  font-weight: bold;
+  color: var(--bonbon);
+}
+
+.gout-chiffres small {
+  margin-left: 5px;
+  font-family: var(--font-ui);
+  font-size: 0.55rem;
+  font-weight: bold;
+  color: var(--gris-ui);
+}
+
+.gout-jauge {
+  position: relative;
+  flex: 0 0 auto;
+  height: 16px;
+  border: 2px solid var(--text-color);
+  border-radius: var(--radius-button);
+  background: linear-gradient(180deg, #e3cfe8, #fff);
+  overflow: hidden;
+}
+
+/* L'arc-en-ciel est calé en pixels, pas en pourcentage : sinon la palette
+   se comprime avec la barre et le rose arrive dès les premiers points. */
+.gout-remplissage {
+  display: block;
+  width: 0;
+  height: 100%;
+  background-image:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 55%),
+    linear-gradient(90deg, var(--piscine) 0%, var(--citron) 28%, var(--or) 58%, var(--bonbon) 100%);
+  background-size: 100% 100%, 400px 100%;
+  background-repeat: no-repeat;
+  transition: width 0.3s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+/* Le repère du meilleur score : la barre à battre. */
+.gout-marque {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--text-color);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.85);
+  transform: translateX(-2px);
+}
+
+.gout-combos {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 4px;
+  height: 21px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.gout-combos::-webkit-scrollbar { display: none; }
+
+.gout-combos-vide::before {
+  content: "aucun combo pour l'instant";
+  font-family: var(--font-ui);
+  font-size: 0.58rem;
+  font-style: italic;
+  color: var(--gris-ui);
+}
+
+.gout-combo {
+  flex: 0 0 auto;
+  padding: 2px 8px;
+  font-family: var(--font-ui);
+  font-size: 0.57rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--citron));
+  border: 2px solid var(--text-color);
+  border-radius: var(--radius-button);
+}
+
+/* =========================================================
    Dock garde-robe : rail de catégories + bande d'items
    ========================================================= */
 
@@ -485,6 +626,51 @@ body {
   padding: 10px;
 }
 
+/* Le rail n'a la place que d'un mot par catégorie. L'en-tête dit le reste :
+   où on est, combien il y a de pièces, et laquelle Drew porte déjà. */
+.dock-entete {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-bottom: 7px;
+  padding-bottom: 5px;
+  border-bottom: 2px dotted rgba(255, 255, 255, 0.35);
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+}
+
+.dock-entete-nom {
+  flex: 0 0 auto;
+  font-family: var(--font-deco);
+  font-size: 0.95rem;
+  line-height: 1;
+  color: #fff;
+}
+
+.dock-entete-compte {
+  flex: 0 0 auto;
+  color: var(--lilas-clair);
+  white-space: nowrap;
+}
+
+.dock-entete-choix {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: right;
+  font-weight: bold;
+  color: var(--citron);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dock-entete-vide {
+  font-weight: normal;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.5);
+}
+
 .dock-panels {
   flex: 1 1 auto;
   min-height: 0;
@@ -540,6 +726,30 @@ body {
   background: #fff center / contain no-repeat;
   pointer-events: none;
 }
+
+/* La note de mauvais goût de la pièce, posée DANS la tuile : en débordant
+   du cadre elle aurait été rognée par le défilement de la bande. */
+.item-laideur {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-chiffres);
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+}
+
+.item-laideur.niveau-bas { background: #3f8f57; }
+.item-laideur.niveau-moyen { background: #d1801a; }
+.item-laideur.niveau-haut { background: #bd2f27; }
 
 .item-nom {
   pointer-events: none;
@@ -633,6 +843,12 @@ body {
 
   #flavor-text { font-size: 0.78rem; margin-top: 6px; }
 
+  /* Le Drewmètre se resserre : sur un écran haut comme un téléphone, chaque
+     pixel pris ici sort de la place de Drew. */
+  .gout { height: 74px; padding: 4px 8px 5px; }
+  .gout-nom { font-size: 0.8rem; }
+  .gout-jauge { height: 14px; }
+
   .dock {
     flex: 0 0 auto;
     flex-direction: column;
@@ -671,6 +887,10 @@ body {
   :root { --tuile: 66px; }
   .round-btn { width: 44px; height: 44px; font-size: 1.1rem; }
   .round-label { font-size: 0.42rem; }
+  /* Le nom du palier suffit : le mot « Drewmètre » passe à la trappe avant
+     lui, sinon les trois blocs de la ligne se marchent dessus. */
+  .gout-nom { display: none; }
+  .item-laideur { width: 17px; height: 17px; font-size: 0.55rem; }
 }
 
 /* =========================================================

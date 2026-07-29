@@ -131,6 +131,8 @@ plus drôle ou corriger un décalage.
 | `fichier` | dès que tu as l'image | chemin du PNG 400 × 600 |
 | `forme` | tant qu'il n'y a pas d'image | silhouette de secours (voir §2.4) |
 | `couleurPlaceholder` | tant qu'il n'y a pas d'image | couleur de cette silhouette |
+| `laideur` | non (0 par défaut) | note de mauvais goût de 0 à 10, pour le Drewmètre (voir §2.5) |
+| `tags` | non | étiquettes qui servent aux combos : `motif`, `neon`, `sale`, `sport`, `hiver`, `ete`, `plage`, `formel`, `fete`, `fac`, `cuir`, `trop-grand`, `fait-maison`, `annees90` |
 | `decalageX` / `decalageY` | non | décalage en px si le fichier est mal aligné |
 
 Recharge la page : la pièce apparaît dans le rail, cliquable et glissable.
@@ -148,16 +150,16 @@ Formes disponibles :
 
 | Catégorie | Formes |
 |---|---|
-| `haut` | `tshirt` (défaut), `chemise` |
-| `veste_manteau` | `veste` |
-| `bas` | `pantalon` (défaut), `short`, `jupe` |
-| `chaussures` | `baskets` (défaut), `tongs`, `sandales` |
-| `ceinture_accessoire_taille` | `ceinture` |
+| `haut` | `tshirt` (défaut), `chemise`, `pull`, `debardeur` |
+| `veste_manteau` | `veste`, `gilet` |
+| `bas` | `pantalon` (défaut), `short`, `jupe`, `jogging`, `pantacourt` |
+| `chaussures` | `baskets` (défaut), `tongs`, `sandales`, `bottes`, `chaussons` |
+| `ceinture_accessoire_taille` | `ceinture`, `banane`, `bretelles` |
 | `calecon` | `calecon` (défaut), `slip` |
-| `bijoux` | `collier` |
-| `coiffure` | `bol` (défaut), `meche` |
-| `chapeau_couvre_chef` | `casquette` (défaut), `casquette_envers` |
-| `visage_extra` | `lunettes` |
+| `bijoux` | `collier`, `cravate`, `echarpe` |
+| `coiffure` | `bol` (défaut), `meche`, `mulet`, `crete` |
+| `chapeau_couvre_chef` | `casquette` (défaut), `casquette_envers`, `bob`, `bonnet` |
+| `visage_extra` | `lunettes`, `lunettes_ski`, `moustache` |
 
 Si tu omets `forme`, la forme par défaut de la catégorie est utilisée.
 
@@ -167,6 +169,31 @@ la garde-robe) et un `dessin(couleur)` qui renvoie des tracés SVG placés dans
 le cadre 400 × 600. Les repères du corps sont rappelés en tête du fichier
 (épaules y 168, taille y 296, chevilles y 552…). Le helper `miroir()` duplique
 un tracé de gauche en symétrie, pour les manches et les chaussures.
+
+### 2.5 Le Drewmètre : régler ce qui est laid
+
+Le score affiché sous Drew se calcule en deux temps, et **aucun des deux n'est
+dans le moteur** :
+
+1. la laideur de chaque pièce prise seule, dans `assets/manifest.json`
+   (`laideur`, de 0 à 10) — c'est aussi le chiffre affiché sur sa vignette ;
+2. ce qui ne se voit que lorsque deux pièces se rencontrent, dans `gout.js` :
+   les **combos**. Chacun a un `nom`, des `points`, un `texte` (la réplique
+   affichée au moment où il s'active) et une règle `quand(t)`.
+
+`t` est un « lecteur de tenue » : `t.porte(id)`, `t.forme(nom)`, `t.cat(cat)`,
+`t.nu(cat)`, `t.tag(etiquette)`, `t.compte(etiquette)`, `t.nb`, `t.decor`.
+Un combo qui repose sur des `tags` continue de marcher quand tu remplaces les
+silhouettes par tes dessins ; un combo qui nomme un `id` précis aussi.
+
+`gout.js` contient aussi les **paliers** (les titres du genre « Attentat
+visuel »), le haut de la jauge (`GOUT_MAX`) et **toutes les phrases** du jeu.
+Si tu ajoutes beaucoup de pièces ou de combos, `GOUT_MAX` mérite d'être
+revérifié : il vaut aujourd'hui 350, soit exactement le meilleur score
+atteignable avec la garde-robe actuelle.
+
+Le meilleur score est gardé en `localStorage` sous la clé `drew_gout_record`,
+et son repère se dessine sur la jauge.
 
 ### 2.3 Ajouter une catégorie entière
 

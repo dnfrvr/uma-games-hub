@@ -13,7 +13,10 @@ async function exportDollAsPng() {
 
   try {
     await genererPng();
-    showFlavorText("Photo enregistrée. L'aigle en garde une copie.");
+    // La note part avec la photo : c'est ce qui rend un score partageable.
+    showFlavorText(
+      `Photo enregistrée : ${evalueGout().score} points de mauvais goût. L'aigle en garde une copie.`
+    );
   } finally {
     exportEnCours = false;
     if (bouton) bouton.disabled = false;
@@ -51,7 +54,9 @@ async function genererPng() {
   link.click();
 }
 
-/* Un nom par tenue plutôt que « dress-my-drew (3).png » à répétition. */
+/* Un nom par tenue plutôt que « dress-my-drew (3).png » à répétition.
+   Le score entre dans le nom : un dossier de captures se relit alors tout
+   seul, de la tenue sage à la pire. */
 function nomDuFichier() {
   const d = new Date();
   const horodatage =
@@ -60,7 +65,7 @@ function nomDuFichier() {
     "-" + String(d.getDate()).padStart(2, "0") +
     "-" + String(d.getHours()).padStart(2, "0") +
     String(d.getMinutes()).padStart(2, "0");
-  return `drew-${sansAccent(trouveDecor(decorActuel).nom)}-${horodatage}.png`;
+  return `drew-${sansAccent(trouveDecor(decorActuel).nom)}-${evalueGout().score}pts-${horodatage}.png`;
 }
 
 function sansAccent(texte) {
