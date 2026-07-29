@@ -13,6 +13,7 @@ ou d'une fenêtre de jugement. Ces scripts, si.
 ```bash
 node outils/test-jeux.js              # 49 vérifications sur les 3 jeux + la fabrique de personnages
 node outils/test-collisions.js        # aucun nom de classe CSS partagé entre la coque et les jeux
+node outils/test-uma-bros.js         # les 3 niveaux d UMA Bros sont-ils franchissables ?
 node outils/test-serie-elias.js       # la série de bons coups et la courbe de vagues de Sanity Whack
 node outils/mesure-difficulte-eoghan.js   # ~2 min : mesure la difficulté des 3 décors de Kiss & Cache
 ```
@@ -62,3 +63,19 @@ console.log(ch.nom, n.length+' notes, pas mini '+m+' ms');}"
 Règle : **jamais moins de 200 ms entre deux notes**, rafale de 4 notes maximum
 suivie d'une respiration. En dessous, la chorégraphie devient injouable à la
 main (la finale était à 101 ms avant correction).
+
+## Ce que vérifie `test-uma-bros.js`
+
+Un jeu de plateforme se casse en silence : un trou trois pixels trop large et
+le niveau devient infranchissable, sans aucune erreur nulle part. Le script
+relit `games/uma-bros/niveaux.js` et vérifie, **pour chacun des quatre
+personnages** (ils n ont ni la même détente ni la même foulée) : que chaque
+trou se saute, que chaque plateforme est atteignable, qu aucun ennemi terrestre
+ne patrouille au-dessus du vide, que le drapeau est posé sur du sol et que le
+chrono laisse le temps de traverser.
+
+Les formules sortent de la physique du moteur, qui lit les mêmes constantes
+(`PHYSIQUE` dans `niveaux.js`) : changer la gravité ou la vitesse rejoue donc
+la vérification sur les trois niveaux. Repère actuel — le plus grand trou par
+niveau : 100 px, 112 px, 120 px, pour une portée sûre de 125 px chez le plus
+lent (Elias).

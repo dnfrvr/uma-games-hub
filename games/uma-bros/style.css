@@ -1,0 +1,460 @@
+/* =========================================================
+   UMA Bros — habillage propre au jeu
+   À charger APRÈS shared/style-tokens.css, components.css, portail.css
+   et skins.css. Tout ce qui est générique (fond, cadre, bandeau, boutons)
+   vient de là ; ce fichier ne décrit que la scène de plateforme.
+
+   Le monde est positionné en pixels absolus et déplacé d'un seul
+   `transform` sur `.monde` : c'est le GPU qui fait défiler, pas la mise en
+   page. Idem pour le décor de fond, à 45 % de la vitesse.
+   ========================================================= */
+
+.game {
+  display: flex;
+  align-items: stretch;
+  min-height: 460px;
+}
+
+/* =========================================================
+   La scène
+   ========================================================= */
+
+.stage {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.scene {
+  position: relative;
+  flex: 1 1 auto;
+  height: 420px;
+  overflow: hidden;
+  /* Le ciel est posé par le niveau (niveaux.js), d'où la valeur de repli. */
+  background: linear-gradient(180deg, #8ed6ff, #eaf8e2);
+}
+
+.fond,
+.monde {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.fond { pointer-events: none; }
+
+/* --- Décor de fond : bâtiments de brique et arbres --- */
+.decor {
+  position: absolute;
+  bottom: auto;
+}
+
+.decor-batiment {
+  background:
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.06) 0 22px, rgba(0, 0, 0, 0) 22px 44px),
+    linear-gradient(180deg, #c0705a, #9c5340);
+  border: 3px solid #6d3628;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  opacity: 0.75;
+}
+
+/* Les fenêtres, en motif : deux rangées de carrés clairs. */
+.decor-batiment::after {
+  content: "";
+  position: absolute;
+  inset: 16px 12px 0;
+  background-image: radial-gradient(circle at 50% 50%, #ffe9a8 0 6px, transparent 7px);
+  background-size: 34px 40px;
+  opacity: 0.8;
+}
+
+.decor-arbre {
+  width: 78px;
+  background:
+    radial-gradient(circle at 50% 32%, #4f9b30 0 38%, transparent 39%),
+    linear-gradient(180deg, transparent 0 60%, #7a4a1e 60% 100%);
+  opacity: 0.7;
+}
+
+/* =========================================================
+   Le terrain
+   ========================================================= */
+
+.sol {
+  position: absolute;
+  height: 240px;
+  background:
+    linear-gradient(180deg, var(--sol-herbe, #5aa02c) 0 14px, var(--sol-terre, #8a5a2b) 14px 100%);
+  border: 3px solid var(--text-color);
+  border-bottom: none;
+  box-shadow: inset 0 -40px 60px rgba(0, 0, 0, 0.22);
+}
+
+.plateforme {
+  position: absolute;
+  height: 20px;
+  background: linear-gradient(180deg, #ffd84d, #e0a400);
+  border: 3px solid var(--text-color);
+  border-radius: 4px;
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.28);
+}
+
+/* Le drapeau d'arrivée */
+.drapeau {
+  position: absolute;
+  width: 10px;
+  height: 150px;
+  background: linear-gradient(180deg, #e6e6e6, #9a9a9a);
+  border: 3px solid var(--text-color);
+  border-radius: 3px;
+}
+
+.drapeau::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 6px;
+  width: 54px;
+  height: 36px;
+  background: var(--accent, var(--bonbon));
+  border: 3px solid var(--text-color);
+  clip-path: polygon(0 0, 100% 0, 74% 50%, 100% 100%, 0 100%);
+  animation: drapeauFlotte 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes drapeauFlotte {
+  to { transform: skewY(-4deg) translateY(2px); }
+}
+
+/* =========================================================
+   Les acteurs
+   ========================================================= */
+
+.joueur {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 52px;
+  will-change: transform;
+}
+
+.joueur svg {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 44px;
+  height: 66px;
+  margin-left: -22px;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.25));
+}
+
+/* Une foulée suggérée : le personnage tangue au lieu d'être une statue. */
+.joueur.court svg { animation: foulee 0.28s steps(2, end) infinite; }
+.joueur.saute svg { transform: translateY(-2px) rotate(-4deg); }
+
+@keyframes foulee {
+  50% { transform: translateY(-3px) rotate(3deg); }
+}
+
+.joueur.clignote { animation: clignote 0.14s steps(2, end) infinite; }
+
+@keyframes clignote {
+  50% { opacity: 0.25; }
+}
+
+.ennemi {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+
+.ennemi svg { display: block; }
+.ennemi.ecrase { animation: ecrase 0.25s ease forwards; }
+
+@keyframes ecrase {
+  to { transform: translateY(10px) scaleY(0.15); opacity: 0; }
+}
+
+/* =========================================================
+   Écrans superposés
+   ========================================================= */
+
+.ecran {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-content: center;
+  padding: 14px;
+  overflow-y: auto;
+  background: rgba(29, 4, 36, 0.55);
+}
+
+.ecran.visible { display: grid; }
+
+.ecran-boite {
+  max-width: 620px;
+  margin: auto;
+  padding: 16px 18px;
+  text-align: center;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--ombre-dure);
+}
+
+.ecran-mince .ecran-boite { max-width: 380px; }
+
+.ecran-titre {
+  margin: 0 0 8px;
+  font-family: var(--font-deco);
+  font-size: 1.6rem;
+  line-height: 1.1;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #fff, 2px 2px 0 var(--text-color);
+}
+
+.ecran-texte {
+  margin: 0 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.4;
+}
+
+.ecran-suite {
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--gris-ui);
+}
+
+/* --- Le choix du personnage --- */
+.choix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.choix-carte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px 10px;
+  font-family: inherit;
+  text-align: center;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: 3px solid var(--accent);
+  border-radius: var(--radius-panel);
+  box-shadow: 0 3px 0 var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.choix-carte:hover,
+.choix-carte:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 0 var(--shadow-color);
+}
+
+.choix-perso svg { width: 54px; height: 81px; display: block; }
+.choix-nom { font-size: 0.9rem; font-weight: bold; }
+
+.choix-talent {
+  padding: 1px 8px;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--accent);
+  border-radius: var(--radius-etiquette);
+}
+
+.choix-detail {
+  margin-top: 2px;
+  font-size: 0.68rem;
+  line-height: 1.25;
+  color: var(--gris-ui);
+}
+
+/* =========================================================
+   Tableau de bord
+   ========================================================= */
+
+.dock {
+  flex: 0 0 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  background: linear-gradient(180deg, #2f5a8a, #16304e);
+  border-left: var(--trait);
+}
+
+.dock-bloc {
+  padding: 7px 9px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-controle);
+}
+
+.dock-etiquette {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #a9c8e8;
+}
+
+.dock-valeur {
+  display: block;
+  font-family: var(--font-chiffres);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #ffd84d;
+}
+
+.dock-texte { display: block; font-size: 0.78rem; color: #fff; }
+
+.vie {
+  font-size: 1.15rem;
+  color: #ff5c8a;
+  text-shadow: 0 0 5px rgba(255, 92, 138, 0.7);
+}
+
+.dock-aide {
+  margin: auto 0 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  line-height: 1.4;
+  color: #a9c8e8;
+}
+
+.dock-aide b { color: #fff; }
+
+/* =========================================================
+   Commandes tactiles
+   ========================================================= */
+
+.tactile {
+  display: none;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-top: var(--trait);
+}
+
+.tact {
+  flex: 1 1 0;
+  padding: 14px 0;
+  font-size: 1.3rem;
+  font-family: inherit;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--barbe));
+  border: 2px solid var(--text-color);
+  border-radius: var(--radius-controle);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.tact.appuye { background: var(--citron); transform: translateY(2px); }
+.tact-saut { flex: 1.6 1 0; }
+
+/* Le doigt vise mal une flèche de 30 px : les pavés n'apparaissent que là où
+   il n'y a pas de clavier. */
+@media (pointer: coarse) {
+  .tactile { display: flex; }
+}
+
+/* =========================================================
+   Écrans étroits
+   ========================================================= */
+
+@media (max-width: 860px) {
+  .game { flex-direction: column; min-height: 0; }
+  .scene { height: min(56vh, 380px); }
+
+  .dock {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    border-left: none;
+    border-top: var(--trait);
+  }
+
+  .dock-bloc { flex: 1 1 100px; }
+  .dock-aide { flex: 1 1 100%; margin: 0; }
+  .tactile { display: flex; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .joueur.court svg,
+  .drapeau::after,
+  .joueur.clignote { animation: none; }
+}
+
+/* =========================================================
+   Décors propres à chaque niveau
+   ---------------------------------------------------------
+   `main.js` pose `data-niveau` sur la scène : le fond change d'ambiance sans
+   qu'aucune couleur soit écrite dans le moteur.
+   ========================================================= */
+
+.decor-lampadaire {
+  width: 14px;
+  background: linear-gradient(180deg, #6b7280, #3b4250);
+  border-radius: 3px;
+}
+
+/* Le halo, en haut du mât. */
+.decor-lampadaire::before {
+  content: "";
+  position: absolute;
+  left: -19px;
+  top: -12px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 214, 120, 0.85) 0 22%, rgba(255, 214, 120, 0) 70%);
+}
+
+.decor-sapin {
+  width: 92px;
+  background:
+    linear-gradient(180deg, transparent 0 74%, #3a2a1c 74% 100%);
+}
+
+/* Trois étages de branches, en triangles. */
+.decor-sapin::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 26% 0;
+  background: #1f4a2c;
+  clip-path: polygon(50% 0, 100% 44%, 74% 44%, 100% 74%, 0 74%, 26% 44%, 0 44%);
+}
+
+/* --- Derry : brique sale et lumière froide --- */
+[data-niveau="derry"] .decor-batiment {
+  background:
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.14) 0 22px, rgba(0, 0, 0, 0) 22px 44px),
+    linear-gradient(180deg, #4c4457, #2f2b3a);
+  border-color: #1b1824;
+  opacity: 0.9;
+}
+
+[data-niveau="derry"] .decor-batiment::after {
+  background-image: radial-gradient(circle at 50% 50%, #ffd77a 0 6px, transparent 7px);
+  opacity: 0.55;
+}
+
+/* --- La forêt : on ne voit plus que des silhouettes --- */
+[data-niveau="foret"] .decor-sapin::before { background: #16301f; }
+[data-niveau="foret"] .decor-sapin { opacity: 0.9; }

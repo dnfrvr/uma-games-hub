@@ -37,6 +37,7 @@ const JEUX = [
   "games/glinda-cheer/style.css",
   "games/elias-whack/style.css",
   "games/eoghan-office/style.css",
+  "games/uma-bros/style.css",
 ];
 
 /* `.css` dans une URL ou un commentaire n'est pas un sélecteur. */

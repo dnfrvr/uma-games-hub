@@ -64,6 +64,22 @@
     "controles": "Flèches + Espace"
   },
   {
+    "id": "uma-bros",
+    "titre": "UMA Bros",
+    "perso": "Drew, Glinda, Elias ou Eoghan",
+    "description": "Traverse le campus sans te faire attraper. Les cafards ne pardonnent pas.",
+    "vignette": "shared/vignettes/uma-bros.svg",
+    "url": "games/uma-bros/index.html",
+    "couleur": "#4ba3e3",
+    "statut": "disponible",
+    "categorie": "Action",
+    "note": 9.1,
+    "votes": 1876,
+    "parties": 31204,
+    "ajoute_le": "2012-12-18",
+    "controles": "Flèches + Espace"
+  },
+  {
     "id": "memory",
     "titre": "UMA Memory",
     "perso": "Tout le monde",

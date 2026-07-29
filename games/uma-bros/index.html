@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>🍄 UMA Bros 🍄</title>
+<link rel="icon" type="image/svg+xml" href="../../shared/vignettes/uma-bros.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="../../shared/portail.css" />
+<link rel="stylesheet" href="../../shared/skins.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-uma-bros">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- En-tête du portail : barre de service, navigation, annonces -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="colonne-jeu">
+      <nav id="fil-ariane"></nav>
+
+      <!-- Régie du portail : bannière au-dessus du lecteur -->
+      <div class="pub pub-banniere" id="pub-haut"></div>
+
+      <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
+      <div class="lecteur">
+        <div id="lecteur-chargement"></div>
+        <div class="lecteur-scene">
+          <div class="shell">
+            <header class="banner">
+              <h1 class="wordart" data-text="UMA Bros"><span>UMA Bros</span></h1>
+              <p class="tagline">Traverse le campus. Tout le monde t'en veut un peu.</p>
+            </header>
+
+            <div class="game">
+              <!-- ===== Scène : le niveau, à défilement horizontal ===== -->
+              <section class="stage">
+                <div class="scene" id="scene">
+                  <div class="fond" id="fond" aria-hidden="true"></div>
+                  <div class="monde" id="monde">
+                    <div class="joueur" id="joueur" aria-hidden="true"></div>
+                  </div>
+                  <div class="ecran visible" id="ecran"></div>
+                </div>
+
+                <!-- Commandes au doigt, seulement sans clavier -->
+                <div class="tactile" aria-hidden="true">
+                  <button type="button" class="tact" id="tact-gauche">◀</button>
+                  <button type="button" class="tact tact-saut" id="tact-saut">SAUT</button>
+                  <button type="button" class="tact" id="tact-droite">▶</button>
+                </div>
+              </section>
+
+              <!-- ===== Tableau de bord ===== -->
+              <aside class="dock">
+                <div class="dock-bloc">
+                  <span class="dock-etiquette">Personnage</span>
+                  <span id="dock-perso" class="dock-texte">—</span>
+                </div>
+
+                <div class="dock-bloc">
+                  <span class="dock-etiquette">Niveau</span>
+                  <span id="dock-niveau" class="dock-texte">—</span>
+                </div>
+
+                <div class="dock-bloc">
+                  <span class="dock-etiquette">Score</span>
+                  <span id="dock-score" class="dock-valeur">0</span>
+                </div>
+
+                <div class="dock-bloc">
+                  <span class="dock-etiquette">Chrono</span>
+                  <span id="dock-chrono" class="dock-valeur">—</span>
+                </div>
+
+                <div class="dock-bloc">
+                  <span class="dock-etiquette">Vies</span>
+                  <span id="dock-vies" class="dock-texte"></span>
+                </div>
+
+                <p class="dock-aide">
+                  <b>← →</b> ou <b>Q D</b> pour courir.<br />
+                  <b>Espace</b> pour sauter — relâche tôt pour sauter court.<br />
+                  Retombe sur un cafard pour l'écraser.
+                </p>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div id="lecteur-outils"></div>
+      </div>
+
+      <!-- Fiche du jeu, remplie depuis games-manifest.json -->
+      <div id="fiche-jeu"></div>
+    </div>
+
+    <div class="colonne-sidebar">
+      <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+      <div id="sidebar-autres-jeux"></div>
+      <!-- Régie du portail : pavé sous le rail -->
+      <div class="pub pub-pave" id="pub-cote"></div>
+    </div>
+  </div>
+
+  <!-- Pied de page du portail, commun à toutes les pages -->
+  <div id="pied"></div>
+
+  <script src="../../shared/perso.js"></script>
+  <script src="niveaux.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/favoris.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script src="../../shared/lecteur.js"></script>
+  <script src="../../shared/pub.js"></script>
+  <script src="../../shared/pied.js"></script>
+  <script>
+    renderNavbar("uma-bros", "navbar");
+    renderSidebar("uma-bros", "sidebar-autres-jeux");
+    renderPied("pied");
+    renderLecteur("uma-bros");
+    renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
+  </script>
+</body>
+</html>

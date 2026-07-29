@@ -179,3 +179,43 @@ body.theme-eoghan {
   --btn-fond-primaire: linear-gradient(180deg, #ff7ab8, #e01f7f);
   --btn-encre-primaire: #ffffff;
 }
+
+/* --- UMA Bros — l affiche d arcade ----------------------------------------
+   Ciel de plein jour et lettrage massif : c est le seul jeu du portail qui
+   n appartient à personne — on y choisit son personnage — donc son habillage
+   ne prend la couleur d aucun des quatre. Arial Black est LA grosse police
+   système de l époque, et elle tient le contour épais sans se boucher. */
+body.theme-uma-bros {
+  --banner-fond:
+    radial-gradient(circle at 18% 120%, rgba(255, 255, 255, 0.5) 0 22%, transparent 23%),
+    radial-gradient(circle at 76% 130%, rgba(255, 255, 255, 0.45) 0 20%, transparent 21%),
+    linear-gradient(180deg, #2f8fd8 0%, #6fc0f0 58%, #a9e4ff 100%);
+  --banner-trait: 3px solid #1c5f95;
+
+  --font-deco: "Arial Black", "Arial Bold", Impact, sans-serif;
+  --titre-police: var(--font-deco);
+  --titre-graisse: 900;
+  --titre-taille: clamp(1.8rem, 5.6vw, 3.2rem);
+  --titre-casse: uppercase;
+  --titre-espacement: 0.01em;
+  --titre-cerne: #14395c;
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
+  --titre-remplissage: linear-gradient(180deg, #fff 0%, #fff 46%, #ffd84d 48%, #f0a800 100%);
+
+  --tagline-style: normal;
+  --tagline-casse: uppercase;
+  --tagline-espacement: 0.1em;
+  --tagline-couleur: #e6f5ff;
+
+  --panel-bg: #f2f8ff;
+  --trait: 3px solid #14395c;
+  --radius-panel: 10px;
+
+  --btn-fond: linear-gradient(180deg, #4fb0ec, #1f6ea8);
+  --btn-cadre: 2px solid #14395c;
+  --btn-encre: #ffffff;
+  --btn-rayon: 5px;
+  --btn-ombre: 0 3px 0 #0e2a45;
+  --btn-fond-primaire: linear-gradient(180deg, #ffe98a, var(--or));
+  --btn-encre-primaire: #14395c;
+}
