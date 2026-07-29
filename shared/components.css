@@ -64,9 +64,18 @@ body::before {
   margin: 0 auto;
 }
 
+/* `width: 100%` n'est pas décoratif, c'est ce qui rend la page repliable.
+   `.shell` porte `margin: 0 auto` (il se centrait tout seul avant d'être mis
+   dans `.page`). Or en colonne — c'est-à-dire sous 1180 px — deux marges auto
+   sur l'axe transversal annulent l'étirement : le cadre se sizait alors sur son
+   contenu, donc jamais sous sa largeur min-content (le rail de catégories de
+   Drew : 736 px). D'où la barre de défilement horizontale et le jeu coupé en
+   deux sur mobile. Une largeur explicite reprend la main ; `max-width` +
+   marges auto continuent de centrer quand il reste de la place. */
 .page > .shell {
   flex: 1 1 auto;
   min-width: 0;
+  width: 100%;
 }
 
 .colonne-sidebar {

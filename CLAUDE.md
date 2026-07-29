@@ -189,8 +189,13 @@ solution de repli et de référence de cadrage.
 - Le **glisser-déposer de Drew** et le **maintien de touche** (bisou d'Eoghan, jeu au
   doigt) ne sont pas testables en automatisation : les événements synthétiques ne
   reproduisent pas la séquence `pointer*` attendue. À vérifier à la main.
-- Le rendu **en écran étroit (< 900 px)** n'a jamais été contrôlé visuellement ; les
-  règles responsives existent dans chaque `style.css` mais méritent un coup d'œil.
+- Le rendu **en écran étroit** est contrôlé depuis le 2026-07-29 : aucune des 5 pages
+  ne déborde horizontalement entre 360 px et 1440 px. Piège à connaître si tu touches
+  à la mise en page : `.shell` porte `margin: 0 auto`, et sous 1180 px `.page` passe en
+  colonne — deux marges auto sur l'axe transversal **annulent l'étirement** d'un item
+  flex, qui se met alors à la taille de son contenu (jamais sous sa largeur min-content).
+  C'est ce qui coupait le jeu de Drew en deux sur mobile. D'où le `width: 100%` sur
+  `.page > .shell` dans `shared/components.css` : ne pas le retirer.
 - L'extension Chrome de capture d'écran tombe régulièrement en panne pendant les
   sessions longues : ouvrir un nouvel onglet la remet d'aplomb.
 
