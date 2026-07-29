@@ -495,8 +495,9 @@ solution de repli et de référence de cadrage.
   d'affilée, ×3 à 10, remise à zéro à la moindre bourde.
   `node outils/test-serie-elias.js` interdit tout plateau jusqu'à la vague 60.
 - **Eoghan** : part de la salle surveillée par les téléphones, en moyenne dans le
-  temps — campus 24 %, soirée 48 %, vestiaire 56 %. Chaque décor doit rester
-  au-dessus du précédent.
+  temps — campus 24 %, soirée 47 %, vestiaire 57 %, bal de promo 64 %. Chaque
+  décor doit rester au-dessus du précédent, et `node outils/mesure-difficulte-eoghan.js`
+  lit désormais `DECORS` : un 5e terrain se mesure sans toucher au banc d essai.
 
 ### Où en est chaque jeu par rapport à sa spec
 - **Glinda** : phases 0 à 4 faites (moteur, hype, combo, habillage). Décor : stade de

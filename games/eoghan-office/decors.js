@@ -10,6 +10,20 @@
    de l'écran.
 
    Ajouter un décor = ajouter une entrée dans DECORS. Aucun code à écrire.
+
+   Un PNJ se décrit en trois couches, qu'on combine librement :
+     motif      "patrouille" (de → a, vitesse) | "tourne" (periode) | "fixe"
+     distraction { regarde, pause, alterne } — il baisse les yeux sur son
+                écran pendant `pause` ms : plus de faisceau, c'est LA fenêtre
+                de tir du joueur. `alterne` le fait repartir de l'autre côté.
+     zoom       amplitude (0,4 = jusqu'à +40 % de portée) + `zoom_ms` de
+                période : la portée respire au lieu de rester figée.
+   Les deux modulations ne dépendent que du temps : la part de salle
+   surveillée reste une propriété du décor, donc mesurable
+   (`node outils/mesure-difficulte-eoghan.js`).
+
+   `objectifs` fixe les paliers de médaille (argent / or) du terrain. Ils ne
+   servent qu'à donner une raison de rejouer un décor déjà réussi.
    ========================================================= */
 
 const LARGEUR_SALLE = 1000;
@@ -124,6 +138,7 @@ const DECORS = [
     chrono_s: 100,
     ragots_max: 3,
     duree_bisou_ms: 800,
+    objectifs: { argent: 700, or: 950 },
     gimmick: null,
     palette: {
       fond: "linear-gradient(180deg, #8fd8f0 0%, #bdeaf7 55%, #d9f2c9 100%)",
@@ -149,7 +164,11 @@ const DECORS = [
         look: { peau: "#f8dcc0", cheveux: "long", couleurCheveux: "#8a5a2b", haut: "#7a6bd4", bas: "#2f3550" } },
     ],
     pnj: [
-      { x: 520, plan: 1, nom: "la bibliothécaire", motif: "tourne", periode: 3400, portee: 200,
+      /* Elle cadre plus loin qu'avant, mais elle finit toujours par retourner
+         à son fil d'actualité : même surveillance en moyenne, une respiration
+         en plus. C'est le décor où on apprend à lire les fenêtres. */
+      { x: 520, plan: 1, nom: "la bibliothécaire", motif: "fixe", portee: 380,
+        distraction: { regarde: 3000, pause: 1600, alterne: true },
         look: { peau: "#f0c39a", cheveux: "queue", couleurCheveux: "#6b4a8a", haut: "#8a5ac4", bas: "#3a2b4e", accessoire: "lunettes" } },
       { x: 260, plan: 0, nom: "l'agent d'entretien", motif: "patrouille", de: 200, a: 600, vitesse: 60, portee: 185,
         look: { peau: "#a9683f", cheveux: "casquette", couleurCheveux: "#2b1a2e", haut: "#4aa3d4", bas: "#2f4a6b", accessoire: "casquette" } },
@@ -168,6 +187,7 @@ const DECORS = [
     chrono_s: 80,
     ragots_max: 3,
     duree_bisou_ms: 1000,
+    objectifs: { argent: 850, or: 1150 },
     gimmick: "flash",
     palette: {
       fond: "linear-gradient(180deg, #2a1140 0%, #4a1f5e 60%, #6b2a6b 100%)",
@@ -198,11 +218,19 @@ const DECORS = [
     pnj: [
       { x: 380, plan: 1, nom: "le danseur", motif: "tourne", periode: 1900, portee: 250,
         look: { peau: "#f0c39a", cheveux: "crete", couleurCheveux: "#e8b84b", haut: "#ff3d9a", bas: "#2b1a2e" } },
+      /* Lui reste tel quel : la buvette lui coupe la vue à 260 unités, un zoom
+         n'y changerait rien — autant le donner à quelqu'un qui a du champ. */
       { x: 690, plan: 0, nom: "le roi de la table de boissons", motif: "fixe", dir: -1, portee: 300,
         look: { peau: "#7a4a2b", cheveux: "court", couleurCheveux: "#2b1a2e", haut: "#c6ff4d", bas: "#3a4a7a" } },
-      { x: 150, plan: 0, nom: "la fille qui filme des stories", motif: "patrouille", de: 90, a: 460, vitesse: 105, portee: 215,
+      /* Elle, elle a toute la gauche de la salle devant elle : son zoom se
+         voit vraiment, et le fond de la piste n'est plus jamais acquis. */
+      { x: 150, plan: 0, nom: "la fille qui filme des stories", motif: "patrouille", de: 90, a: 460, vitesse: 105, portee: 230,
+        zoom: 0.5, zoom_ms: 2600,
         look: { peau: "#f8dcc0", cheveux: "couettes", couleurCheveux: "#b03a3a", haut: "#9b4dff", bas: "#ff8ac4", accessoire: "noeud" } },
-      { x: 880, plan: 1, nom: "le photographe amateur", motif: "tourne", periode: 2400, portee: 230,
+      /* Le photographe passe son temps à relire ses photos : grosse portée,
+         mais un temps mort régulier — et il ne repart jamais du même côté. */
+      { x: 880, plan: 1, nom: "le photographe amateur", motif: "tourne", periode: 2400, portee: 330,
+        distraction: { regarde: 2200, pause: 1000, alterne: true },
         look: { peau: "#d99a6c", cheveux: "long", couleurCheveux: "#4a2c17", haut: "#2f6f8f", bas: "#2b1a2e" } },
     ],
   },
@@ -217,6 +245,7 @@ const DECORS = [
     chrono_s: 55,
     ragots_max: 2,
     duree_bisou_ms: 700,
+    objectifs: { argent: 600, or: 800 },
     gimmick: "douche",
     palette: {
       fond: "linear-gradient(180deg, #b9c9de 0%, #93a7c4 55%, #7b8ea9 100%)",
@@ -245,12 +274,86 @@ const DECORS = [
     pnj: [
       { x: 480, plan: 0, nom: "le coach", motif: "patrouille", de: 120, a: 880, vitesse: 200, portee: 380,
         look: { peau: "#d99a6c", cheveux: "casquette", couleurCheveux: "#2b1a2e", haut: "#c22f52", bas: "#2f3550", accessoire: "casquette" } },
-      { x: 850, plan: 1, nom: "le capitaine d'équipe", motif: "fixe", dir: -1, portee: 520,
+      /* Le capitaine tient toute la longueur du vestiaire au téléphone, et il
+         zoome par-dessus le marché : ici, la respiration ne vient pas de lui
+         mais des casiers. */
+      { x: 850, plan: 1, nom: "le capitaine d'équipe", motif: "fixe", dir: -1, portee: 500,
+        zoom: 0.25, zoom_ms: 2800,
         look: { peau: "#7a4a2b", cheveux: "crete", couleurCheveux: "#2b1a2e", haut: "#ffd84d", bas: "#2b1a2e" } },
       { x: 560, plan: 0, nom: "l'arbitre du dimanche", motif: "tourne", periode: 1100, portee: 300,
         look: { peau: "#f0c39a", cheveux: "chauve", couleurCheveux: "#2b1a2e", haut: "#2b1a2e", bas: "#2b1a2e", accessoire: "lunettes" } },
       { x: 300, plan: 1, nom: "le surveillant de vestiaire", motif: "patrouille", de: 260, a: 720, vitesse: 155, portee: 280,
         look: { peau: "#f8dcc0", cheveux: "court", couleurCheveux: "#8a5a2b", haut: "#4aa3d4", bas: "#2f3550" } },
+    ],
+  },
+
+  {
+    id: "bal",
+    titre: "Le bal de promo",
+    emoji: "🪩",
+    difficulte: "Expert",
+    etoiles: "★★★★",
+    ambiance: "Le grand soir : gel dans les cheveux, punch tiède et un projecteur qui balaie la piste sans jamais s'arrêter. Il ne trie pas les rangées et les meubles ne l'arrêtent pas — accroupis-toi ou attends-le.",
+    chrono_s: 75,
+    ragots_max: 2,
+    duree_bisou_ms: 900,
+    objectifs: { argent: 800, or: 1100 },
+    gimmick: "projecteur",
+    /* Assez large pour qu'on ne puisse pas le prendre de vitesse en marchant
+       (Eoghan fait 210 unités/s), assez lent pour qu'on ait le temps de le
+       traverser dans l'autre sens ou de plonger derrière un meuble. */
+    projecteur: { largeur: 210, vitesse: 175 },
+    palette: {
+      fond: "linear-gradient(180deg, #140b33 0%, #2c1560 58%, #4a1d6b 100%)",
+      solArriere: "#2a1c4e",
+      solAvant: "#3a2668",
+      bandeau: "#0f0824",
+    },
+    decorFond: "bal",
+    eoghan: { x: 60, plan: 0 },
+    /* Six abris, trois par rangée : avec un projecteur qui passe et repasse,
+       il faut toujours avoir un meuble en vue. Les deux enceintes et le canapé
+       cadrent la piste du fond ; devant, la table à punch coupe la salle en
+       deux et le banc ne cache que si on s'accroupit. */
+    props: [
+      { type: "enceinte", x: 40, plan: 1 },
+      { type: "canape", x: 700, plan: 1 },
+      { type: "enceinte", x: 960, plan: 1 },
+      { type: "plante", x: 190, plan: 0 },
+      { type: "buvette", x: 520, plan: 0 },
+      { type: "banc", x: 850, plan: 0 },
+    ],
+    garcons: [
+      { x: 250, plan: 0, nom: "Le cavalier de quelqu'un d'autre", replique: "Techniquement, j'accompagnais quelqu'un. Techniquement.",
+        look: { peau: "#f8dcc0", cheveux: "court", couleurCheveux: "#2b1a2e", haut: "#2f3550", bas: "#2f3550", accessoire: "noeud", couleurAccessoire: "#ff3d9a" } },
+      /* Planté en plein dans le champ de la reine : la seule façon de
+         l'embrasser tranquille est de s'accroupir derrière le banc. */
+      { x: 800, plan: 0, nom: "Le trésorier du comité du bal", replique: "Ça, ce n'était pas prévu au budget.",
+        look: { peau: "#d99a6c", cheveux: "frange", couleurCheveux: "#4a2c17", haut: "#7a6bd4", bas: "#2b1a2e", accessoire: "lunettes" } },
+      { x: 830, plan: 1, nom: "Le roi du bal", replique: "Une couronne, un bisou. Excellente soirée.",
+        look: { peau: "#a9683f", cheveux: "boucle", couleurCheveux: "#2b1a2e", haut: "#ffd84d", bas: "#3a2b4e" } },
+      { x: 460, plan: 1, nom: "Le gars qui tient le punch", replique: "Ressers-toi. Enfin… tu t'es déjà servi.",
+        look: { peau: "#f0c39a", cheveux: "crete", couleurCheveux: "#c98a3a", haut: "#4de0ff", bas: "#2f3550" } },
+    ],
+    pnj: [
+      /* Le DJ tient toute la piste du fond depuis sa cabine — son champ court
+         jusqu'au canapé — mais il a un morceau à caler toutes les 2,6 s :
+         c'est la respiration du décor, et la seule façon de traverser. */
+      { x: 60, plan: 1, nom: "le DJ", motif: "fixe", dir: 1, portee: 640,
+        distraction: { regarde: 2600, pause: 1900 },
+        look: { peau: "#d99a6c", cheveux: "casquette", couleurCheveux: "#2b1a2e", haut: "#9b4dff", bas: "#2b1a2e", accessoire: "casquette" } },
+      /* Elle se filme en continu du même côté, et elle zoome : le fond du
+         parquet n'est jamais sûr, seulement plus ou moins loin. */
+      { x: 630, plan: 0, nom: "la reine du bal", motif: "fixe", dir: 1, portee: 330,
+        zoom: 0.35, zoom_ms: 2600,
+        look: { peau: "#f8dcc0", cheveux: "long", couleurCheveux: "#e8b84b", haut: "#ff8ac4", bas: "#ff8ac4", accessoire: "serretete", couleurAccessoire: "#ffd84d" } },
+      { x: 300, plan: 0, nom: "le prof chaperon", motif: "patrouille", de: 130, a: 860, vitesse: 145, portee: 300,
+        look: { peau: "#f0c39a", cheveux: "chauve", couleurCheveux: "#2b1a2e", haut: "#3a4a7a", bas: "#2f3550", accessoire: "lunettes" } },
+      /* Elle garde le coin du canapé, la seule zone que le DJ ne voit pas —
+         mais elle republie ses stories toutes les trois secondes. */
+      { x: 930, plan: 1, nom: "la déléguée qui fait des stories", motif: "fixe", dir: -1, portee: 260,
+        distraction: { regarde: 3200, pause: 1200 },
+        look: { peau: "#a9683f", cheveux: "couettes", couleurCheveux: "#b03a3a", haut: "#e0446b", bas: "#2b1a2e", accessoire: "noeud" } },
     ],
   },
 ];

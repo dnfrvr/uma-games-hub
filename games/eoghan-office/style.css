@@ -122,6 +122,21 @@ body {
     linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 60%);
 }
 
+/* Le bal : boule à facettes, guirlande de fanions et deux halos de couleur.
+   Le vrai décor du niveau, c'est le projecteur — le fond reste sombre exprès
+   pour qu'on le voie passer. */
+.salle[data-decor="bal"] .fond {
+  background-image:
+    repeating-conic-gradient(from 0deg at 50% 16%, rgba(255, 255, 255, 0.07) 0 5deg, transparent 5deg 15deg),
+    radial-gradient(circle at 50% 16%, #efeaff 0 16px, transparent 17px),
+    radial-gradient(circle at 16% 36%, rgba(255, 61, 154, 0.35) 0 54px, transparent 55px),
+    radial-gradient(circle at 84% 30%, rgba(77, 224, 255, 0.3) 0 58px, transparent 59px),
+    repeating-linear-gradient(90deg, rgba(255, 216, 77, 0.55) 0 7px, transparent 7px 46px);
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x;
+  background-size: auto, auto, auto, auto, 100% 9px;
+  background-position: center, center, center, center, top;
+}
+
 /* =========================================================
    Mobilier et personnages
    ========================================================= */
@@ -138,6 +153,54 @@ body {
 }
 
 .prop svg { display: block; width: 100%; height: auto; }
+
+/* --- Les cachettes cessent d'être une règle invisible ---
+   Le meuble à portée s'entoure de pointillés et rappelle la touche ; une fois
+   accroupi derrière, le trait devient plein et vert. Avant, le rayon de
+   cachette ne se devinait qu'en se faisant photographier. */
+.prop.abri-proche::after,
+.prop.abri-actif::after {
+  content: "";
+  position: absolute;
+  inset: -8% -10%;
+  border-radius: 12px;
+  pointer-events: none;
+}
+
+.prop.abri-proche::after {
+  border: 3px dashed rgba(255, 255, 255, 0.92);
+  animation: abriRespire 1.1s ease-in-out infinite;
+}
+
+.prop.abri-actif::after {
+  border: 3px solid #4ce07a;
+  background: rgba(76, 224, 122, 0.16);
+}
+
+.prop.abri-proche::before,
+.prop.abri-actif::before {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%);
+  padding: 1px 6px;
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--text-color);
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid var(--text-color);
+  border-radius: var(--radius-etiquette, 3px);
+}
+
+.prop.abri-proche::before { content: "⇧ Maj"; }
+.prop.abri-actif::before { content: "planqué"; background: #4ce07a; }
+
+@keyframes abriRespire {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
 
 .acteur {
   position: absolute;
@@ -216,15 +279,25 @@ body {
    campus que sur le parquet sombre de la soirée. */
 .faisceau {
   position: absolute;
-  height: 34%;
+  /* La hauteur suit l'échelle de la rangée : un champ dessiné dans le fond
+     doit se lire comme étant DANS le fond, sinon on croit être en danger
+     alors que le téléphone cadre l'autre rangée. */
+  height: calc(34% * var(--echelle, 1));
   background:
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.35) 0 7px, rgba(255, 255, 255, 0) 7px 20px),
     linear-gradient(90deg, rgba(190, 235, 255, 0) 0%, rgba(190, 235, 255, 0.85) 92%, rgba(255, 255, 255, 0.95) 100%);
   clip-path: polygon(100% 0, 100% 100%, 0 72%, 0 28%);
   pointer-events: none;
   mix-blend-mode: screen;
-  transition: background 0.12s linear;
+  transition: background 0.12s linear, opacity 0.15s linear;
 }
+
+/* Rangée du fond : même dessin, moins appuyé. */
+.faisceau.arriere { opacity: 0.7; }
+
+/* Téléphone baissé : plus de champ du tout. La disparition du faisceau est
+   le signal — c'est la fenêtre pour traverser. */
+.faisceau.eteint { opacity: 0; }
 
 .faisceau.vers-gauche {
   background:
@@ -249,6 +322,124 @@ body {
 @keyframes clignoteDanger {
   50% { opacity: 0.45; }
 }
+
+/* =========================================================
+   Qui t'a vu, et depuis combien de temps
+   ---------------------------------------------------------
+   Le jeu punissait sans jamais désigner le coupable : tous les faisceaux
+   viraient au rouge ensemble et le compte à rebours avant le snap était
+   invisible. Les trois marqueurs ci-dessous répondent à « pourquoi je me
+   suis fait voir ».
+   ========================================================= */
+
+/* Celui qui cadre Eoghan porte un point d'exclamation ; les autres non. */
+.acteur-pnj.reperage::before {
+  content: "❗";
+  position: absolute;
+  left: 50%;
+  bottom: 96%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  z-index: 9;
+  filter: drop-shadow(1px 1px 0 var(--text-color));
+  animation: alerteRebond 0.36s ease-in-out infinite alternate;
+}
+
+/* Le distrait annonce sa distraction : bulle de message et couleurs éteintes.
+   C'est une invitation à traverser, elle doit se voir d'un coup d'œil. */
+.acteur-pnj.distrait { filter: saturate(0.3) opacity(0.75); }
+
+.acteur-pnj.distrait::before {
+  content: "💬";
+  position: absolute;
+  left: 50%;
+  bottom: 94%;
+  transform: translateX(-50%);
+  font-size: 1.25rem;
+  z-index: 9;
+  filter: drop-shadow(0 0 2px #fff) drop-shadow(1px 1px 0 var(--text-color));
+}
+
+/* Le zoom en cours se voit sur le porteur, pas seulement sur son faisceau. */
+.acteur-pnj.zoome { filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.85)); }
+
+@keyframes alerteRebond {
+  from { transform: translateX(-50%) translateY(0); }
+  to   { transform: translateX(-50%) translateY(-22%); }
+}
+
+/* Le compte à rebours avant le snap, au-dessus de la tête d'Eoghan : rouge
+   qui se remplit = il reste moins d'une seconde pour sortir du champ.
+   Vert = la cachette prend, on peut souffler. */
+.jauge-alerte {
+  position: absolute;
+  z-index: 11;
+  display: none;
+  width: 26px;
+  height: 26px;
+  margin-left: -13px;
+  border-radius: 50%;
+  border: 2px solid var(--text-color);
+  background: conic-gradient(#ff2d2d calc(var(--part, 0) * 360deg), rgba(255, 255, 255, 0.9) 0);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.jauge-alerte::after {
+  content: "👁";
+  position: absolute;
+  inset: 3px;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  background: #fff;
+  border-radius: 50%;
+}
+
+.jauge-alerte.vu,
+.jauge-alerte.planque { display: block; }
+
+.jauge-alerte.vu { animation: alerteBat 0.4s ease-in-out infinite alternate; }
+
+.jauge-alerte.planque {
+  background: #4ce07a;
+  animation: none;
+}
+
+.jauge-alerte.planque::after { content: "🙈"; }
+
+@keyframes alerteBat {
+  from { transform: scale(1); }
+  to   { transform: scale(1.15); }
+}
+
+/* =========================================================
+   Le projecteur du bal
+   ---------------------------------------------------------
+   Un rond de lumière qui balaie la piste : il éclaire les deux rangées et se
+   moque des meubles. La seule parade est de s'accroupir derrière un abri —
+   d'où un dessin qui touche le sol sur toute sa largeur, pour qu'on lise
+   exactement où il mord.
+   ========================================================= */
+
+.projecteur {
+  position: absolute;
+  bottom: 0;
+  height: 100%;
+  z-index: 7;
+  display: none;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  /* Le faisceau reste discret en hauteur et ne s'affirme qu'au sol : c'est la
+     flaque de lumière qui dit où il mord, et une colonne opaque effaçait les
+     personnages qu'elle traversait. */
+  background:
+    linear-gradient(180deg, rgba(255, 246, 200, 0.07) 0%, rgba(255, 246, 200, 0.22) 60%, rgba(255, 252, 214, 0.58) 100%);
+  clip-path: polygon(44% 0, 56% 0, 100% 46%, 100% 100%, 0 100%, 0 46%);
+  filter: blur(0.5px);
+}
+
+body.projecteur-actif .projecteur { display: block; }
 
 /* Le flash de la soirée : plus aucune cachette pendant 1,5 s */
 .salle .flash-voile {
@@ -431,6 +622,27 @@ body.bisou-en-cours .jauge-bisou { display: block; }
 .decor-detail { grid-column: 2 / -1; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.04em; }
 .decor-resume { grid-column: 1 / -1; font-size: 0.74rem; font-style: italic; }
 
+/* Record et paliers de médaille : c'est la ligne qui donne envie de refaire
+   un terrain déjà terminé. En Tahoma, comme tout ce qui est du mobilier. */
+.decor-record {
+  grid-column: 2 / 3;
+  font-family: var(--font-ui);
+  font-size: 0.66rem;
+  font-weight: bold;
+  color: var(--accent);
+}
+
+.decor-record.vierge { color: var(--text-color); font-weight: normal; opacity: 0.6; }
+
+.decor-objectif {
+  grid-column: 3 / 4;
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  opacity: 0.75;
+}
+
 /* =========================================================
    Tableau de bord
    ========================================================= */
@@ -522,5 +734,12 @@ body.bisou-en-cours .jauge-bisou { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .acteur.marche svg,
   .coeur-cible,
-  .faisceau.danger { animation: none; }
+  .faisceau.danger,
+  .prop.abri-proche::after,
+  .acteur-pnj.reperage::before,
+  .jauge-alerte.vu { animation: none; }
+
+  /* Sans clignotement, les mêmes informations doivent rester lisibles : on
+     appuie le trait au lieu de l'animer. */
+  .prop.abri-proche::after { opacity: 1; }
 }

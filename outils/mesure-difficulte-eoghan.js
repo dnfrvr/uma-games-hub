@@ -126,7 +126,9 @@ function simule(indexDecor, graine) {
 }
 
 console.log("décor                  | salle surveillée | repérages du bot | bisous pris | chrono");
-[0, 1, 2].forEach((i) => {
+/* La liste des décors est lue depuis le jeu : un terrain de plus se mesure
+   sans toucher à ce banc d'essai. */
+charge().lit("DECORS").map((_, i) => i).forEach((i) => {
   const { lit } = charge();
   const decor = lit("DECORS")[i];
   const cov = couverture(i);

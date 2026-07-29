@@ -18,6 +18,12 @@ const EXPOSITION_MAX = 900; // temps toléré dans un faisceau, hors bisou
 const ALERTE_MS = 3000;
 const RAYON_CACHETTE = 90;  // distance à un meuble pour s'y planquer accroupi
 
+/* Le projecteur du bal : un rond de lumière qui balaie la piste. Valeurs de
+   repli si le décor n'en donne pas. */
+const PROJECTEUR = { largeur: 170, vitesse: 200 };
+
+const RECORDS_CLE = "uma_eoghan_records";
+
 const RANGS = [
   { min: 900, texte: "Fantôme romantique 👻💗" },
   { min: 500, texte: "Discret… ish" },
@@ -33,6 +39,8 @@ const elements = {
   props: $("props"),
   acteurs: $("acteurs"),
   faisceaux: $("faisceaux"),
+  alerte: $("alerte"),
+  projecteur: $("projecteur"),
   chrono: $("chrono"),
   score: $("score"),
   combo: $("combo"),
@@ -66,10 +74,13 @@ const etat = {
   exposition: 0,
   bisou: null,
   vu: false,
+  photographe: null,
+  cache: false,
   alerteJusqua: 0,
   flashJusqua: 0,
   prochainGimmick: 0,
   douche: null,
+  projecteur: null,
   touches: new Set(),
 };
 
@@ -159,6 +170,10 @@ function chargeDecor(decor) {
       el,
       faisceau,
       compte: 0,
+      zoomCompte: 0,
+      distraitCompte: 0,
+      facteurZoom: 1,
+      aveugle: false,
     };
     poseActeur(el, p.x, p.plan, p.dir, modele.petit ? 0.72 : 1);
     etat.pnj.push(p);
@@ -200,6 +215,18 @@ function demarre(decor) {
   etat.alerteJusqua = 0;
   etat.flashJusqua = 0;
   etat.douche = null;
+  /* Le projecteur, lui, ne s'allume pas par intermittence : il tourne du
+     début à la fin de la partie, comme dans une vraie salle de bal. */
+  etat.projecteur =
+    decor.gimmick === "projecteur"
+      ? {
+          x: LARGEUR_SALLE / 2,
+          dir: 1,
+          largeur: (decor.projecteur && decor.projecteur.largeur) || PROJECTEUR.largeur,
+          vitesse: (decor.projecteur && decor.projecteur.vitesse) || PROJECTEUR.vitesse,
+        }
+      : null;
+  document.body.classList.toggle("projecteur-actif", !!etat.projecteur);
   etat.enCours = true;
   etat.dernierTemps = performance.now();
   etat.finChrono = etat.dernierTemps + decor.chrono_s * 1000;
@@ -218,21 +245,94 @@ function termine(titre, texte, gagne) {
   etat.enCours = false;
   cancelAnimationFrame(etat.boucle);
   annuleBisou();
-  document.body.classList.remove("repere", "flash");
+  document.body.classList.remove("repere", "flash", "projecteur-actif");
+  etat.projecteur = null;
+  if (elements.alerte) elements.alerte.classList.remove("vu", "planque");
 
   const restant = Math.max(0, Math.ceil((etat.finChrono - performance.now()) / 1000));
   if (gagne) etat.score += restant * 5;
 
   const rang = RANGS.find((r) => etat.score >= r.min);
+  const decor = etat.decor;
+  const fini = etat.garcons.length > 0 && etat.garcons.every((g) => g.embrasse);
+  const med = medaille(decor, etat.score, fini);
+  const marque = enregistreRecord(decor, etat.score, fini);
+
+  /* Le bilan dit toujours ce qu'il manquait pour le palier au-dessus : c'est
+     ce qui donne envie de refaire un décor déjà réussi. */
+  let bilan;
+  if (!fini) {
+    bilan = "Il restait " + etat.garcons.filter((g) => !g.embrasse).length +
+      " garçon(s) à embrasser : pas de médaille cette fois.";
+  } else if (med.rang === "or") {
+    bilan = "🥇 Médaille d'or. Personne ne fera mieux. Enfin, personne d'autre.";
+  } else {
+    const objectifs = decor.objectifs || { argent: 0, or: 0 };
+    const cible = med.rang === "argent" ? objectifs.or : objectifs.argent;
+    const suivante = med.rang === "argent" ? "l'or" : "l'argent";
+    bilan = med.icone + " Médaille de " + med.nom.toLowerCase() + " — " +
+      (cible - etat.score) + " points de plus et c'était " + suivante + ".";
+  }
 
   elements.ecranTitre.textContent = titre;
   elements.ecranTexte.innerHTML =
     texte +
     "<br /><br /><b>" + etat.score + " points</b>" +
     (gagne ? " (dont " + restant * 5 + " de bonus rapidité)" : "") +
-    "<br />" + rang.texte;
+    "<br />" + rang.texte +
+    "<br />" + bilan +
+    (marque.nouveau
+      ? "<br /><b>✨ Nouveau record sur ce terrain !</b>"
+      : marque.record ? "<br />Ton record ici : " + marque.record + " points." : "");
   elements.ecran.classList.add("visible");
+  construitMenu(); // les records affichés dans le menu viennent de changer
   majTableau();
+}
+
+/* =========================================================
+   Records et médailles — la raison de refaire un décor
+   ---------------------------------------------------------
+   Tout est rangé dans le navigateur du joueur, sous une seule clé. Si le
+   stockage est refusé (navigation privée), le jeu continue sans rien dire :
+   un tableau des records n'est pas une raison de ne pas pouvoir jouer.
+   ========================================================= */
+
+function medaille(decor, score, fini) {
+  if (!fini) return null;
+  const objectifs = (decor && decor.objectifs) || {};
+  if (score >= objectifs.or) return { rang: "or", icone: "🥇", nom: "Or" };
+  if (score >= objectifs.argent) return { rang: "argent", icone: "🥈", nom: "Argent" };
+  return { rang: "bronze", icone: "🥉", nom: "Bronze" };
+}
+
+function litRecords() {
+  try {
+    return JSON.parse(localStorage.getItem(RECORDS_CLE)) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function enregistreRecord(decor, score, fini) {
+  if (!decor) return { nouveau: false, record: 0 };
+  const records = litRecords();
+  const ancien = records[decor.id];
+  /* Une partie abandonnée d'entrée ne vaut pas un record : le terrain reste
+     marqué « jamais joué » plutôt que d'afficher un zéro. */
+  if (!ancien && score <= 0) return { nouveau: false, record: 0 };
+  const nouveau = !!ancien && score > ancien.score;
+
+  records[decor.id] = {
+    score: Math.max(score, (ancien && ancien.score) || 0),
+    fini: fini || !!(ancien && ancien.fini),
+  };
+  try {
+    localStorage.setItem(RECORDS_CLE, JSON.stringify(records));
+  } catch (e) {
+    /* Stockage refusé : on joue quand même, simplement sans mémoire. */
+  }
+
+  return { nouveau, record: records[decor.id].score };
 }
 
 /* =========================================================
@@ -297,14 +397,22 @@ function changePlan(delta) {
   poseActeur(e.el, e.x, e.plan, e.dir);
 }
 
+/* L'abri utilisable ici et maintenant : le meuble de SA rangée dont Eoghan
+   est assez près. On le renvoie (et pas un simple oui/non) pour pouvoir
+   l'entourer à l'écran : le rayon de cachette était jusqu'ici une règle
+   invisible, on s'accroupissait au jugé. */
+function abriProche() {
+  return etat.props.find(
+    (p) => p.cache && p.plan === etat.eoghan.plan && Math.abs(p.x - etat.eoghan.x) < RAYON_CACHETTE
+  );
+}
+
 /* Accroupi : Eoghan devient invisible s'il est planqué derrière un meuble.
    Un flash de lumière annule toutes les cachettes. */
 function estCache(maintenant) {
   if (maintenant < etat.flashJusqua) return false;
   if (!etat.eoghan.accroupi) return false;
-  return etat.props.some(
-    (p) => p.cache && p.plan === etat.eoghan.plan && Math.abs(p.x - etat.eoghan.x) < RAYON_CACHETTE
-  );
+  return !!abriProche();
 }
 
 /* =========================================================
@@ -313,9 +421,11 @@ function estCache(maintenant) {
 
 function bougePnj(p, dt, maintenant) {
   /* Pendant une alerte, tout le monde se braque sur Eoghan : c'est la
-     punition d'une première bourde. */
+     punition d'une première bourde. Même celui qui scrollait relève le nez. */
   if (maintenant < etat.alerteJusqua) {
     p.dir = etat.eoghan.x >= p.x ? 1 : -1;
+    p.aveugle = false;
+    p.el.classList.remove("distrait");
     poseActeur(p.el, p.x, p.plan, p.dir, p.petit ? 0.72 : 1);
     return;
   }
@@ -333,7 +443,44 @@ function bougePnj(p, dt, maintenant) {
     }
   }
 
+  /* --- Deux modulations qui se posent sur N'IMPORTE quel motif : c'est ce
+     qui casse le métronome des rondes sans avoir à inventer un déplacement
+     de plus. Les deux ne dépendent que du temps, jamais de la position
+     d'Eoghan — sinon la difficulté d'un décor ne serait plus mesurable. --- */
+
+  /* Distraction : il surveille, puis se perd dans ses notifications. Pendant
+     sa pause il ne cadre plus rien : c'est la fenêtre de tir du joueur, et
+     elle se lit gratuitement puisque son faisceau disparaît de l'écran. */
+  if (p.distraction) {
+    p.distraitCompte += dt * 1000;
+    const cycle = p.distraction.regarde + p.distraction.pause;
+    if (p.distraitCompte >= cycle) {
+      p.distraitCompte -= cycle;
+      if (p.distraction.alterne) p.dir *= -1; // il ne repart pas du même côté
+    }
+    p.aveugle = p.distraitCompte >= p.distraction.regarde;
+    p.el.classList.toggle("distrait", p.aveugle);
+  }
+
+  /* Zoom : la portée respire au lieu de rester figée. Un téléphone qui zoome
+     voit plus loin par à-coups — un danger qui a un tempo, sans que le PNJ
+     ait besoin de bouger d'un pouce. */
+  if (p.zoom) {
+    p.zoomCompte = (p.zoomCompte + dt * 1000) % p.zoom_ms;
+    const phase = (p.zoomCompte / p.zoom_ms) * Math.PI * 2;
+    p.facteurZoom = 1 + p.zoom * (0.5 - 0.5 * Math.cos(phase));
+    p.el.classList.toggle("zoome", p.facteurZoom > 1 + p.zoom * 0.6);
+  }
+
   poseActeur(p.el, p.x, p.plan, p.dir, p.petit ? 0.72 : 1);
+}
+
+/* La portée réellement dangereuse à cet instant. Tout ce qui module la vue
+   d'un PNJ passe par ici, pour que l'affichage du faisceau et la détection ne
+   puissent jamais raconter deux histoires différentes. */
+function porteeVue(p) {
+  if (p.aveugle) return 0;
+  return p.portee * (p.facteurZoom || 1);
 }
 
 /* Un meuble bloque la vue s'il est entre le PNJ et le point regardé,
@@ -348,7 +495,7 @@ function vueBloquee(p, cibleX) {
 
 function porteeReelle(p) {
   /* Le faisceau s'arrête au premier meuble opaque rencontré. */
-  let portee = p.portee;
+  let portee = porteeVue(p);
   etat.props.forEach((prop) => {
     if (!prop.bloqueVue || prop.plan !== p.plan) return;
     const d = (prop.x - p.x) * p.dir;
@@ -361,6 +508,7 @@ function dessineFaisceaux(maintenant) {
   const flash = maintenant < etat.flashJusqua;
 
   etat.pnj.forEach((p) => {
+    const eteint = p.aveugle && !flash;
     const portee = flash ? LARGEUR_SALLE : porteeReelle(p);
     const debut = p.dir > 0 ? p.x : p.x - portee;
     const a = ancrage(p.plan);
@@ -370,9 +518,18 @@ function dessineFaisceaux(maintenant) {
     p.faisceau.style.bottom = a.bas + "%";
     p.faisceau.classList.toggle("vers-gauche", p.dir < 0);
     p.faisceau.style.zIndex = p.plan === 1 ? 1 : 4;
+    /* Le champ de la rangée du fond est dessiné plus bas et plus pâle : sans
+       ça, deux faisceaux superposés donnent l'impression d'être en danger
+       dans une rangée où personne ne regarde. */
     p.faisceau.style.setProperty("--echelle", a.echelle);
-    p.faisceau.classList.toggle("danger", etat.vu);
-    p.portéeCourante = portee;
+    p.faisceau.classList.toggle("arriere", p.plan === 1);
+    p.faisceau.classList.toggle("eteint", eteint);
+    /* Rouge UNIQUEMENT pour celui qui cadre Eoghan. Avant, tous les faisceaux
+       viraient au rouge en même temps : impossible de savoir qui t'avait vu,
+       donc impossible d'apprendre de sa bourde. */
+    p.faisceau.classList.toggle("danger", etat.photographe === p);
+    p.el.classList.toggle("reperage", etat.photographe === p);
+    p.porteeAffichee = portee;
   });
 }
 
@@ -383,40 +540,88 @@ function dessineFaisceaux(maintenant) {
 function gereDetection(maintenant, dt) {
   const flash = maintenant < etat.flashJusqua;
   const e = etat.eoghan;
+  const cache = estCache(maintenant);
+  etat.cache = cache;
 
-  /* On retient QUI cadre Eoghan : c'est ce PNJ qui déclenchera le snap. */
-  const photographe = estCache(maintenant)
+  /* On retient QUI cadre Eoghan : c'est ce PNJ qui déclenchera le snap, et
+     c'est son faisceau à lui qui vire au rouge. */
+  const photographe = cache
     ? null
     : etat.pnj.find((p) => {
         if (p.plan !== e.plan) return false; // chacun cadre son plan
         const d = (e.x - p.x) * p.dir;
         if (d < 0) return false;             // il vise ailleurs
-        if (d > (flash ? LARGEUR_SALLE : p.portee)) return false;
+        if (d > (flash ? LARGEUR_SALLE : porteeVue(p))) return false;
         return flash || !vueBloquee(p, e.x);
       });
 
-  const vu = !!photographe;
+  /* Le projecteur ne trie pas les rangées et se moque des meubles hauts —
+     mais il passe au-dessus de qui est accroupi derrière un abri. */
+  const sousProjecteur =
+    !cache && !!etat.projecteur && Math.abs(etat.projecteur.x - e.x) <= etat.projecteur.largeur / 2;
+
+  const vu = !!photographe || sousProjecteur;
   etat.photographe = photographe;
+  etat.sousProjecteur = sousProjecteur;
   etat.vu = vu;
   document.body.classList.toggle("repere", vu);
+  majAlerte(vu, cache);
+  majAbris(cache);
 
   if (!vu) {
     etat.exposition = Math.max(0, etat.exposition - dt * 1000);
     return;
   }
 
+  /* On nomme le coupable : « je ne sais pas ce qui m'est arrivé » n'apprend
+     rien au joueur. Le nom ouvre la phrase, donc majuscule. */
+  const nom = sousProjecteur ? "le projecteur" : photographe.nom || "quelqu'un";
+  const qui = nom.charAt(0).toUpperCase() + nom.slice(1);
+
   /* Se faire voir pendant un bisou, c'est immédiat : c'est LE moment de
      vulnérabilité du jeu. */
   if (etat.bisou) {
     annuleBisou();
-    bourde("📸 SNAP ! La photo part dans le groupe.");
+    bourde("📸 SNAP ! " + qui + " a tout pris. La photo part dans le groupe.");
     return;
   }
 
   etat.exposition += dt * 1000;
   if (etat.exposition >= EXPOSITION_MAX) {
     etat.exposition = 0;
-    bourde("📸 Snap ! « Regardez qui traîne ici. »");
+    bourde("📸 Snap ! " + qui + " : « Regardez qui traîne ici. »");
+  }
+}
+
+/* Le compte à rebours avant le snap, au-dessus de la tête d'Eoghan. Sans lui,
+   la seconde de tolérance était une règle invisible : on ramassait un cran de
+   ragots sans avoir jamais su qu'on avait failli s'en sortir. Le même
+   marqueur, en vert, confirme qu'une cachette prend bien. */
+function majAlerte(vu, cache) {
+  const el = elements.alerte;
+  if (!el) return;
+  const a = ancrage(etat.eoghan.plan);
+  el.style.left = pourcent(etat.eoghan.x) + "%";
+  el.style.bottom = (a.bas + 29 * a.echelle).toFixed(1) + "%";
+  el.style.setProperty("--part", Math.min(1, etat.exposition / EXPOSITION_MAX).toFixed(2));
+  el.classList.toggle("vu", vu);
+  el.classList.toggle("planque", !vu && cache);
+}
+
+/* Le meuble à portée s'entoure de pointillés (« accroupis-toi ici ») et se
+   remplit quand la cachette est effective. */
+function majAbris(cache) {
+  const abri = abriProche();
+  etat.props.forEach((p) => {
+    p.el.classList.toggle("abri-proche", p === abri && !cache);
+    p.el.classList.toggle("abri-actif", p === abri && cache);
+  });
+
+  /* Planqué, Eoghan repasse DERRIÈRE le meuble. Dans la rangée du fond les
+     acteurs sont dessinés par-dessus le mobilier : sans ça, on se cachait
+     debout sur le canapé, ce qui n'a jamais rassuré personne. */
+  if (etat.eoghan.el) {
+    etat.eoghan.el.style.zIndex = cache && etat.eoghan.plan === 1 ? 0 : etat.eoghan.plan === 1 ? 2 : 5;
   }
 }
 
@@ -517,8 +722,10 @@ function avanceBisou(dtMs) {
   /* Bonus « bisou sous le nez » : un faisceau frôle Eoghan sans le toucher. */
   const frole = etat.pnj.some((p) => {
     if (p.plan !== etat.eoghan.plan) return false;
+    const portee = porteeVue(p);
+    if (portee <= 0) return false; // celui qui a le nez sur son écran ne frôle rien
     const d = (etat.eoghan.x - p.x) * p.dir;
-    return d > 0 && d <= p.portee + 120 && d > p.portee - 40;
+    return d > 0 && d <= portee + 120 && d > portee - 40;
   });
   if (frole) bisou.frole = true;
 
@@ -593,6 +800,25 @@ function gereGimmick(maintenant, dt) {
 
   document.body.classList.toggle("flash", maintenant < etat.flashJusqua);
   avanceDouche(dt);
+  avanceProjecteur(dt);
+}
+
+/* Le projecteur du bal : un rond de lumière qui balaie la piste sans jamais
+   s'arrêter. Contrairement aux téléphones il ne trie pas les rangées et les
+   meubles hauts ne l'arrêtent pas — c'est un danger qu'on ne contourne pas,
+   qu'on attend. La seule parade reste de s'accroupir derrière un abri. */
+function avanceProjecteur(dt) {
+  const p = etat.projecteur;
+  if (!p) return;
+
+  p.x += p.dir * p.vitesse * dt;
+  if (p.x <= p.largeur / 2) { p.x = p.largeur / 2; p.dir = 1; }
+  if (p.x >= LARGEUR_SALLE - p.largeur / 2) { p.x = LARGEUR_SALLE - p.largeur / 2; p.dir = -1; }
+
+  if (elements.projecteur) {
+    elements.projecteur.style.left = pourcent(p.x - p.largeur / 2) + "%";
+    elements.projecteur.style.width = pourcent(p.largeur) + "%";
+  }
 }
 
 /* Le groupe ne regarde rien, mais il occupe le passage : il pousse Eoghan
@@ -714,8 +940,21 @@ function commente(texte) {
 }
 
 function construitMenu() {
+  const records = litRecords();
   elements.ecranDecors.innerHTML = "";
+
   DECORS.forEach((decor) => {
+    const record = records[decor.id];
+    const med = record ? medaille(decor, record.score, record.fini) : null;
+
+    /* Chaque terrain affiche son record et sa médaille : c'est le seul moyen
+       de savoir qu'il reste quelque chose à aller chercher sur un décor déjà
+       terminé. */
+    const trophee = record
+      ? '<span class="decor-record">' + (med ? med.icone + " " : "") +
+        "Record " + record.score + " pts</span>"
+      : '<span class="decor-record vierge">Jamais joué</span>';
+
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "decor-btn";
@@ -725,7 +964,10 @@ function construitMenu() {
       '<span class="decor-etoiles">' + decor.etoiles + "</span>" +
       '<span class="decor-detail">' + decor.difficulte + " · " + decor.chrono_s + " s · " +
       decor.ragots_max + " ragots max</span>" +
-      '<span class="decor-resume">' + decor.ambiance + "</span>";
+      '<span class="decor-resume">' + decor.ambiance + "</span>" +
+      trophee +
+      '<span class="decor-objectif">🥈 ' + ((decor.objectifs && decor.objectifs.argent) || "—") +
+        " · 🥇 " + ((decor.objectifs && decor.objectifs.or) || "—") + "</span>";
     btn.addEventListener("click", () => demarre(decor));
     elements.ecranDecors.appendChild(btn);
   });
