@@ -121,11 +121,15 @@
     "perso": "Tout le monde",
     "description": "Deux prénoms, un pourcentage. La machine ne se trompe jamais.",
     "vignette": "shared/vignettes/love-tester.svg",
-    "url": null,
+    "url": "games/love-tester/index.html",
     "couleur": "#ff3d9a",
-    "statut": "bientot",
+    "statut": "disponible",
     "categorie": "Réflexion",
-    "controles": "Clavier"
+    "controles": "Clavier et souris",
+    "note": 8.7,
+    "votes": 6812,
+    "parties": 214530,
+    "ajoute_le": "2012-02-09"
   },
   {
     "id": "tomates",

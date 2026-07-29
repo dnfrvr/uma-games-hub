@@ -1,0 +1,558 @@
+/* =========================================================
+   Love Tester — habillage propre au jeu
+   À charger APRÈS style-tokens.css, components.css, portail.css et
+   skins.css. Le fond, le cadre, le bandeau-titre, les boutons et les
+   couleurs viennent de là ; ce fichier ne décrit que la machine.
+
+   Toutes les classes sont préfixées `lt-` : le CSS n'a qu'un seul espace de
+   noms et le style d'un jeu est chargé après la coque du portail, donc un
+   nom commun (`.note`, `.machine`, `.carnet`…) casserait le site autour du
+   jeu sans qu'on s'en aperçoive. Cf. outils/test-collisions.js.
+   ========================================================= */
+
+.lt-jeu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  min-height: 460px;
+}
+
+/* =========================================================
+   1. La machine
+   ========================================================= */
+
+.lt-machine {
+  position: relative;
+  padding: 16px 16px 12px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, #ffd9ec 0%, #ffb4d8 100%);
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.8), var(--ombre-dure);
+}
+
+/* Deux plaques de saisie encadrant le cadran. En dessous de 780 px la
+   machine se déplie à la verticale : le cœur passe entre les deux prénoms,
+   ce qui reste lisible. */
+.lt-pupitre {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
+  gap: 16px;
+}
+
+/* --- Les deux plaques de prénom --- */
+
+.lt-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 10px;
+  background: var(--panel-bg);
+  border: 3px solid #8c0040;
+  border-radius: var(--radius-panel);
+  box-shadow: inset 0 -4px 0 rgba(140, 0, 64, 0.12);
+}
+
+.lt-portrait {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 118px;
+  padding: 4px;
+  background: linear-gradient(180deg, #fff, #ffe7f4);
+  border: 3px solid #8c0040;
+  border-radius: 12px;
+}
+
+/* Le chibi de shared/perso.js est un viewBox 48 × 72 sans dimensions : on
+   cale sa hauteur et on laisse la largeur suivre, sinon il s'écrase dans le
+   cadre au lieu de garder ses proportions. */
+.lt-portrait svg { height: 100%; width: auto; }
+
+/* Un champ vide n'a pas de visage : cadre en pointillés et point
+   d'interrogation, pour que ça se lise comme une place à remplir. */
+.lt-portrait-vide {
+  border-style: dashed;
+  background: repeating-linear-gradient(45deg, #fff 0 8px, #ffeaf5 8px 16px);
+  font-family: var(--font-deco);
+  font-size: 2.6rem;
+  color: #d48db4;
+}
+
+.lt-portrait-connu { box-shadow: 0 0 0 3px var(--or); }
+
+.lt-identite {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #a03a72;
+}
+
+.lt-etiquette {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: bold;
+  color: #6d0033;
+}
+
+.lt-saisie {
+  width: 100%;
+  max-width: 210px;
+  padding: 8px 10px;
+  font-family: var(--font-deco);
+  font-size: 1.5rem;
+  text-align: center;
+  color: #6d0033;
+  background: #fff;
+  border: 3px solid #8c0040;
+  border-radius: var(--radius-controle);
+  box-shadow: inset 0 2px 4px rgba(140, 0, 64, 0.2);
+}
+
+.lt-saisie::placeholder { color: #e0a8c6; }
+
+/* Le champ qu'on a oublié de remplir se signale tout seul. */
+.lt-secoue { animation: ltSecousse 420ms ease-in-out; }
+
+@keyframes ltSecousse {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-7px); }
+  45% { transform: translateX(6px); }
+  70% { transform: translateX(-4px); }
+}
+
+/* --- Le noyau : cœur, cadran, voyants --- */
+
+.lt-noyau {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    "coeur echelle"
+    "cadran echelle";
+  align-items: center;
+  gap: 6px 12px;
+  padding: 12px;
+  background: linear-gradient(180deg, #6d0033, #3b0a45);
+  border: 3px solid #2b0018;
+  border-radius: var(--radius-panel);
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.22);
+}
+
+.lt-coeur { grid-area: coeur; }
+.lt-coeur-svg { display: block; width: 150px; height: auto; }
+
+/* Le cadran à chiffres, cousin du compteur de visites du pied de page :
+   c'est le vocabulaire visuel de l'époque pour « une machine calcule ». */
+.lt-afficheur {
+  grid-area: cadran;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 3px;
+  margin: 0;
+  padding: 4px 8px;
+  background: #120010;
+  border: 2px solid #2b0018;
+  border-radius: 5px;
+  font-family: var(--font-chiffres);
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--or);
+  text-shadow: 0 0 8px rgba(255, 216, 77, 0.8);
+}
+
+.lt-afficheur b { font-size: 1rem; }
+
+/* La colonne de voyants : une ligne par tranche de verdict, du destin en
+   haut au désastre en bas. Elles sont construites depuis verdicts.js. */
+.lt-echelle {
+  grid-area: echelle;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  height: 100%;
+}
+
+.lt-cran {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 224, 240, 0.45);
+  white-space: nowrap;
+}
+
+.lt-voyant {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4a1235;
+  border: 2px solid #2b0018;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.lt-cran-atteint { color: #ffe0f0; }
+
+.lt-cran-atteint .lt-voyant {
+  background: radial-gradient(circle at 35% 30%, #ffd0e4, var(--bonbon));
+  box-shadow: 0 0 8px rgba(255, 61, 154, 0.9);
+}
+
+/* Le palier effectivement atteint, celui qui donne le verdict. */
+.lt-cran-actif {
+  color: #fff;
+  font-weight: bold;
+}
+
+.lt-cran-actif .lt-voyant {
+  background: radial-gradient(circle at 35% 30%, #fffbe6, var(--or));
+  box-shadow: 0 0 12px var(--or);
+  animation: ltClignote 900ms steps(2, end) infinite;
+}
+
+@keyframes ltClignote {
+  50% { box-shadow: 0 0 3px var(--or); }
+}
+
+/* --- Commandes et ligne de service --- */
+
+.lt-commandes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.lt-gros-bouton {
+  padding: 12px 26px;
+  font-family: var(--font-deco);
+  font-size: 1.5rem;
+}
+
+.lt-gros-bouton:disabled {
+  filter: grayscale(0.5);
+  cursor: progress;
+  transform: none;
+}
+
+.lt-son.lt-muet { opacity: 0.65; }
+
+.lt-petit-bouton {
+  align-self: flex-start;
+  padding: 5px 12px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
+
+/* Ce que la machine marmonne pendant qu'elle cherche. */
+.lt-console {
+  margin: 10px 0 0;
+  padding: 6px 10px;
+  font-family: var(--font-chiffres);
+  font-size: 12px;
+  text-align: center;
+  color: #6d0033;
+  background: rgba(255, 255, 255, 0.7);
+  border: 2px dashed #d67aa6;
+  border-radius: var(--radius-controle);
+}
+
+.lt-chauffe .lt-console { border-style: solid; }
+
+/* =========================================================
+   2. Le verdict
+   ========================================================= */
+
+.lt-verdict {
+  display: none;
+  padding: 16px;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--ombre-dure);
+}
+
+.lt-verdict-visible {
+  display: block;
+  animation: ltTombe 380ms ease-out;
+}
+
+@keyframes ltTombe {
+  from { opacity: 0; transform: translateY(-14px); }
+}
+
+.lt-verdict-couple {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a03a72;
+}
+
+.lt-verdict-couple b { font-size: 15px; color: #6d0033; }
+.lt-coeurmini { color: var(--bonbon); }
+
+.lt-verdict-titre {
+  margin: 4px 0 8px;
+  font-family: var(--font-deco);
+  font-size: clamp(1.6rem, 4.5vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: #6d0033;
+  text-shadow: 2px 2px 0 rgba(255, 255, 255, 0.9);
+}
+
+.lt-verdict-texte {
+  margin: 0 0 10px;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.lt-solo {
+  padding: 8px 10px;
+  background: rgba(255, 216, 77, 0.35);
+  border-left: 5px solid var(--or);
+  border-radius: var(--radius-controle);
+  font-size: 0.9rem;
+}
+
+/* La tranche colore le liseré du bloc : on lit le résultat avant même la
+   première phrase. Sept tranches, sept traitements. */
+.lt-tranche-0 { border-color: #6b7280; }
+.lt-tranche-1 { border-color: #9a5b7d; }
+.lt-tranche-2 { border-color: #c77aa8; }
+.lt-tranche-3 { border-color: #e07ab0; }
+.lt-tranche-4 { border-color: var(--bonbon-clair); }
+.lt-tranche-5 { border-color: var(--bonbon); }
+.lt-tranche-6 { border-color: #e0005f; box-shadow: 0 0 0 4px rgba(255, 61, 154, 0.35), var(--ombre-dure); }
+
+/* --- Les trois relevés annexes --- */
+
+.lt-axes {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.lt-axe {
+  display: grid;
+  grid-template-columns: 120px 1fr 46px;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: #6d0033;
+}
+
+.lt-axe-nom { font-weight: bold; }
+
+.lt-axe-barre {
+  height: 12px;
+  background: #ffe3f1;
+  border: 2px solid #8c0040;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lt-axe-barre i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bonbon-clair), var(--bonbon));
+}
+
+.lt-axe-valeur {
+  font-family: var(--font-chiffres);
+  font-weight: bold;
+  text-align: right;
+}
+
+/* Le commentaire passe sous la barre et occupe toute la largeur : à trois
+   colonnes il n'y avait plus de place pour lui. */
+.lt-axe-note {
+  grid-column: 2 / -1;
+  font-style: italic;
+  color: var(--gris-ui);
+}
+
+.lt-mention-legale {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: var(--gris-ui);
+}
+
+/* =========================================================
+   3. Le bas : préréglages et carnet
+   ========================================================= */
+
+.lt-bas {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 14px;
+}
+
+.lt-bloc {
+  padding: 12px;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--ombre-dure);
+}
+
+.lt-titre-bloc {
+  margin: 0;
+  font-family: var(--font-deco);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #6d0033;
+}
+
+.lt-sous-titre {
+  margin: 0 0 10px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--gris-ui);
+}
+
+/* --- Couples préréglés --- */
+
+.lt-couples {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.lt-couple {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 6px;
+  font-family: inherit;
+  text-align: center;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, #ffe7f4);
+  border: 3px solid #8c0040;
+  border-radius: var(--radius-panel);
+  cursor: pointer;
+}
+
+.lt-couple:hover {
+  background: linear-gradient(180deg, #fff, var(--barbe));
+  transform: translate(-1px, -2px);
+  box-shadow: 3px 4px 0 #8c0040;
+}
+
+.lt-couple-tetes { display: flex; gap: 2px; }
+.lt-mini { display: block; width: 34px; }
+.lt-mini svg { width: 100%; height: auto; }
+
+.lt-couple-noms { font-size: 0.9rem; }
+
+.lt-couple-note {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-style: italic;
+  color: var(--gris-ui);
+}
+
+/* --- Le carnet --- */
+
+.lt-carnet {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.lt-carnet-vide {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-style: italic;
+  color: var(--gris-ui);
+}
+
+.lt-carnet-ligne {
+  display: grid;
+  grid-template-columns: 1fr 70px 42px;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  text-align: left;
+  color: var(--text-color);
+  background: #fff;
+  border: 2px solid #e3a8c8;
+  border-radius: var(--radius-controle);
+  cursor: pointer;
+}
+
+.lt-carnet-ligne:hover { border-color: #8c0040; background: var(--barbe); }
+
+.lt-carnet-noms { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.lt-carnet-barre {
+  height: 9px;
+  background: #ffe3f1;
+  border: 2px solid #8c0040;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.lt-carnet-barre i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--bonbon-clair), var(--bonbon));
+}
+
+.lt-carnet-score {
+  font-family: var(--font-chiffres);
+  font-weight: bold;
+  text-align: right;
+  color: #6d0033;
+}
+
+/* =========================================================
+   4. Écrans étroits
+   ========================================================= */
+
+@media (max-width: 900px) {
+  .lt-bas { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 780px) {
+  /* La machine se déplie : prénom, cadran, prénom, les uns sous les autres. */
+  .lt-pupitre { grid-template-columns: 1fr; }
+  /* En colonne, le noyau ne doit pas s'étirer sur toute la largeur : il se
+     centre à sa taille naturelle, entre les deux prénoms. */
+  .lt-noyau { justify-self: center; }
+  .lt-jeu { padding: 10px; }
+}
+
+@media (max-width: 460px) {
+  .lt-coeur-svg { width: 118px; }
+  .lt-axe { grid-template-columns: 92px 1fr 42px; }
+  .lt-couples { grid-template-columns: 1fr 1fr; }
+}
