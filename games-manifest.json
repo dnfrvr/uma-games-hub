@@ -7,7 +7,13 @@
     "vignette": "shared/vignettes/drew.svg",
     "url": "games/drew-dress-up/index.html",
     "couleur": "#aa6caa",
-    "statut": "disponible"
+    "statut": "disponible",
+    "categorie": "Habillage",
+    "note": 8.9,
+    "votes": 4312,
+    "parties": 128704,
+    "ajoute_le": "2012-03-14",
+    "controles": "Souris"
   },
   {
     "id": "glinda",
@@ -17,7 +23,13 @@
     "vignette": "shared/vignettes/glinda.svg",
     "url": "games/glinda-cheer/index.html",
     "couleur": "#e91e8c",
-    "statut": "disponible"
+    "statut": "disponible",
+    "categorie": "Rythme",
+    "note": 9.2,
+    "votes": 3877,
+    "parties": 96331,
+    "ajoute_le": "2012-05-02",
+    "controles": "Flèches"
   },
   {
     "id": "elias",
@@ -27,7 +39,13 @@
     "vignette": "shared/vignettes/elias.svg",
     "url": "games/elias-whack/index.html",
     "couleur": "#6672d0",
-    "statut": "disponible"
+    "statut": "disponible",
+    "categorie": "Action",
+    "note": 8.4,
+    "votes": 2915,
+    "parties": 74208,
+    "ajoute_le": "2012-08-19",
+    "controles": "Souris"
   },
   {
     "id": "eoghan",
@@ -37,6 +55,36 @@
     "vignette": "shared/vignettes/eoghan.svg",
     "url": "games/eoghan-office/index.html",
     "couleur": "#00d435",
-    "statut": "disponible"
+    "statut": "disponible",
+    "categorie": "Action",
+    "note": 9.6,
+    "votes": 5104,
+    "parties": 143992,
+    "ajoute_le": "2012-11-27",
+    "controles": "Flèches + Espace"
+  },
+  {
+    "id": "memory",
+    "titre": "UMA Memory",
+    "perso": "Tout le monde",
+    "description": "Retrouve les paires. Certaines cartes n'ont pas de paire.",
+    "vignette": "shared/vignettes/memory.svg",
+    "url": null,
+    "couleur": "#9b4dff",
+    "statut": "bientot",
+    "categorie": "Réflexion",
+    "controles": "Souris"
+  },
+  {
+    "id": "glinda-run",
+    "titre": "Run, Glinda, Run",
+    "perso": "Glinda",
+    "description": "Boq veut te parler. Cours.",
+    "vignette": "shared/vignettes/glinda-run.svg",
+    "url": null,
+    "couleur": "#e91e8c",
+    "statut": "bientot",
+    "categorie": "Action",
+    "controles": "Flèches"
   }
 ]

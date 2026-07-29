@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="UMA Memory">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#9b4dff"/>
+  <rect width="320" height="240" fill="url(#memory-rayures)"/>
+  <defs>
+    <pattern id="memory-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+
+  <!-- carte face cachée, légèrement penchée -->
+  <g transform="rotate(-9 116 130)">
+    <rect x="72" y="72" width="88" height="116" rx="10" fill="#fff0fa" stroke="#3b0a45" stroke-width="9"/>
+    <rect x="88" y="88" width="56" height="84" rx="5" fill="#c9a3ff" stroke="#3b0a45" stroke-width="5"/>
+    <path d="M116 108l6 14 14 6-14 6-6 14-6-14-14-6 14-6z" fill="#fff0fa"/>
+  </g>
+
+  <!-- carte retournée, la paire trouvée -->
+  <g transform="rotate(7 208 126)">
+    <rect x="164" y="68" width="88" height="116" rx="10" fill="#ffffff" stroke="#3b0a45" stroke-width="9"/>
+    <circle cx="208" cy="112" r="20" fill="#4de0ff" stroke="#3b0a45" stroke-width="6"/>
+    <path d="M188 156h40" stroke="#3b0a45" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <g fill="#ffd84d">
+    <path d="M40 44l6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/>
+    <path d="M280 186l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+  </g>
+</svg>

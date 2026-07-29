@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Run, Glinda, Run">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#e91e8c"/>
+  <rect width="320" height="240" fill="url(#run-rayures)"/>
+  <defs>
+    <pattern id="run-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+
+  <!-- le couloir qui file, façon course sans fin -->
+  <path d="M0 190h320v50H0z" fill="#3b0a45" opacity=".28"/>
+  <g stroke="#ffffff" stroke-width="7" stroke-linecap="round" opacity=".45">
+    <path d="M18 214h44"/><path d="M96 214h56"/><path d="M186 214h40"/><path d="M258 214h48"/>
+  </g>
+
+  <!-- l'ombre qui suit, derrière -->
+  <g fill="#3b0a45" opacity=".55">
+    <circle cx="72" cy="112" r="26"/>
+    <path d="M46 146h52l10 44H36z"/>
+  </g>
+
+  <!-- Glinda qui court, pompons au vent -->
+  <g stroke="#3b0a45" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <circle cx="196" cy="88" r="24" fill="#ffd3ef"/>
+    <path d="M196 112v46" />
+    <path d="M196 158l-22 40M196 158l26 36" />
+    <path d="M196 124l-34-14M196 124l38-20" />
+  </g>
+  <circle cx="158" cy="106" r="13" fill="#ffd84d" stroke="#3b0a45" stroke-width="7"/>
+  <circle cx="238" cy="100" r="13" fill="#4de0ff" stroke="#3b0a45" stroke-width="7"/>
+
+  <g fill="#ffd84d">
+    <path d="M286 40l6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/>
+    <path d="M28 58l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+  </g>
+</svg>

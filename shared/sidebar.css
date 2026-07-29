@@ -1,118 +1,122 @@
 /* =========================================================
    Sidebar « Tu aimeras aussi... » — habillage partagé
-   À importer APRÈS shared/components.css.
-   Même DA que le reste du portail : cadre à double filet, bandeau en
-   dégradé bonbon/lilas/piscine, titre WordArt, tuiles à ombre dure.
-   Les couleurs, polices et ombres viennent toutes de style-tokens.css ;
-   chaque item pose en plus sa propre --accent (couleur du perso).
+   À importer APRÈS shared/components.css, AVANT shared/portail.css.
+   ---------------------------------------------------------
+   C'est le rail « jeux similaires » des portails de 2012 : un en-tête sombre
+   à filet d'accent, puis des lignes serrées vignette + titre + catégorie.
+   Elle suit la même hiérarchie que le reste de la coque — trait d'un cheveu
+   sur feuille blanche, l'ombre dure étant réservée à l'en-tête, au lecteur et
+   au pied de page. Chaque ligne pose sa propre --accent (couleur du perso).
    ========================================================= */
 
 .sidebar-autres {
   overflow: hidden;
-  font-family: var(--font-title);
+  font-family: var(--font-ui);
   color: var(--text-color);
-  background: var(--panel-bg);
-  border: 4px double var(--text-color);
-  border-radius: 20px;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7), var(--ombre-dure);
+  background: var(--feuille);
+  border: 1px solid var(--reglure-forte);
+  border-radius: var(--radius-bloc);
+  box-shadow: var(--ombre-bloc);
 }
 
-/* Petit bandeau, comme celui des pages de jeu en miniature */
+/* Même barre d'en-tête que les blocs du hub (.rubrique), au mot près. */
 .sidebar-titre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
-  padding: 8px 10px 7px;
-  text-align: center;
-  font-family: var(--font-deco);
-  font-weight: 400;
-  font-size: 1.15rem;
-  line-height: 1.2;
+  padding: 6px 10px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: #fff;
-  text-shadow: 1px 1px 0 var(--text-color), 2px 3px 0 rgba(59, 10, 69, 0.4);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
-    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
-  border-bottom: var(--trait);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+  background: linear-gradient(180deg, var(--coque-clair), var(--coque));
+  border-bottom: 3px solid var(--bonbon);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .sidebar-liste {
   list-style: none;
   margin: 0;
-  padding: 10px;
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  background: radial-gradient(ellipse at 50% 0%, #fff 0%, var(--panel-bg) 60%, var(--barbe) 100%);
 }
 
-/* Une tuile de jeu, cousine des tuiles de la garde-robe de Drew */
+.sidebar-item { border-bottom: 1px solid var(--reglure); }
+.sidebar-item:last-child { border-bottom: none; }
+.sidebar-item:nth-child(even) { background: #fff8fd; }
+
+/* Une ligne de jeu : vignette, titre, catégorie. */
 .sidebar-lien {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px;
+  gap: 9px;
+  padding: 7px 10px;
   text-decoration: none;
   color: inherit;
-  background: linear-gradient(180deg, #fff, var(--panel-bg));
-  border: 2px solid var(--accent);
-  border-radius: 12px;
-  box-shadow: 0 3px 0 var(--shadow-color);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  /* Le filet d'accent à gauche, c'est ce qui rattache la ligne à son perso
+     sans avoir à colorer toute la tuile. */
+  border-left: 3px solid transparent;
+  transition: background 0.1s ease, border-color 0.1s ease;
 }
 
 a.sidebar-lien:hover,
 a.sidebar-lien:focus-visible {
-  transform: translateY(-3px) rotate(-1.5deg);
-  box-shadow: 0 6px 0 var(--shadow-color);
-  filter: saturate(1.3);
-}
-
-/* L'étoile qui pétille sur les jeux jouables, comme sur le hub */
-a.sidebar-lien::after {
-  content: "★";
-  position: absolute;
-  top: -6px;
-  right: -4px;
-  font-size: 0.8rem;
-  color: var(--or);
-  text-shadow: 0 0 5px #fff, 1px 1px 0 var(--text-color);
+  background: var(--panel-bg);
+  border-left-color: var(--accent);
 }
 
 .sidebar-vignette {
   flex: 0 0 auto;
-  width: 54px;
-  height: 40px;
+  width: 52px;
+  height: 39px;
   object-fit: cover;
-  border: 2px solid var(--text-color);
-  border-radius: 7px;
+  border: 1px solid var(--reglure-forte);
+  border-radius: var(--radius-etiquette);
 }
+
+a.sidebar-lien:hover .sidebar-vignette { border-color: var(--accent); }
 
 .sidebar-texte {
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .sidebar-nom {
-  font-size: 0.72rem;
+  font-family: var(--font-title);
+  font-size: 12px;
   font-weight: bold;
   line-height: 1.2;
 }
 
-/* Badge « Bientôt » façon bouton doré d'époque */
+a.sidebar-lien:hover .sidebar-nom { text-decoration: underline; }
+
+.sidebar-cat {
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gris-ui);
+}
+
+/* Badge « Bientôt » façon pastille dorée d'époque */
 .sidebar-badge {
   align-self: flex-start;
   padding: 1px 7px;
-  font-family: var(--font-chiffres);
-  font-size: 0.5rem;
+  font-size: 8px;
   font-weight: bold;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #000;
   background: linear-gradient(180deg, var(--or), #ff9d00);
   border: 1px solid #000;
-  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.6);
+  border-radius: var(--radius-etiquette);
 }
 
 .sidebar-item.bientot {
@@ -121,26 +125,23 @@ a.sidebar-lien::after {
   cursor: not-allowed;
 }
 
-/* Retour au hub : petit bouton pilule, comme les boutons du portail */
+/* Retour au hub : la barre de pied du rail */
 .sidebar-retour {
   display: block;
   margin: 0;
-  padding: 8px 10px 10px;
+  padding: 7px 10px;
   text-align: center;
   text-decoration: none;
-  font-size: 0.62rem;
+  font-size: 10px;
   font-weight: bold;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-color);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon));
-  border-top: var(--trait);
-  text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.6);
+  color: var(--coque-texte);
+  background: linear-gradient(180deg, var(--coque-clair), var(--coque));
+  border-top: 1px solid var(--coque-bord);
 }
 
-.sidebar-retour:hover { filter: saturate(1.4); }
+.sidebar-retour:hover { color: var(--or); }
 
 @media (prefers-reduced-motion: reduce) {
   .sidebar-lien { transition: none; }

@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="../../shared/components.css" />
 <link rel="stylesheet" href="../../shared/navbar.css" />
 <link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="../../shared/portail.css" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body class="theme-glinda">
@@ -22,6 +23,13 @@
   <div id="navbar"></div>
 
   <div class="page">
+    <div class="colonne-jeu">
+      <nav id="fil-ariane"></nav>
+
+      <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
+      <div class="lecteur">
+        <div id="lecteur-chargement"></div>
+        <div class="lecteur-scene">
     <div class="shell">
       <header class="banner">
         <h1 class="wordart" data-text="Pep Rally Rhythm"><span>Pep Rally Rhythm</span></h1>
@@ -119,7 +127,7 @@
 
       <footer>
         <div class="footer-compteur">
-          <span class="counter-label">Tu es la visiteuse n°</span>
+          <span class="counter-label">Tu es le visiteur n°</span>
           <span id="counter" class="counter" aria-label="compteur de visites"
                 data-cle="glinda_visites" data-base="4212" data-chiffres="6"></span>
         </div>
@@ -127,6 +135,13 @@
           <span class="badge">★ SPIRIT SQUAD 4 EVER ★</span>
         </div>
       </footer>
+    </div>
+        </div>
+        <div id="lecteur-outils"></div>
+      </div>
+
+      <!-- Fiche du jeu, remplie depuis games-manifest.json -->
+      <div id="fiche-jeu"></div>
     </div>
 
     <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
@@ -136,12 +151,15 @@
   <script src="../../shared/perso.js"></script>
   <script src="charts.js"></script>
   <script src="main.js"></script>
+  <script src="../../shared/favoris.js"></script>
   <script src="../../shared/sparkle.js"></script>
   <script src="../../shared/navbar.js"></script>
   <script src="../../shared/sidebar.js"></script>
+  <script src="../../shared/lecteur.js"></script>
   <script>
     renderNavbar("glinda", "navbar");
     renderSidebar("glinda", "sidebar-autres-jeux");
+    renderLecteur("glinda");
   </script>
 </body>
 </html>

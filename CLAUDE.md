@@ -4,20 +4,25 @@ Ce fichier donne le contexte permanent du projet à Claude Code. À lire avant t
 tâche. Les specs détaillées par jeu sont dans les fichiers `*-SPEC.md` à la racine.
 
 ## Le projet
-**uma-games-hub** : un portail façon site de jeux 2012 (esprit girlsgogames) qui
-regroupe 4 mini-jeux, un par personnage principal d'un JDR/univers narratif appelé
-*IT: Welcome to UMA*. Chaque jeu est goofy et exploite un trait de personnalité, sans
-raconter le lore/l'intrigue.
+**uma-games-hub** : un portail façon **site de jeux Flash de 2012** — la référence
+n'est pas seulement girlsgogames mais aussi Miniclip, Kongregate, Armor Games, Y8 —
+qui regroupe des mini-jeux, un par personnage principal d'un JDR/univers narratif
+appelé *IT: Welcome to UMA*. Chaque jeu est goofy et exploite un trait de
+personnalité, sans raconter le lore/l'intrigue.
 
-| Perso   | Jeu                          | Dossier                 | Statut          |
-|---------|------------------------------|--------------------------|-----------------|
-| Drew    | Dress-up (mauvais goût)      | `games/drew-dress-up/`   | Jouable         |
-| Glinda  | Pep Rally Rhythm (rythme/QTE)| `games/glinda-cheer/`    | Jouable         |
-| Elias   | Sanity Whack (whack-a-mole)  | `games/elias-whack/`     | Jouable         |
-| Eoghan  | Kiss & Cache (infiltration)  | `games/eoghan-office/`   | Jouable         |
+| Perso       | Jeu                            | Dossier                 | Statut     |
+|-------------|--------------------------------|-------------------------|------------|
+| Drew        | Dress-up (mauvais goût)        | `games/drew-dress-up/`  | Jouable    |
+| Glinda      | Pep Rally Rhythm (rythme/QTE)  | `games/glinda-cheer/`   | Jouable    |
+| Elias       | Sanity Whack (whack-a-mole)    | `games/elias-whack/`    | Jouable    |
+| Eoghan      | Kiss & Cache (infiltration)    | `games/eoghan-office/`  | Jouable    |
+| Tout le monde | UMA Memory (paires)          | —                       | **Placeholder** |
+| Glinda      | Run, Glinda, Run (course sans fin, façon Temple Run — Boq la poursuit) | — | **Placeholder** |
 
-**Les 4 jeux sont finis et branchés au hub.** Ce qui reste est du contenu et du
-polish, pas de la structure — voir « État d'avancement » en bas de ce fichier.
+**Les 4 premiers jeux sont finis et branchés au hub.** Les deux derniers n'existent
+que comme entrées `"statut": "bientot"` dans le manifest, avec une vignette : ils
+apparaissent partout (grille grisée, onglet inactif, catégories) sans qu'une seule
+ligne de moteur soit écrite. On verra plus tard s'ils sont développés.
 
 Voir `uma-games-hub-SPEC.md` pour l'architecture du hub/sidebar, et les fichiers
 `dress-my-drew-SPEC.md` / futures specs Glinda-Elias pour le détail de chaque jeu.
@@ -36,15 +41,21 @@ uma-games-hub/
 ├── CLAUDE.md                   # ce fichier
 ├── uma-games-hub-SPEC.md        # spec du hub + sidebar + manifest
 ├── dress-my-drew-SPEC.md        # spec du jeu de Drew
-├── games-manifest.json          # source unique de vérité : liste des 4 jeux
+├── games-manifest.json          # source unique de vérité : la liste des jeux
+├── pubs.json                    # les annonceurs d'Augusta (régie publicitaire)
 ├── index.html                   # page d'accueil / hub
 ├── style-hub.css
 ├── shared/
-│   ├── style-tokens.css         # variables CSS (couleurs, police, ombres)
+│   ├── style-tokens.css         # variables CSS (couleurs, polices, ombres)
 │   ├── components.css           # mobilier commun (fond, .shell, bandeau, footer…)
+│   ├── portail.css              # LA COQUE : barre de service, annonces, fil
+│   │                            #   d'Ariane, pubs, notes, lecteur, pied de page
 │   ├── perso.js                 # fabrique de personnages chibi (persoSVG, spectateurSVG)
-│   ├── navbar.js / navbar.css   # barre de navigation permanente
+│   ├── navbar.js / navbar.css   # en-tête du site (service + navigation + annonces)
 │   ├── sidebar.js / sidebar.css # renderSidebar(currentGameId, targetElementId)
+│   ├── lecteur.js               # renderLecteur(gameId) : habillage d'une page de jeu
+│   ├── pub.js                   # renderPubs(...) : la régie, créations en rotation
+│   ├── favoris.js               # umaFavoris : le ★ des jeux, en localStorage
 │   ├── sparkle.js               # paillettes du curseur + compteur de visites
 │   └── vignettes/               # vignettes SVG des jeux (placeholders)
 ├── outils/                      # bancs d'essai Node (voir outils/LISEZMOI.md)
@@ -55,9 +66,32 @@ uma-games-hub/
     └── eoghan-office/           # index/style/main + decors.js (3 salles + mobilier)
 ```
 
-Chaque jeu suit le même squelette de page : `#navbar` → `.page` (`.shell` du jeu +
-`#sidebar-autres-jeux`) → scripts du jeu, puis `sparkle.js`, `navbar.js`, `sidebar.js`
-et l'appel à `renderNavbar(id, "navbar")` / `renderSidebar(id, "sidebar-autres-jeux")`.
+Squelette d'une page de jeu — le jeu est **encastré dans un lecteur**, comme sur
+un portail Flash de l'époque :
+
+```
+#navbar                          ← en-tête du site, injecté par renderNavbar
+.page
+├── .colonne-jeu
+│   ├── #fil-ariane              ← Accueil » Catégorie » Jeu
+│   ├── .lecteur
+│   │   ├── #lecteur-chargement  ← la jauge « chargement… prêt »
+│   │   ├── .lecteur-scene       ← le bezel sombre
+│   │   │   └── .shell           ← le jeu lui-même, inchangé
+│   │   └── #lecteur-outils      ← note, favori, plein écran, recommencer
+│   └── #fiche-jeu               ← « À propos de ce jeu »
+└── #sidebar-autres-jeux
+```
+
+Scripts, dans cet ordre : ceux du jeu, puis `favoris.js`, `sparkle.js`,
+`navbar.js`, `sidebar.js`, `lecteur.js`, puis les appels `renderNavbar(id,
+"navbar")` / `renderSidebar(id, "sidebar-autres-jeux")` / `renderLecteur(id)`.
+`favoris.js` doit passer **avant** `navbar.js` et `lecteur.js`, qui s'en servent.
+
+Le squelette du lecteur est en dur dans le HTML et **jamais construit à
+l'exécution** : déplacer le jeu dans le DOM après le chargement de ses scripts
+casserait les mesures que plusieurs font au démarrage (le cadrage de Drew,
+notamment).
 
 ## Direction artistique (DA) commune
 Tous les jeux + le hub partagent la même DA rétro 2012 kitsch via `shared/`.
@@ -65,9 +99,67 @@ Tous les jeux + le hub partagent la même DA rétro 2012 kitsch via `shared/`.
   ```html
   <link rel="stylesheet" href="../../shared/style-tokens.css" />
   <link rel="stylesheet" href="../../shared/components.css" />
-  <link rel="stylesheet" href="style.css" /> <!-- spécifique au jeu -->
+  <link rel="stylesheet" href="../../shared/navbar.css" />
+  <link rel="stylesheet" href="../../shared/sidebar.css" />
+  <link rel="stylesheet" href="../../shared/portail.css" />
+  <link rel="stylesheet" href="style.css" /> <!-- spécifique au jeu, en dernier -->
   ```
   (adapter le nombre de `../` selon la profondeur réelle du fichier)
+
+### La coque et la feuille — la hiérarchie visuelle
+La référence n'est pas seulement girlsgogames mais **les portails Flash de 2012
+en général** (Miniclip, Kongregate, Armor Games, Y8). Ce qu'ils avaient tous, et
+qui manquait ici : une **coque sombre** (barre de service, en-tête, cadre du
+lecteur, pied de page) qui enveloppe une **feuille claire** portant le contenu.
+Avant, tout portait le même trait de 3 px et la même ombre dure : rien ne
+reculait, et la page se lisait comme un tas d'autocollants plutôt que comme un
+site. La règle, désormais :
+
+| Couche | Rôle | Traitement |
+|--------|------|------------|
+| Coque (`--coque`, `--coque-clair`) | en-tête, lecteur, pied de page | dégradé sombre, filet `--coque-bord`, **ombre dure** |
+| Feuille (`--feuille`) | blocs de contenu, cartes, listes | blanc, filet d'un cheveu `--reglure-forte`, ombre douce |
+| Accent (`--bonbon`, `--or`) | boutons, soulignés de rubrique, notes | le rose bonbon joue ici le rôle que l'orange tenait chez Kongregate |
+
+Le relief se fabrique toujours pareil, « biseauté Web 2.0 » : dégradé vertical
+clair→sombre, filet blanc translucide en haut, filet sombre en bas.
+
+- **L'en-tête est sombre de bout en bout.** Une version intermédiaire gardait le
+  dégradé bonbon/lilas/piscine sur la rangée de navigation entre deux bandes
+  sombres : ça se lisait comme une hésitation, pas comme un choix, et ça cassait
+  la hiérarchie qu'on venait d'installer. Les trois bandes se distinguent par
+  leur seule **valeur** (la navigation est la plus claire), et le dégradé bonbon
+  reste là où il veut dire quelque chose : le bandeau-titre **dans** chaque jeu.
+- **Un seul système de formes.** Avant, la même page mélangeait des pilules
+  (999 px) et des angles à 3, 4, 5, 6, 8, 10, 12 et 14 px. Désormais trois
+  jetons, et rien d'autre : `--radius-etiquette` (3 px, ce qui ne se clique
+  pas), `--radius-controle` (4 px, **tout** ce qui se clique), `--radius-bloc`
+  (5 px, les boîtes). Les pilules `--radius-button` et `--radius-panel` restent
+  définies mais ne servent plus qu'à **l'intérieur** des jeux.
+- **Un seul contour.** Tout ce qui est posé sur le papier peint — en-tête, blocs,
+  lecteur, pied de page — porte le même filet d'un cheveu et la même
+  `--ombre-bloc`. La hiérarchie ne passe plus par l'épaisseur du cadre mais par
+  la valeur : coque sombre contre feuille blanche. Seul le bouton JOUER garde une
+  ombre dure, parce que c'est l'action principale de la page.
+
+- **Deux polices, deux rôles.** `--font-title` (Comic Sans) porte la
+  personnalité : titres de jeux, texte d'ambiance, boutons de jeu.
+  `--font-ui` (Tahoma/Verdana) porte le **mobilier** : menus, notes, votes,
+  compteurs, mentions. À 11 px Comic Sans devient illisible, et surtout ce
+  n'est pas ce que les vrais sites employaient — leur interface était en
+  Tahoma/Verdana/Arial. Ne pas écrire de métadonnée en Comic Sans.
+- **On ne sélectionne pas le texte.** `components.css` pose `user-select: none`
+  sur le `body` (plus la coupure du halo bleu au tap et du menu d'appui long) :
+  un site de jeux ne doit pas se manipuler comme un document. Les `input` et
+  `textarea` sont rendus à leur métier juste après, sinon la recherche devient
+  inutilisable. Et `body` porte `min-height: 100%`, **pas** `height` : avec une
+  hauteur fixe, sa boîte s'arrête au bas de la fenêtre et le `padding-bottom`
+  se dessine au milieu de la page — la marge sous le pied de page disparaît.
+- **Attention aux collisions de classes.** Le CSS n'a qu'un seul espace de
+  noms et le style d'un jeu est chargé **après** la coque : un nom commun et
+  c'est le jeu qui gagne. Déjà vécu — `.note` (les notes qui tombent chez
+  Glinda) écrasait la note sur 10 du lecteur, renommée `.notation`.
+  `node outils/test-collisions.js` monte la garde.
 - Chaque page de jeu ajoute une classe thème sur `<body>` : `theme-drew`,
   `theme-glinda`, `theme-eoghan`, `theme-elias` → applique automatiquement la bonne
   couleur d'accent partout où `var(--accent)` est utilisé.
@@ -85,16 +177,57 @@ Tous les jeux + le hub partagent la même DA rétro 2012 kitsch via `shared/`.
   nouveau personnage = de nouvelles options, jamais un nouveau style de dessin.
 
 ## `games-manifest.json`
-Source unique de vérité pour le hub ET la sidebar de chaque jeu. Champs par entrée :
-`id`, `titre`, `perso`, `description`, `vignette`, `url` (relatif à la racine du repo,
-ou `null` si pas encore disponible), `couleur`, `statut` (`"disponible"` ou `"bientot"`).
-Ne jamais dupliquer ces infos ailleurs en dur — toujours lire ce fichier.
+Source unique de vérité pour le hub, l'en-tête, la sidebar ET le lecteur.
+Champs par entrée :
+
+| Champ | Sert à |
+|-------|--------|
+| `id`, `titre`, `perso`, `description` | partout |
+| `vignette`, `url` (relatif à la racine, `null` si absent), `couleur` | partout |
+| `statut` | `"disponible"` ou `"bientot"` |
+| `categorie` | fil d'Ariane, liste des catégories, rail « jeux similaires » |
+| | Ce sont de **larges paniers**, façon portail : Action, Habillage, Réflexion, Rythme. Une catégorie par jeu ne fait pas un rail de catégories — quand chaque compteur vaut 1, autant ne rien afficher. Course et Aventure ont été refondues dans Action pour cette raison. |
+| `note` (sur 10), `votes` | les étoiles, le tri « les mieux notés » |
+| `parties` | le classement, la barre d'outils, le total de l'en-tête |
+| `ajoute_le` (`AAAA-MM-JJ`) | le tri « nouveautés » et le choix du **jeu à la une** |
+| `controles` | la fiche du jeu |
+
+Un jeu `"statut": "bientot"` n'a ni `url`, ni `note`, ni `votes`, ni `parties`, ni
+`ajoute_le` — il n'est pas sorti, il n'a rien à afficher. Le hub le gère :
+il est écarté de la une, du classement et des réclames, ses étoiles ne sont pas
+rendues (cinq étoiles grises se liraient comme un zéro) et il **passe toujours en
+fin de liste**, quel que soit le tri. Il suffit donc d'ajouter une entrée et une
+vignette pour annoncer un jeu, sans écrire une ligne de moteur.
+
+## `pubs.json` — la régie
+Les annonceurs d'Augusta, affichés dans les emplacements publicitaires du hub.
+Champs : `id`, `annonceur`, `titre`, `accroche`, `bouton`, `glyphe`, `couleur`,
+`couleur2`, `encre`. Pas d'`url` : ce sont des décors, donc **aucun lien mort** —
+seules les réclames maison (fabriquées depuis le manifest par `shared/pub.js`)
+sont cliquables, et elles mènent au jeu.
+
+Les emplacements **tournent** : une création toutes les 7 s, en fondu, comme
+n'importe quelle régie de l'époque. La rotation se met en pause quand l'onglet
+est masqué et ne démarre pas du tout si le système demande moins d'animation.
+Quand de vraies images d'annonceurs existeront, ajouter un champ `image` à
+l'entrée : le rendu la prendra si elle est là, sinon il retombe sur la création
+dessinée en CSS — la même méthode que pour le reste de l'art.
+
+Ne jamais dupliquer ces infos ailleurs en dur — toujours lire ce fichier. Les
+chiffres (`note`, `votes`, `parties`) sont de la fiction d'ambiance, assumée :
+c'est un portail imaginaire. Mais rien ne doit être écrit en dur dans une page —
+le total de parties de l'en-tête, les comptes par catégorie et le classement se
+recalculent tous depuis ce fichier.
 
 ## Comment tester en local
 ```bash
 python3 -m http.server 8000       # puis ouvrir http://localhost:8000
 node outils/test-jeux.js          # 49 vérifications de règles, sans navigateur
+node outils/test-collisions.js    # aucun nom de classe partagé coque ↔ jeux
 ```
+Note : `http.server` est **mono-thread**. Il suffit pour jouer, mais il se bloque
+dès qu'on charge plusieurs pages en parallèle (banc d'essai qui ouvre des iframes
+à différentes largeurs) : passer alors par `ThreadingHTTPServer`.
 Les jeux eux-mêmes n'ont **aucune dépendance** : Node ne sert qu'aux bancs d'essai.
 Penser au **rechargement forcé** (Ctrl+Maj+R) après une modif de CSS/JS : le serveur
 Python ne renvoie pas d'en-tête anti-cache et le navigateur garde l'ancienne version.
@@ -136,6 +269,32 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       en dessous), pastilles à 35 px de haut au lieu de 22, ascenseur du ruban
       repeint aux couleurs du site, bords en fondu du côté où il reste des jeux,
       et l'onglet de la page courante est amené sous les yeux au chargement.
+- [x] **Le site ressemble enfin à un portail Flash de 2012**, pas seulement à
+      une page rose. Ce qui a été ajouté, et qui manquait :
+      - la **coque sombre** et sa hiérarchie (voir la DA plus haut) ;
+      - une **barre de service** (recherche qui filtre pour de vrai, compteur de
+        favoris) et un **bandeau d'annonces** déroulant, injectés par `navbar.js`
+        donc présents sur les 5 pages ;
+      - des **emplacements publicitaires** aux formats de l'époque (728×90 et
+        300×250), remplis de réclames maison pour les jeux du site ;
+      - des **notes sur 10**, des compteurs de parties, un **classement**, une
+        liste de **catégories**, un tri (nouveautés / notes / parties / A→Z) ;
+      - un **jeu à la une** = le dernier arrivé d'après `ajoute_le` ;
+      - le **lecteur** sur les pages de jeu : bezel, jauge de chargement, barre
+        d'outils (note, favori, plein écran, recommencer) et fiche « à propos » ;
+      - des **favoris** en localStorage, vraiment fonctionnels ;
+      - le rail « Tu aimeras aussi » redessiné en liste dense avec catégories.
+      Le grand titre WordArt du hub a disparu au passage : un vrai portail
+      n'avait pas de titre de page géant, il avait un **logo** dans son en-tête.
+      C'est ce qu'est devenue la marque (`.marque-nom` + `.marque-slogan`).
+- [x] Deux jeux annoncés en placeholders : **UMA Memory** et **Run, Glinda, Run**
+      (course sans fin, Boq la poursuit). Entrées de manifest + vignettes SVG,
+      aucun moteur.
+- [x] **Régie publicitaire** (`pubs.json` + `shared/pub.js`) : cinq annonceurs
+      d'Augusta (le Starbucks du campus, le club d'échecs de la fac, l'Instagram
+      de @glindatheverygood, le SoundCloud de @eoghanmasuda, l'appel à témoins
+      sur les disparitions) mélangés aux réclames maison, en rotation toutes les
+      7 s. Les deux emplacements d'une page ne montrent jamais la même chose.
 
 ### PROCHAINE ÉTAPE : remplacer tous les SVG par de vraies illustrations
 C'est la priorité annoncée. Aujourd'hui **tout est dessiné en code** (SVG généré par
@@ -202,7 +361,19 @@ solution de repli et de référence de cadrage.
   C'est ce qui coupait le jeu de Drew en deux sur mobile. D'où le `width: 100%` sur
   `.page > .shell` dans `shared/components.css` : ne pas le retirer.
 - L'extension Chrome de capture d'écran tombe régulièrement en panne pendant les
-  sessions longues : ouvrir un nouvel onglet la remet d'aplomb.
+  sessions longues : ouvrir un nouvel onglet la remet d'aplomb. Et quand la
+  fenêtre passe en arrière-plan (`document.visibilityState === "hidden"`),
+  Chrome **suspend le chargement des iframes** : le banc d'essai qui mesure
+  plusieurs largeurs d'un coup reste bloqué à « loading » sans erreur. Il faut
+  la fenêtre au premier plan.
+- **La coque du portail (2026-07-29) n'a été contrôlée visuellement qu'en large
+  (~1000 px et plus).** Les règles pour écran étroit existent — `portail.css` §9
+  (860 et 460 px), `style-hub.css` (900 et 460 px), `navbar.css` (720 et 380 px)
+  — mais n'ont pas été vues à l'œil : la fenêtre de test était maximisée et
+  refusait de se redimensionner. À reprendre en priorité au prochain passage.
+- **La rotation des pubs n'a pas été observée en direct**, pour la même raison :
+  elle se met volontairement en pause quand l'onglet est masqué, et l'onglet de
+  test l'était. Le rendu des deux créations de départ, lui, est vérifié.
 
 ### Repères d'équilibrage (à revérifier après toute retouche)
 - **Glinda** : écart minimum entre deux notes ≥ 200 ms, rafale de 4 notes maximum

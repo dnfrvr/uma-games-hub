@@ -1,0 +1,805 @@
+/* =========================================================
+   La coque du portail — mobilier commun au hub et aux pages de jeu
+   À importer APRÈS shared/components.css, AVANT le style de la page.
+   ---------------------------------------------------------
+   Ce que les portails Flash de 2012 avaient en commun, au-delà de leur
+   palette : une COQUE sombre (barre de service, bandeau déroulant, fil
+   d'Ariane, cadre du lecteur, pied de page) qui enveloppe une FEUILLE claire
+   où vit le contenu. On y ajoute le mobilier commercial de l'époque —
+   emplacements de publicité, notes sur 10, compteurs de parties, barre
+   d'outils sous le jeu. C'est ce qui distingue un site d'une page.
+
+   Le relief se fabrique toujours de la même façon ici, la « biseautée
+   Web 2.0 » : un dégradé vertical clair→sombre, un filet blanc translucide
+   en haut, un filet sombre en bas. Trois lignes, et une barre a l'air pressée
+   dans du plastique.
+   ========================================================= */
+
+/* =========================================================
+   0. L'en-tête, d'un seul tenant
+   ---------------------------------------------------------
+   Barre de service, navigation et bandeau d'annonces ne sont pas trois
+   widgets empilés mais un seul bloc : c'est le cadre extérieur qui porte le
+   trait, le rayon et l'ombre, les trois bandes à l'intérieur n'ont que des
+   séparateurs horizontaux.
+
+   L'en-tête est SOMBRE de bout en bout. Une première version gardait le
+   dégradé bonbon/lilas/piscine sur la rangée de navigation, entre deux bandes
+   sombres : ça ne se lisait pas comme un choix mais comme une hésitation, et
+   surtout ça cassait la hiérarchie que la coque vient d'installer — une bande
+   arc-en-ciel au milieu du chrome, et plus rien ne recule. C'est aussi ce que
+   faisaient les vrais portails : Miniclip, Kongregate, Armor Games avaient
+   tous une barre sombre, l'accent vivant dans l'onglet actif et pas dans le
+   fond. Le dégradé bonbon reste là où il veut dire quelque chose : le
+   bandeau-titre à l'intérieur de chaque jeu.
+
+   Les trois bandes se distinguent par leur seule valeur — la navigation est
+   la plus claire (c'est la rangée principale), les lisières sont les plus
+   sombres — et un filet bonbon ferme l'ensemble, le même que sous les barres
+   de rubrique. ========================================================= */
+
+/* Même contour que n'importe quel bloc de contenu : filet d'un cheveu, rayon
+   de bloc, ombre douce. L'en-tête portait avant un halo blanc de 4 px et une
+   ombre dure héritée de l'ancienne DA — il flottait dans un autre plan que le
+   reste de la page. Le filet bonbon du bas reste : c'est le même accent que
+   sous chaque barre de rubrique, donc un rappel du système, pas une exception. */
+.entete-site {
+  max-width: 1180px;
+  margin: 0 auto 14px;
+  overflow: hidden; /* sans quoi les bandes débordent du rayon */
+  border: 1px solid var(--coque-fond);
+  border-bottom: 3px solid var(--bonbon);
+  border-radius: var(--radius-bloc);
+  box-shadow: var(--ombre-bloc);
+}
+
+/* Sur une page de jeu, l'en-tête s'aligne sur le duo jeu + colonne latérale,
+   plus large que le hub. Si le navigateur ne connaît pas :has(), la règle est
+   simplement ignorée et l'en-tête reste à 1180 px. */
+body:has(.page) .entete-site { max-width: 1330px; }
+
+.entete-site .barre-service,
+.entete-site .bandeau-annonces {
+  border: none;
+  border-radius: 0;
+}
+
+.entete-site .navbar {
+  /* Le `sticky` d'origine n'a jamais rien collé : son parent ne faisait que sa
+     propre hauteur. Ici il collerait sur les quelques pixels de l'en-tête, ce
+     qui serait pire. Sur un portail de jeux, la barre laisse l'écran au jeu. */
+  position: static;
+  max-width: none;
+  margin: 0;
+  /* La rangée principale : la plus claire des trois bandes. */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, var(--coque-clair), var(--coque));
+  border: none;
+  border-top: 1px solid var(--coque-bord);
+  border-bottom: 1px solid var(--coque-fond);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Les deux lisières : plus sombres que la navigation, pour que la rangée
+   principale se détache sans avoir besoin d'une couleur. */
+.entete-site .barre-service {
+  background: linear-gradient(180deg, var(--coque), var(--coque-fond));
+}
+
+.entete-site .bandeau-annonces {
+  background: linear-gradient(180deg, var(--coque-fond), #16031c);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* =========================================================
+   1. Barre de service — la lisière haute du site
+   ========================================================= */
+
+.barre-service {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 12px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--coque-texte-faible);
+  background: linear-gradient(180deg, var(--coque-clair), var(--coque));
+  border: 1px solid var(--coque-bord);
+  border-radius: var(--radius-bloc) var(--radius-bloc) 0 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.service-salut { flex: 0 1 auto; min-width: 0; }
+.service-salut b { color: var(--or); font-weight: bold; }
+
+/* Le champ de recherche pousse le reste aux deux bouts. */
+.service-recherche {
+  flex: 1 1 auto;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.service-champ {
+  flex: 0 1 260px;
+  min-width: 0;
+  padding: 4px 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--text-color);
+  background: var(--feuille);
+  border: 1px solid var(--coque);
+  border-radius: var(--radius-controle);
+  /* Creux : l'ombre portée est à l'intérieur, comme tous les champs de 2012. */
+  box-shadow: inset 0 2px 3px rgba(42, 7, 51, 0.35);
+}
+
+.service-champ::placeholder { color: #b79ab3; font-style: italic; }
+
+.service-loupe {
+  flex: 0 0 auto;
+  padding: 4px 10px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff8b0, var(--or));
+  border: 1px solid var(--coque);
+  border-radius: var(--radius-controle);
+  cursor: pointer;
+}
+
+.service-loupe:hover { filter: brightness(1.08); }
+.service-loupe:active { box-shadow: inset 0 2px 4px rgba(42, 7, 51, 0.4); }
+
+.service-liens {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-lien {
+  color: var(--coque-texte);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--coque-texte-faible);
+}
+
+.service-lien:hover { color: var(--or); border-bottom-color: var(--or); }
+
+.service-sep { color: var(--coque-bord); }
+
+/* =========================================================
+   2. Bandeau déroulant — le <marquee> d'époque, en CSS
+   ========================================================= */
+
+.bandeau-annonces {
+  overflow: hidden;
+  padding: 4px 0;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--coque-texte);
+  background: linear-gradient(180deg, #3d0d49, var(--coque));
+  border: 1px solid var(--coque-bord);
+  border-top: none;
+  border-radius: 0 0 var(--radius-bloc) var(--radius-bloc);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* La durée est posée par navbar.js d'après la largeur réelle du ruban, pour que
+   la VITESSE reste constante (voir --bandeau-vitesse). La valeur ci-dessous
+   n'est qu'un repli si le script ne tourne pas : lente exprès, un bandeau trop
+   rapide est illisible et fatigant. */
+.bandeau-piste {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: defile 110s linear infinite;
+}
+
+.bandeau-piste b { color: var(--citron); }
+.bandeau-piste em { color: var(--or); font-style: normal; }
+.bandeau-sep { color: var(--coque-bord); padding: 0 14px; }
+
+@keyframes defile {
+  to { transform: translateX(-100%); }
+}
+
+/* Sans animation, un bandeau qui défile ne se lit plus du tout : on le
+   remet à plat et il devient une ligne d'annonces ordinaire. */
+@media (prefers-reduced-motion: reduce) {
+  .bandeau-piste {
+    display: block;
+    padding-left: 12px;
+    white-space: normal;
+    animation: none;
+  }
+}
+
+/* =========================================================
+   3. Fil d'Ariane
+   ========================================================= */
+
+.fil-ariane {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 8px;
+  padding: 0 2px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--gris-ui);
+}
+
+.fil-ariane a {
+  color: #a3308c;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.fil-ariane a:hover { text-decoration: underline; }
+.fil-ariane .fil-sep { color: var(--reglure-forte); }
+.fil-ariane .fil-actuel { color: var(--text-color); }
+
+/* =========================================================
+   4. Emplacements publicitaires
+   ---------------------------------------------------------
+   Le détail le plus vrai d'un portail gratuit de 2012, et celui auquel on
+   pense le moins. La mention « PUBLICITÉ » au-dessus est ce qui fait le
+   tableau — et surtout, un emplacement TOURNE : il enchaîne ses créations
+   toutes les sept secondes, comme n'importe quelle régie de l'époque.
+
+   Deux familles de créations (voir shared/pub.js) :
+     - les annonceurs d'Augusta, chacun avec sa couleur de marque, posés en
+       variables `--pub-a` / `--pub-b` / `--pub-encre` par le script ;
+     - les réclames maison pour les jeux du site, qui gardent le fond rayé
+       jaune de l'emplacement — l'autopromo se voyait, à l'époque.
+   ========================================================= */
+
+.pub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.pub-mention {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gris-ui);
+}
+
+/* La scène porte le format ; les créations défilent dedans. */
+.pub-scene {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Les deux formats standards de l'époque, au pixel près. */
+.pub-banniere .pub-scene { max-width: 728px; height: 90px; margin: 0 auto; }
+.pub-pave .pub-scene { height: 250px; }
+
+.pub-cadre {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-decoration: none;
+  background:
+    repeating-linear-gradient(-45deg, #fffbe6 0 12px, #fff3c4 12px 24px);
+  border: 1px dashed var(--reglure-forte);
+  border-radius: var(--radius-etiquette);
+}
+
+/* Une création d'annonceur prend les couleurs de sa marque. */
+.pub-annonceur {
+  color: var(--pub-encre);
+  background: linear-gradient(135deg, var(--pub-a), var(--pub-b));
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+/* Le passage d'une création à la suivante. */
+.pub-entre { animation: pubEntre 0.45s ease both; }
+
+@keyframes pubEntre {
+  from { opacity: 0; transform: scale(1.015); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pub-entre { animation: none; }
+}
+
+.pub-reclame {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 18px;
+  text-align: left;
+}
+
+.pub-pave .pub-reclame { flex-direction: column; text-align: center; padding: 12px; }
+
+.pub-vignette {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 63px;
+  object-fit: cover;
+  border: 2px solid var(--text-color);
+  border-radius: var(--radius-etiquette);
+}
+
+.pub-pave .pub-vignette { width: 140px; height: 105px; }
+
+/* Le logo d'un annonceur, tant qu'il n'a pas d'image : un signe dans un
+   carré, comme les marques de l'époque en avaient toutes un. */
+.pub-glyphe {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  font-size: 28px;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: var(--radius-controle);
+}
+
+.pub-pave .pub-glyphe { width: 84px; height: 84px; font-size: 42px; }
+
+.pub-accroche {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 15px;
+  line-height: 1.2;
+  color: var(--text-color);
+}
+
+.pub-accroche strong { display: block; font-size: 20px; color: #d1007a; }
+
+/* Sur une création d'annonceur, tout le texte prend l'encre de la marque. */
+.pub-annonceur .pub-accroche { color: var(--pub-encre); }
+.pub-annonceur .pub-accroche strong { font-size: 17px; color: var(--pub-encre); }
+.pub-pave .pub-annonceur .pub-accroche strong { font-size: 20px; }
+
+.pub-annonceur-nom {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.pub-ligne {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.25;
+  opacity: 0.9;
+}
+
+.pub-annonceur .pub-bouton {
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, #e8e8e8);
+  border-color: rgba(0, 0, 0, 0.55);
+}
+
+.pub-bouton {
+  display: inline-block;
+  margin-top: 6px;
+  padding: 4px 14px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #ffffff, var(--or));
+  border: 1px solid var(--coque-fond);
+  border-radius: var(--radius-controle);
+  box-shadow: 0 1px 2px rgba(42, 7, 51, 0.35);
+}
+
+a.pub-cadre:hover .pub-bouton { background: linear-gradient(180deg, #fff, var(--citron)); }
+
+/* Le bouton favori hors de la barre d'outils (bloc à la une du hub) : même
+   fonction, habillage de bouton secondaire à côté du gros bouton JOUER. */
+.bouton-favori {
+  padding: 8px 16px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--barbe));
+  border: 2px solid var(--reglure-forte);
+  border-radius: var(--radius-controle);
+  cursor: pointer;
+  transition: filter 0.1s ease, transform 0.1s ease;
+}
+
+.bouton-favori:hover { filter: brightness(1.04); transform: translateY(-1px); }
+
+.bouton-favori[aria-pressed="true"] {
+  background: linear-gradient(180deg, #fff8c9, var(--or));
+  border-color: var(--text-color);
+}
+
+/* =========================================================
+   5. Note sur 10 et étoiles
+   ---------------------------------------------------------
+   Cinq étoiles grises, cinq étoiles dorées par-dessus, rognées à la largeur
+   qui correspond à la note. Pas d'image, pas de demi-étoile à dessiner.
+   ========================================================= */
+
+.notation {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--gris-ui);
+}
+
+.notation-etoiles {
+  position: relative;
+  flex: 0 0 auto;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 1px;
+  color: #d9c3d5;
+}
+
+.notation-etoiles::before { content: "★★★★★"; }
+
+.notation-etoiles i {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  font-style: normal;
+  color: #ffb400;
+  text-shadow: 0 1px 0 rgba(120, 60, 0, 0.35);
+}
+
+.notation-etoiles i::before { content: "★★★★★"; }
+
+.notation-chiffre {
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.notation-votes { color: var(--gris-ui); }
+
+/* =========================================================
+   6. Titre de rubrique — la barre d'en-tête d'un bloc
+   ========================================================= */
+
+.rubrique {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 6px 10px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+  background: linear-gradient(180deg, var(--coque-clair), var(--coque));
+  border-bottom: 3px solid var(--bonbon);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.rubrique-icone { font-size: 13px; }
+
+/* Compteur discret à droite du titre : « 4 jeux », « mise à jour lundi »… */
+.rubrique-info {
+  margin-left: auto;
+  font-weight: normal;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: var(--coque-texte-faible);
+}
+
+/* =========================================================
+   7. Le cadre du lecteur — la signature du portail Flash
+   ---------------------------------------------------------
+   Un jeu de 2012 ne s'affichait jamais nu : il était encastré dans un bezel
+   sombre, surmonté d'une barre de chargement et suivi d'une barre d'outils
+   (note, favori, plein écran, partage). C'est l'élément auquel on reconnaît
+   un portail de jeux au premier coup d'œil.
+   ========================================================= */
+
+.lecteur {
+  background: linear-gradient(180deg, #1d0524, var(--coque));
+  border: 1px solid var(--coque-bord);
+  border-radius: var(--radius-bloc);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), var(--ombre-bloc);
+}
+
+/* --- La bande de chargement, en haut du bezel --- */
+.lecteur-chargement {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--coque-texte-faible);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.lecteur-jauge {
+  flex: 1 1 auto;
+  height: 8px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-etiquette);
+}
+
+.lecteur-jauge span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, #ff7cc0, var(--bonbon));
+}
+
+.lecteur-etat { flex: 0 0 auto; color: var(--citron); }
+
+/* --- Le logement du jeu --- */
+.lecteur-scene {
+  padding: 8px;
+}
+
+.lecteur-scene > * { display: block; }
+
+/* Dans le bezel, le cadre du jeu se fait discret : c'est le lecteur qui
+   encadre maintenant, et deux cadres l'un dans l'autre ne cadrent plus rien.
+   Le `.shell` garde son fond et son contenu, il perd juste son gros trait,
+   son grand rayon et son ombre portée. */
+.lecteur-scene > .shell {
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-controle);
+  box-shadow: none;
+}
+
+.lecteur-scene:fullscreen {
+  display: grid;
+  place-content: center;
+  padding: 0;
+  background: var(--coque);
+}
+
+.lecteur-scene:fullscreen > .shell {
+  max-height: 100vh;
+  overflow: auto;
+}
+
+/* =========================================================
+   7b. La fiche du jeu, sous le lecteur
+   ========================================================= */
+
+.fiche-jeu {
+  margin-top: 12px;
+  overflow: hidden;
+  background: var(--feuille);
+  border: 1px solid var(--reglure-forte);
+  border-radius: var(--radius-bloc);
+  box-shadow: var(--ombre-bloc);
+}
+
+.fiche-corps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px 26px;
+  padding: 11px 12px 12px;
+}
+
+.fiche-desc {
+  flex: 1 1 260px;
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* La fiche technique : deux colonnes serrées, en police d'interface. */
+.fiche {
+  flex: 0 1 auto;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 11px;
+}
+
+.fiche dt {
+  align-self: center;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gris-ui);
+}
+
+.fiche dd {
+  margin: 0;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+/* --- La barre d'outils, sous le jeu --- */
+.lecteur-outils {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  padding: 7px 10px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--coque-texte-faible);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(0, 0, 0, 0.25));
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 var(--radius-controle) var(--radius-controle);
+}
+
+.lecteur-outils .notation { color: var(--coque-texte-faible); }
+.lecteur-outils .notation-chiffre { color: var(--or); }
+.lecteur-outils .notation-etoiles { color: #5c3a5c; }
+
+.outils-groupe {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.outils-groupe.a-droite { margin-left: auto; }
+
+.outil {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--coque-texte);
+  text-decoration: none;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-controle);
+  cursor: pointer;
+  transition: filter 0.1s ease, transform 0.1s ease;
+}
+
+.outil:hover { filter: brightness(1.35); }
+.outil:active { transform: translateY(1px); }
+
+.outil[aria-pressed="true"] {
+  color: var(--coque);
+  background: linear-gradient(180deg, #fff3a8, var(--or));
+  border-color: var(--or);
+}
+
+.outil-stat {
+  padding: 4px 0;
+  white-space: nowrap;
+}
+
+.outil-stat b { color: var(--coque-texte); font-weight: bold; }
+
+/* =========================================================
+   8. Pied de page du portail
+   ========================================================= */
+
+.pied-portail {
+  margin-top: 16px;
+  padding: 14px 16px 16px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--coque-texte-faible);
+  background: linear-gradient(180deg, var(--coque-clair), var(--coque));
+  border: 1px solid var(--coque-bord);
+  border-radius: var(--radius-bloc);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), var(--ombre-bloc);
+}
+
+.pied-liens {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.pied-liens a {
+  color: var(--coque-texte);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--coque-bord);
+}
+
+.pied-liens a:hover { color: var(--or); border-bottom-color: var(--or); }
+.pied-liens .fil-sep { color: var(--coque-bord); }
+
+.pied-mentions { margin: 0 0 10px; }
+.pied-mentions strong { color: var(--coque-texte); }
+
+/* Les pastilles « Optimisé pour… » : le vrai marqueur de l'époque. */
+.pied-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.pied-badge {
+  padding: 3px 8px;
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--coque-texte-faible);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--coque-bord);
+  border-radius: var(--radius-etiquette);
+}
+
+.pied-badge.badge-flash {
+  color: #2a0733;
+  background: linear-gradient(180deg, #ffd0e8, #ff8ac4);
+  border-color: #ff8ac4;
+  font-weight: bold;
+}
+
+/* Le compteur de visites garde son boîtier noir à chiffres verts. */
+.pied-portail .footer-compteur { justify-content: center; }
+.pied-portail .counter-label { color: var(--coque-texte-faible); }
+
+/* =========================================================
+   9. Écrans étroits
+   ========================================================= */
+
+@media (max-width: 860px) {
+  /* La barre de service passe sur deux lignes : recherche en pleine largeur
+     dessous, salutation et liens de compte au-dessus. */
+  .barre-service { flex-wrap: wrap; gap: 6px 10px; }
+  .service-recherche { order: 3; flex: 1 0 100%; justify-content: stretch; }
+  .service-champ { flex: 1 1 auto; }
+  .service-liens { margin-left: auto; }
+
+  .pub-banniere .pub-cadre { height: 70px; }
+  .pub-banniere .pub-vignette { width: 62px; height: 47px; }
+  .pub-accroche { font-size: 13px; }
+  .pub-accroche strong { font-size: 16px; }
+
+  .lecteur-scene { padding: 5px; }
+  .lecteur-outils { font-size: 10px; padding: 6px 8px; }
+  .outils-groupe.a-droite { margin-left: 0; }
+}
+
+@media (max-width: 460px) {
+  .service-salut { flex: 1 0 100%; }
+  .service-liens { margin-left: 0; }
+  .pied-liens { font-size: 10px; }
+}

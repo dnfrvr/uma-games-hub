@@ -1,0 +1,57 @@
+[
+  {
+    "id": "starbucks",
+    "annonceur": "Starbucks — Campus d'Augusta",
+    "titre": "Ta commande t'attend",
+    "accroche": "Ouvert jusqu'à 23 h. Ton prénom sera mal orthographié.",
+    "bouton": "Voir le menu",
+    "glyphe": "☕",
+    "couleur": "#0b6b45",
+    "couleur2": "#12a06a",
+    "encre": "#ffffff"
+  },
+  {
+    "id": "echecs",
+    "annonceur": "Club d'échecs · Université d'Augusta",
+    "titre": "Tous les jeudis, salle 204",
+    "accroche": "Débutants bienvenus. Thé et biscuits fournis.",
+    "bouton": "Nous rejoindre",
+    "glyphe": "♞",
+    "couleur": "#2b2f52",
+    "couleur2": "#4a5188",
+    "encre": "#ffffff"
+  },
+  {
+    "id": "glinda-insta",
+    "annonceur": "@glindatheverygood",
+    "titre": "Suis-moi sur Instagram",
+    "accroche": "12 400 abonnés. Aucun filtre, promis.",
+    "bouton": "S'abonner",
+    "glyphe": "◉",
+    "couleur": "#c81f7a",
+    "couleur2": "#ff7ab8",
+    "encre": "#ffffff"
+  },
+  {
+    "id": "eoghan-soundcloud",
+    "annonceur": "@eoghanmasuda",
+    "titre": "Nouvelle démo en ligne",
+    "accroche": "Trois titres. Enregistrés dans un garage. Ça s'entend.",
+    "bouton": "Écouter",
+    "glyphe": "♫",
+    "couleur": "#c9500f",
+    "couleur2": "#ff8a3d",
+    "encre": "#ffffff"
+  },
+  {
+    "id": "disparitions",
+    "annonceur": "Appel à témoins · Comté d'Augusta",
+    "titre": "Vous avez vu quelque chose ?",
+    "accroche": "Disparitions inexpliquées. Témoignages recueillis en confidence.",
+    "bouton": "Témoigner",
+    "glyphe": "❓",
+    "couleur": "#14161c",
+    "couleur2": "#39404f",
+    "encre": "#e8e2d0"
+  }
+]

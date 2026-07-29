@@ -33,17 +33,58 @@
   --panel-bg: #fff0fa;      /* fond des panneaux, rose très pâle */
   --page-bg: linear-gradient(160deg, #ffc2e8 0%, #f6b8ff 45%, #b8e7ff 100%);
 
+  /* --- La coque sombre du portail --------------------------------------
+     Ce que les portails Flash de 2012 (Miniclip, Kongregate, Armor Games,
+     Y8) avaient tous et qui manquait ici : une COQUE sombre — barre de
+     service, rails, cadre du lecteur, pied de page — qui enveloppe une
+     FEUILLE claire où vit le contenu. C'est ce contraste qui fait « site »
+     plutôt que « page » : sans lui, tout est au même plan et rien ne recule.
+     Le rose bonbon devient l'accent chaud posé dessus, exactement le rôle
+     que l'orange tenait chez Kongregate. */
+  --coque-fond: #1d0424;    /* le plus sombre : lisières haute et basse */
+  --coque: #2a0733;         /* fond des barres et du pied de page */
+  --coque-clair: #4a1257;   /* haut des dégradés de barre */
+  --coque-bord: #7a2a89;    /* filet clair qui détache la coque */
+  --coque-texte: #f3d9ee;   /* texte posé sur la coque */
+  --coque-texte-faible: #b98fb4;
+
+  --feuille: #ffffff;       /* la feuille de contenu, sur la coque */
+  --reglure: #edc9e4;       /* filet d'un cheveu, séparateurs de listes */
+  --reglure-forte: #d190c2;
+  --gris-ui: #7c5a78;       /* petites mentions, métadonnées, votes */
+
   /* Typo */
   --font-title: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
   --font-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
   --font-chiffres: "Courier New", Courier, monospace;
+  /* Le mobilier d'un portail (menus, notes, mentions, compteurs) ne s'écrit
+     pas en Comic Sans : à 11 px il devient illisible, et surtout ce n'est pas
+     ce que les vrais sites employaient. Tahoma/Verdana, c'est la police de
+     l'interface de 2012. Comic Sans reste pour la personnalité : titres de
+     jeux, boutons, texte d'ambiance. */
+  --font-ui: Tahoma, Verdana, Geneva, "DejaVu Sans", sans-serif;
 
-  /* Rythme visuel */
+  /* --- Rythme visuel -----------------------------------------------------
+     UN SEUL système de rayons pour tout le portail, du plus petit au plus
+     grand. Avant, la même page mélangeait des pilules (999 px) et des angles
+     à 3, 4, 5, 6, 8, 10, 12 et 14 px : deux langages de formes dans le même
+     écran, ce qui se lit comme du désordre et pas comme du style. */
+  --radius-etiquette: 3px;  /* pastilles, vignettes, badges — rien à cliquer */
+  --radius-controle: 4px;   /* TOUT ce qui se clique : boutons, onglets, champs */
+  --radius-bloc: 5px;       /* blocs de contenu, en-tête, lecteur, pied de page */
+
+  /* Conservés pour l'intérieur des jeux, qui garde son vocabulaire bonbon
+     (`.fun-btn` en pilule, panneaux très arrondis). La coque du portail
+     n'emploie ni l'un ni l'autre. */
   --radius-panel: 18px;
   --radius-button: 999px;
+
   --border-thick: 3px;
   --trait: var(--border-thick) solid var(--text-color);
   --ombre-dure: 5px 5px 0 var(--shadow-color);
+  /* L'ombre de tout ce qui est posé sur le papier peint : en-tête, blocs,
+     lecteur, pied de page. Une seule valeur, donc un seul plan. */
+  --ombre-bloc: 0 1px 3px rgba(42, 7, 51, 0.22);
 }
 
 /* Chaque page de jeu surcharge juste --accent (et éventuellement le fond)

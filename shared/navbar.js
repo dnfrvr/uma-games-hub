@@ -1,9 +1,16 @@
 /* =========================================================
-   Barre de navigation permanente du portail — composant partagé
+   En-tête du portail — composant partagé
    ---------------------------------------------------------
-   Usage, sur le hub comme sur n'importe quelle page de jeu :
+   Rend la coque haute du site, identique sur le hub et sur les pages de jeu :
+
+     barre de service (recherche, favoris)
+     barre de navigation (marque, onglets, « Au hasard ! »)
+     bandeau d'annonces déroulant
+
+   Usage, inchangé :
 
      <div id="navbar"></div>
+     <script src="../../shared/favoris.js"></script>
      <script src="../../shared/navbar.js"></script>
      <script>renderNavbar("drew", "navbar");</script>
 
@@ -23,9 +30,10 @@
   const RACINE = new URL("../", SCRIPT_URL).href;
 
   const versRacine = (chemin) => new URL(chemin, RACINE).href;
+  const nombre = (n) => Number(n || 0).toLocaleString("fr-FR");
 
   /**
-   * Injecte la barre de navigation du portail.
+   * Injecte l'en-tête du portail.
    * @param {string|null} currentGameId  id du jeu affiché, null sur le hub
    * @param {string} targetElementId  id de l'élément conteneur
    * @returns {Promise<void>}
@@ -37,11 +45,12 @@
       return Promise.resolve();
     }
 
-    /* La barre est posée tout de suite avec sa marque et son lien Accueil :
-       même si le manifest tarde ou échoue, la navigation de secours existe. */
+    /* L'en-tête est posé tout de suite avec sa marque, sa recherche et son
+       lien Accueil : même si le manifest tarde ou échoue, on garde une
+       navigation de secours. */
     const barre = squelette(currentGameId);
     cible.innerHTML = "";
-    cible.appendChild(barre.nav);
+    cible.appendChild(barre.entete);
 
     return fetch(versRacine("games-manifest.json"))
       .then((r) => {
@@ -52,22 +61,77 @@
         jeux.forEach((jeu) => barre.liens.appendChild(onglet(jeu, currentGameId)));
         brancheHasard(barre.hasard, jeux);
         brancheRuban(barre.liens);
+        remplitSalut(barre.salut, jeux);
+        remplitAnnonces(barre.annonces, jeux);
       })
       .catch((err) => {
         console.error("[navbar] manifest illisible :", err);
         barre.hasard.remove();
+        barre.annonces.closest(".bandeau-annonces").remove();
       });
   }
 
+  /* ---------------------------------------------------------
+     La coque haute
+     --------------------------------------------------------- */
+
   function squelette(currentGameId) {
+    const entete = document.createElement("div");
+    entete.className = "entete-site";
+
+    const service = document.createElement("div");
+    service.className = "barre-service";
+
+    const salut = document.createElement("span");
+    salut.className = "service-salut";
+    salut.textContent = "Bienvenue sur UMA Games !";
+
+    /* Un vrai formulaire GET : la recherche marche sans JS, elle arrive sur le
+       hub avec ?q= et c'est le hub qui filtre sa grille. */
+    const recherche = document.createElement("form");
+    recherche.className = "service-recherche";
+    recherche.setAttribute("role", "search");
+    recherche.action = versRacine("index.html");
+    recherche.method = "get";
+    recherche.innerHTML =
+      '<input class="service-champ" type="search" name="q" ' +
+      'placeholder="Cherche un jeu…" aria-label="Chercher un jeu" />' +
+      '<button class="service-loupe" type="submit">Chercher</button>';
+
+    const liensService = document.createElement("span");
+    liensService.className = "service-liens";
+
+    const favoris = document.createElement("a");
+    favoris.className = "service-lien";
+    favoris.href = versRacine("index.html") + "?favoris=1";
+    liensService.appendChild(favoris);
+    brancheCompteurFavoris(favoris);
+
+    const sep = document.createElement("span");
+    sep.className = "service-sep";
+    sep.textContent = "·";
+
+    const compte = document.createElement("span");
+    compte.textContent = "Visiteur anonyme";
+
+    liensService.append(sep, compte);
+    service.append(salut, recherche, liensService);
+
     const nav = document.createElement("nav");
     nav.className = "navbar";
     nav.setAttribute("aria-label", "Navigation du portail");
 
+    /* Le logo d'un portail, c'est un bloc marque + accroche, pas un mot posé
+       dans la barre. C'est lui qui porte le nom du site maintenant que
+       l'accueil n'a plus de grand titre décoratif au milieu de la page. */
     const marque = document.createElement("a");
     marque.className = "navbar-marque";
     marque.href = versRacine("index.html");
-    marque.innerHTML = '<span aria-hidden="true">★</span> UMA GAMES <span aria-hidden="true">★</span>';
+    marque.innerHTML =
+      '<span class="marque-nom">' +
+      '<span aria-hidden="true">★</span> UMA GAMES <span aria-hidden="true">★</span>' +
+      "</span>" +
+      '<span class="marque-slogan">Jeux gratuits en ligne</span>';
 
     const liens = document.createElement("div");
     liens.className = "navbar-liens";
@@ -84,8 +148,98 @@
     hasard.textContent = "🎲 Au hasard !";
 
     nav.append(marque, liens, hasard);
-    return { nav, liens, hasard };
+
+    const bandeau = document.createElement("div");
+    bandeau.className = "bandeau-annonces";
+    const annonces = document.createElement("span");
+    annonces.className = "bandeau-piste";
+    bandeau.appendChild(annonces);
+
+    entete.append(service, nav, bandeau);
+    return { entete, nav, liens, hasard, salut, annonces };
   }
+
+  /* Ce que le site a à annoncer se déduit du manifest — pas de chiffre écrit
+     en dur qui mentirait dès qu'on ajoute un jeu. */
+  function remplitSalut(salut, jeux) {
+    const jouables = jeux.filter((j) => j.statut === "disponible" && j.url);
+    const parties = jeux.reduce((t, j) => t + (j.parties || 0), 0);
+    salut.innerHTML =
+      "Bienvenue ! <b>" +
+      jouables.length +
+      "</b> jeux en ligne · <b>" +
+      nombre(parties) +
+      "</b> parties jouées";
+  }
+
+  function remplitAnnonces(piste, jeux) {
+    const jouables = jeux.filter((j) => j.statut === "disponible" && j.url);
+    if (!jouables.length) return;
+
+    const recent = jouables
+      .slice()
+      .sort((a, b) => String(b.ajoute_le).localeCompare(String(a.ajoute_le)))[0];
+    const mieuxNote = jouables
+      .slice()
+      .sort((a, b) => (b.note || 0) - (a.note || 0))[0];
+
+    const messages = [
+      "<b>★ NOUVEAU ★</b> <em>" + recent.titre + "</em> vient d'arriver sur UMA Games !",
+      "Le mieux noté du moment : <em>" +
+        mieuxNote.titre +
+        "</em> — " +
+        String(mieuxNote.note).replace(".", ",") +
+        "/10 sur " +
+        nombre(mieuxNote.votes) +
+        " votes.",
+      "Astuce : le bouton <em>Au hasard !</em> ne t'enverra jamais sur un jeu pas fini.",
+      "Site optimisé pour un écran 1024×768 et une connexion pleine d'espoir.",
+    ];
+
+    /* Le ruban est doublé : quand la première copie sort à gauche, la seconde
+       occupe déjà l'écran, donc pas de blanc au raccord. */
+    const ruban = messages.join('<span class="bandeau-sep">◆</span>');
+    piste.innerHTML = ruban + '<span class="bandeau-sep">◆</span>' + ruban;
+
+    caleVitesseBandeau(piste);
+  }
+
+  /* Vitesse de défilé du bandeau, en pixels par seconde. Une durée fixe ne
+     marche pas : l'animation parcourt la largeur du ruban, qui dépend de la
+     largeur de l'écran ET du nombre de messages. À 26 s le bandeau filait à
+     ~240 px/s sur un grand écran, illisible et fatigant. On fixe donc la
+     vitesse et on en déduit la durée. */
+  const BANDEAU_PX_PAR_SECONDE = 60;
+
+  function caleVitesseBandeau(piste) {
+    const cale = () => {
+      /* `offsetWidth` inclut le `padding-left: 100%` — c'est bien la distance
+         que parcourt la translation de -100 %. */
+      const distance = piste.offsetWidth;
+      if (!distance) return;
+      piste.style.animationDuration =
+        Math.round(distance / BANDEAU_PX_PAR_SECONDE) + "s";
+    };
+
+    cale();
+    /* Les polices arrivent après le premier rendu et changent la largeur ;
+       le redimensionnement de la fenêtre aussi. */
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(cale);
+    window.addEventListener("resize", cale);
+  }
+
+  function brancheCompteurFavoris(lien) {
+    const maj = () => {
+      const n = window.umaFavoris ? window.umaFavoris.liste().length : 0;
+      lien.textContent = "★ Mes favoris (" + n + ")";
+    };
+    if (window.umaFavoris) window.umaFavoris.surChangement(maj);
+    maj();
+  }
+
+  /* ---------------------------------------------------------
+     Les onglets
+     --------------------------------------------------------- */
 
   function onglet(jeu, currentGameId) {
     const dispo = jeu.statut === "disponible" && jeu.url;
@@ -142,7 +296,7 @@
     window.addEventListener("resize", majFondu);
     if (window.ResizeObserver) new ResizeObserver(majFondu).observe(liens);
 
-    /* Dès que la visiteuse fait glisser le ruban elle-même, on ne le recadre
+    /* Dès que le visiteur fait glisser le ruban lui-même, on ne le recadre
        plus dans son dos. */
     const laMain = () => { mainMise = true; };
     liens.addEventListener("pointerdown", laMain, { passive: true, once: true });

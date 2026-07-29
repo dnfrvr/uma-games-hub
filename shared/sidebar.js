@@ -121,6 +121,13 @@
       badge.className = "sidebar-badge";
       badge.textContent = "Bientôt";
       texte.appendChild(badge);
+    } else if (jeu.categorie) {
+      /* La catégorie sous le titre : c'est ce qui transforme une liste de
+         liens en rail « jeux similaires » de portail. */
+      const cat = document.createElement("span");
+      cat.className = "sidebar-cat";
+      cat.textContent = jeu.categorie;
+      texte.appendChild(cat);
     }
 
     el.append(img, texte);

@@ -1,8 +1,13 @@
 /* =========================================================
    Barre de navigation permanente — habillage partagé
    À importer APRÈS shared/components.css.
-   Même DA que le reste du portail : dégradé bonbon/lilas/piscine,
-   filet d'encre, onglets à ombre dure.
+   ---------------------------------------------------------
+   Elle vit à l'intérieur de `.entete-site` (voir shared/portail.css), qui lui
+   pose son fond sombre : les valeurs de fond et de cadre ci-dessous ne servent
+   que si la barre est employée seule. Les onglets suivent le système de formes
+   commun — rectangle arrondi `--radius-controle`, filet d'un pixel, ombre
+   douce. Ni pilule ni ombre dure : c'était l'autre langage de formes, et il
+   n'en reste qu'un.
    ========================================================= */
 
 .navbar {
@@ -21,7 +26,7 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
     linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
   border: var(--trait);
-  border-radius: 14px;
+  border-radius: var(--radius-bloc);
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.6), var(--ombre-dure);
 }
 
@@ -30,21 +35,52 @@
    ne connaît pas :has(), la règle est simplement ignorée. */
 body:has(.page) .navbar { max-width: 1330px; }
 
+/* Le logo : nom en lettrage doré cerné d'encre, accroche en petites capitales
+   dessous. Le cerne est fait de quatre ombres portées d'un pixel plutôt qu'en
+   `-webkit-text-stroke` : le tracé fin de Lobster se fait manger par un
+   contour posé par-dessus, alors qu'une ombre reste derrière la lettre. */
 .navbar-marque {
   flex: 0 0 auto;
-  font-family: var(--font-deco);
-  font-size: 1.35rem;
-  line-height: 1;
-  letter-spacing: 0.02em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
   text-decoration: none;
-  color: #fff;
-  text-shadow: 1px 1px 0 var(--text-color), 3px 3px 0 rgba(59, 10, 69, 0.4);
 }
 
-.navbar-marque:hover { filter: brightness(1.12); }
+.marque-nom {
+  font-family: var(--font-deco);
+  font-size: 1.8rem;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: var(--or);
+  text-shadow:
+    1px 1px 0 var(--text-color), -1px 1px 0 var(--text-color),
+    1px -1px 0 var(--text-color), -1px -1px 0 var(--text-color),
+    3px 4px 0 rgba(59, 10, 69, 0.45);
+}
 
+.marque-slogan {
+  font-family: var(--font-ui);
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 1px 1px 0 rgba(59, 10, 69, 0.65);
+}
+
+.navbar-marque:hover .marque-nom { filter: brightness(1.12); }
+
+/* `flex-basis: 0` et non `auto` : c'est ce qui empêche le ruban de pousser le
+   dé à la ligne. Avec une base `auto`, la largeur hypothétique du ruban est
+   celle de tous ses onglets bout à bout ; le calcul de retour à la ligne la
+   prend telle quelle, donc « Au hasard ! » tombait sur une troisième rangée
+   dès qu'on ajoutait un jeu — alors même que le ruban sait défiler. Avec une
+   base nulle il ne réclame que la place qui reste, et déborde vers son propre
+   défilement. La barre tient sur une rangée quel que soit le nombre de jeux. */
 .navbar-liens {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-width: 0;
   display: flex;
   align-items: center;
@@ -62,12 +98,12 @@ body:has(.page) .navbar { max-width: 1330px; }
 
 .navbar-liens::-webkit-scrollbar-track {
   background: rgba(255, 255, 255, 0.5);
-  border-radius: 999px;
+  border-radius: var(--radius-etiquette);
 }
 
 .navbar-liens::-webkit-scrollbar-thumb {
   background: var(--text-color);
-  border-radius: 999px;
+  border-radius: var(--radius-etiquette);
 }
 
 /* Un ruban qui déborde le dit : le bord concerné se fond dans la barre, donc
@@ -89,8 +125,8 @@ body:has(.page) .navbar { max-width: 1330px; }
   mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 22px), transparent);
 }
 
-/* Un onglet = une pastille blanche à ombre dure ; l'onglet courant prend la
-   couleur du perso via --accent, posé par navbar.js. */
+/* Un onglet = un rectangle blanc à filet fin ; l'onglet courant prend la
+   couleur du perso via --accent, posé par navbar.js, et son cerne doré. */
 .navbar-lien {
   flex: 0 0 auto;
   padding: 5px 11px;
@@ -100,23 +136,23 @@ body:has(.page) .navbar { max-width: 1330px; }
   text-decoration: none;
   color: var(--text-color);
   background: linear-gradient(180deg, #fff, var(--panel-bg));
-  border: 2px solid var(--text-color);
-  border-radius: 999px;
-  box-shadow: 0 3px 0 var(--shadow-color);
+  border: 1px solid var(--coque-fond);
+  border-radius: var(--radius-controle);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
   transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
 }
 
 a.navbar-lien:hover,
 a.navbar-lien:focus-visible {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 0 var(--shadow-color);
-  filter: saturate(1.3);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.05) saturate(1.15);
 }
 
 .navbar-lien.actif {
   color: #fff;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%), var(--accent);
-  box-shadow: 0 3px 0 var(--shadow-color), 0 0 0 3px var(--or);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 2px var(--or);
 }
 
 .navbar-lien.bientot {
@@ -132,23 +168,23 @@ a.navbar-lien:focus-visible {
   font-size: 0.72rem;
   font-weight: bold;
   color: var(--text-color);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--or);
-  border: 2px solid var(--text-color);
-  border-radius: 999px;
-  box-shadow: 0 3px 0 var(--shadow-color);
+  background: linear-gradient(180deg, #fff8b0, var(--or));
+  border: 1px solid var(--coque-fond);
+  border-radius: var(--radius-controle);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
   cursor: pointer;
   transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
 }
 
 .navbar-hasard:hover {
-  transform: translateY(-2px) rotate(-2deg);
-  box-shadow: 0 5px 0 var(--shadow-color);
-  filter: saturate(1.4);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.07);
 }
 
 .navbar-hasard:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 0 var(--shadow-color);
+  box-shadow: inset 0 2px 4px rgba(42, 7, 51, 0.4);
 }
 
 /* =========================================================
@@ -162,7 +198,8 @@ a.navbar-lien:focus-visible {
 
 @media (max-width: 720px) {
   .navbar { gap: 6px 8px; padding: 7px 9px 6px; }
-  .navbar-marque { font-size: 1.15rem; }
+  .marque-nom { font-size: 1.35rem; }
+  .marque-slogan { font-size: 7px; letter-spacing: 0.14em; }
 
   /* `flex: 1 0 100%` sur le ruban force le retour à la ligne ; le dé remonte
      donc à côté de la marque, poussé à droite par sa marge auto. `order` ne
@@ -179,7 +216,8 @@ a.navbar-lien:focus-visible {
 
 @media (max-width: 380px) {
   /* Écrans les plus étroits : la marque seule tient mal à côté du dé. */
-  .navbar-marque { font-size: 1rem; }
+  .marque-nom { font-size: 1.15rem; }
+  .marque-slogan { display: none; }
   .navbar-hasard { padding: 7px 10px; }
 }
 
