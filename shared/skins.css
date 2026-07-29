@@ -37,6 +37,7 @@
    lettrage des sites de jeux de filles de l'époque, et ça le sépare de
    l'enseigne du site (Lobster), qui reste réservée à l'en-tête et au hub. */
 body.theme-drew {
+  --font-deco: var(--font-title);
   --titre-police: var(--font-title);
   --titre-graisse: 700;
   --titre-taille: clamp(1.9rem, 6vw, 3.4rem);
@@ -56,7 +57,8 @@ body.theme-glinda {
     linear-gradient(180deg, #33497d 0%, #16244a 100%);
   --banner-trait: 3px solid var(--or);
 
-  --titre-police: Impact, Haettenschweiler, "Arial Narrow", sans-serif;
+  --font-deco: Impact, Haettenschweiler, "Arial Narrow", sans-serif;
+  --titre-police: var(--font-deco);
   --titre-graisse: 400;
   --titre-taille: clamp(2.1rem, 7vw, 4rem);
   --titre-casse: uppercase;
@@ -111,7 +113,8 @@ body.theme-elias {
     linear-gradient(180deg, #343943 0%, #10131a 100%);
   --banner-trait: 3px solid #8f1f1f;
 
-  --titre-police: "Courier New", Courier, monospace;
+  --font-deco: "Courier New", Courier, monospace;
+  --titre-police: var(--font-deco);
   --titre-graisse: 700;
   /* Courier est large : à la taille des autres, le titre déborderait. */
   --titre-taille: clamp(1.4rem, 4.6vw, 2.6rem);
@@ -159,7 +162,8 @@ body.theme-eoghan {
     linear-gradient(100deg, #ff2f93 0%, #ff8ac4 42%, #6ee7a0 100%);
   --banner-trait: 3px solid #0a6b28;
 
-  --titre-police: Georgia, "Times New Roman", "Nimbus Roman", serif;
+  --font-deco: Georgia, "Times New Roman", "Nimbus Roman", serif;
+  --titre-police: var(--font-deco);
   --titre-graisse: 700;
   --titre-style: italic;
   --titre-taille: clamp(1.9rem, 6vw, 3.4rem);

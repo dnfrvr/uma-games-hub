@@ -58,7 +58,7 @@
         return r.json();
       })
       .then((jeux) => {
-        jeux.forEach((jeu) => barre.liens.appendChild(onglet(jeu, currentGameId)));
+        remplitOnglets(barre.liens, jeux, currentGameId);
         brancheHasard(barre.hasard, jeux);
         brancheRuban(barre.liens);
         remplitSalut(barre.salut, jeux);
@@ -172,9 +172,14 @@
       "</b> parties jouées";
   }
 
+  /* Le ruban d'annonces d'un portail parle comme un portail : des sorties, un
+     classement, un appel aux favoris. Il ne parle jamais de lui-même comme
+     d'un site en construction — les jeux qui arrivent sont des « prochaines
+     sorties », pas des « jeux pas finis ». */
   function remplitAnnonces(piste, jeux) {
     const jouables = jeux.filter((j) => j.statut === "disponible" && j.url);
     if (!jouables.length) return;
+    const aVenir = jeux.filter((j) => j.statut !== "disponible" || !j.url);
 
     const recent = jouables
       .slice()
@@ -182,19 +187,37 @@
     const mieuxNote = jouables
       .slice()
       .sort((a, b) => (b.note || 0) - (a.note || 0))[0];
+    const plusJoue = jouables
+      .slice()
+      .sort((a, b) => (b.parties || 0) - (a.parties || 0))[0];
 
     const messages = [
-      "<b>★ NOUVEAU ★</b> <em>" + recent.titre + "</em> vient d'arriver sur UMA Games !",
+      "<b>★ NOUVEAU ★</b> <em>" + recent.titre + "</em> est en ligne — soyez les premiers à y jouer !",
       "Le mieux noté du moment : <em>" +
         mieuxNote.titre +
-        "</em> — " +
+        "</em>, " +
         String(mieuxNote.note).replace(".", ",") +
         "/10 sur " +
         nombre(mieuxNote.votes) +
         " votes.",
-      "Astuce : le bouton <em>Au hasard !</em> ne t'enverra jamais sur un jeu pas fini.",
-      "Site optimisé pour un écran 1024×768 et une connexion pleine d'espoir.",
+      "<em>" +
+        plusJoue.titre +
+        "</em> en tête du classement avec <b>" +
+        nombre(plusJoue.parties) +
+        "</b> parties.",
+      "<b>" + jouables.length + " jeux gratuits</b>, sans inscription, directement dans votre navigateur.",
+      "Ajoutez UMA Games à vos favoris (Ctrl+D) pour ne rien manquer des nouveautés !",
     ];
+
+    if (aVenir.length) {
+      messages.splice(
+        3,
+        0,
+        "Prochainement sur UMA Games : <em>" +
+          aVenir.map((j) => j.titre).join("</em>, <em>") +
+          "</em>."
+      );
+    }
 
     /* Le ruban est doublé : quand la première copie sort à gauche, la seconde
        occupe déjà l'écran, donc pas de blanc au raccord. */
@@ -241,23 +264,40 @@
      Les onglets
      --------------------------------------------------------- */
 
-  function onglet(jeu, currentGameId) {
-    const dispo = jeu.statut === "disponible" && jeu.url;
+  /* La barre liste les CATÉGORIES, pas les jeux. Un onglet par jeu tenait tant
+     qu'il y en avait quatre ; à neuf le ruban devient un mur de pastilles où
+     plus rien ne se lit. C'est aussi ce que faisaient les portails : leur
+     navigation haute était thématique, et on tombait sur les jeux ensuite. */
+  function remplitOnglets(liens, jeux, currentGameId) {
+    const jeuCourant = jeux.filter((j) => j.id === currentGameId)[0];
+    const filtreUrl = new URLSearchParams(location.search).get("categorie");
 
-    /* Jouable = lien, à venir = simple <span> : rien à neutraliser au clic. */
-    const el = document.createElement(dispo ? "a" : "span");
-    el.className =
-      "navbar-lien" +
-      (dispo ? "" : " bientot") +
-      (jeu.id === currentGameId ? " actif" : "");
-    el.style.setProperty("--accent", jeu.couleur);
-    if (dispo) {
-      el.href = versRacine(jeu.url);
-    } else {
-      el.setAttribute("aria-disabled", "true");
-      el.title = "Bientôt disponible";
+    /* La catégorie active, c'est celle du jeu ouvert, ou celle qu'on filtre
+       sur l'accueil. Sinon aucune, et c'est « Accueil » qui reste allumé. */
+    const active = jeuCourant ? jeuCourant.categorie : filtreUrl;
+    if (active) {
+      const accueil = liens.querySelector(".navbar-lien");
+      if (accueil) accueil.classList.remove("actif");
     }
-    el.textContent = jeu.titre;
+
+    const comptes = new Map();
+    jeux.forEach((j) => {
+      if (j.categorie) comptes.set(j.categorie, (comptes.get(j.categorie) || 0) + 1);
+    });
+
+    [...comptes.keys()]
+      .sort((a, b) => a.localeCompare(b, "fr"))
+      .forEach((nom) => liens.appendChild(onglet(nom, nom === active, jeuCourant)));
+  }
+
+  function onglet(categorie, estActive, jeuCourant) {
+    const el = document.createElement("a");
+    el.className = "navbar-lien" + (estActive ? " actif" : "");
+    el.href = versRacine("index.html") + "?categorie=" + encodeURIComponent(categorie);
+    el.textContent = categorie;
+    /* Sur une page de jeu, l'onglet allumé prend la couleur du perso : la
+       barre rappelle discrètement où l'on est. */
+    if (estActive && jeuCourant) el.style.setProperty("--accent", jeuCourant.couleur);
     return el;
   }
 

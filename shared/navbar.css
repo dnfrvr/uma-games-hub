@@ -49,7 +49,7 @@ body:has(.page) .navbar { max-width: 1330px; }
 }
 
 .marque-nom {
-  font-family: var(--font-deco);
+  font-family: var(--font-enseigne);
   font-size: 1.8rem;
   line-height: 1.05;
   letter-spacing: 0.02em;

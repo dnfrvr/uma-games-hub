@@ -433,7 +433,7 @@
     /* Le voile « ▶ JOUER » au survol : le geste des portails de l'époque. */
     const voile = document.createElement("span");
     voile.className = "carte-voile";
-    voile.textContent = dispo ? "▶ JOUER" : "EN CHANTIER";
+    voile.textContent = dispo ? "▶ JOUER" : "PROCHAINEMENT";
     cadre.appendChild(voile);
 
     if (!dispo) {
@@ -582,11 +582,12 @@
 
   /* Petit gadget d'ambiance : une anecdote au hasard à chaque visite. */
   const ANECDOTES = [
-    "Ce site est optimisé pour un écran 1024×768 et une connexion pleine d'espoir.",
-    "Aucun aigle n'a été blessé pendant la fabrication de ce portail.",
-    "Astuce : le bouton « Au hasard ! » ne t'enverra jamais vers un jeu pas fini.",
-    "Meilleur score du staff : personne ne s'en souvient, mais c'était énorme.",
-    "Les notes sur 10 sont parfaitement objectives et ne souffrent aucune discussion.",
+    "Ce site est optimisé pour un écran 1024×768 et Internet Explorer 8.",
+    "Tous nos jeux sont gratuits et le resteront. Parlez-en autour de vous !",
+    "Astuce : cliquez sur ★ pour garder un jeu sous la main à votre prochaine visite.",
+    "Le record du staff sur Sanity Whack tient depuis mars. À vous de jouer.",
+    "Nos notes sont calculées sur les votes des joueurs, et sur rien d'autre.",
+    "Un jeu qui rame ? Fermez les autres onglets, ça aide plus qu'on ne croit.",
   ];
   document.getElementById("anecdote").textContent =
     ANECDOTES[Math.floor(Math.random() * ANECDOTES.length)];

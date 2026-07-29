@@ -59,11 +59,17 @@
 
   /* Typo */
   --font-title: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
-  /* L'enseigne du SITE : le logo de l'en-tête et le héros de l'accueil,
-     rien d'autre. Lobster est LA police d'affiche de 2012, elle est à sa
-     place ici — mais elle ne sert plus dans aucun jeu : chacun a la sienne,
-     choisie pour coller à son univers (voir shared/skins.css). */
-  --font-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
+  /* Deux polices d'affiche, deux portées :
+     --font-enseigne  le SITE. Logo de l'en-tête et héros de l'accueil.
+                      FIGÉE : aucun thème n'y touche, sinon la marque
+                      changerait de tête d'un jeu à l'autre.
+     --font-deco      l'intérieur d'un JEU. Titres de ses écrans, de ses
+                      panneaux. Chaque thème la remplace par la sienne
+                      (voir shared/skins.css) — c'est ce qui fait qu'un
+                      jeu ne sonne pas comme son voisin. La valeur par
+                      défaut est celle de Drew, la DA de référence. */
+  --font-enseigne: "Lobster", "Segoe Script", "Brush Script MT", cursive;
+  --font-deco: var(--font-enseigne);
   --font-chiffres: "Courier New", Courier, monospace;
   /* Le mobilier d'un portail (menus, notes, mentions, compteurs) ne s'écrit
      pas en Comic Sans : à 11 px il devient illisible, et surtout ce n'est pas

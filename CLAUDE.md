@@ -112,6 +112,23 @@ Tous les jeux + le hub partagent la même DA rétro 2012 kitsch via `shared/`.
   ```
   (adapter le nombre de `../` selon la profondeur réelle du fichier)
 
+### RÈGLE : le site ne parle jamais de lui comme d'un chantier
+Le bandeau d'annonces, les anecdotes et les étiquettes sont écrits **dans la voix
+d'un portail de 2012 qui tourne**, pas dans celle de qui le fabrique. Un jeu qui
+n'est pas sorti est une **prochaine sortie**, jamais un « jeu pas fini » ni un jeu
+« en chantier » ; l'étiquette sur sa vignette dit « Prochainement ». Les annonces
+se déduisent du manifest (dernière sortie, tête du classement, mieux noté, nombre
+de jeux, liste des sorties à venir) : elles restent donc vraies quand le catalogue
+bouge, sans qu'on ait une ligne à réécrire.
+
+### La navigation haute liste les CATÉGORIES, pas les jeux
+Un onglet par jeu tenait à quatre jeux ; à neuf, le ruban devient un mur de
+pastilles où plus rien ne se lit. La barre liste donc les catégories, chacune
+pointant vers `index.html?categorie=…` que le hub sait filtrer. L'onglet allumé
+est celui de la catégorie du jeu ouvert (et prend la couleur du perso), ou celui
+qu'on filtre sur l'accueil ; sinon c'est « Accueil ». Rien n'est écrit en dur :
+les catégories et leurs comptes se déduisent du manifest.
+
 ### La coque et la feuille — la hiérarchie visuelle
 La référence n'est pas seulement girlsgogames mais **les portails Flash de 2012
 en général** (Miniclip, Kongregate, Armor Games, Y8). Ce qu'ils avaient tous, et
@@ -213,10 +230,13 @@ de couleur d'un jeu à l'autre.
 | Elias | dossier classé, bande vidéo et lignes de balayage | Courier vert moniteur | ardoise en Courier, le principal en rouge REC |
 | Eoghan | couverture de magazine à potins, rose vers vert, semé de cœurs | Georgia italique | blancs cerclés de vert épais, encre rose |
 
-**Aucune police de titre n'est partagée entre deux jeux.** `--font-deco`
-(Lobster) est l'enseigne du SITE — le logo de l'en-tête et le héros de l'accueil —
-et rien d'autre : **aucun jeu ne l'emploie**. Avant, elle servait au logo, au hub
-et aux titres de jeux à la fois, si bien que tous les jeux avaient la même voix.
+**Deux polices d'affiche, deux portées.** `--font-enseigne` (Lobster) est
+l'enseigne du SITE : le logo de l'en-tête et le héros de l'accueil, et rien
+d'autre. Elle est **figée**, aucun thème n'y touche — sinon la marque changerait
+de tête d'un jeu à l'autre. `--font-deco` est la police d'affiche **à l'intérieur
+d'un jeu** : son titre, mais aussi les titres de ses écrans et de ses panneaux.
+Chaque thème la remplace par la sienne, donc aucun jeu ne sonne comme son voisin.
+Avant, une seule variable servait aux deux rôles et tout le site parlait Lobster.
 
 Deux garde-fous en ajoutant un jeu :
 1. **La coque du portail ne bouge pas.** En-tête, lecteur, fil d'Ariane, pied de
@@ -239,8 +259,8 @@ Champs par entrée :
 | `id`, `titre`, `perso`, `description` | partout |
 | `vignette`, `url` (relatif à la racine, `null` si absent), `couleur` | partout |
 | `statut` | `"disponible"` ou `"bientot"` |
-| `categorie` | fil d'Ariane, liste des catégories, rail « jeux similaires » |
-| | Ce sont de **larges paniers**, façon portail : Action, Habillage, Réflexion, Rythme. Une catégorie par jeu ne fait pas un rail de catégories — quand chaque compteur vaut 1, autant ne rien afficher. Course et Aventure ont été refondues dans Action pour cette raison. |
+| `categorie` | **la navigation haute**, le fil d'Ariane, la liste des catégories, le rail « jeux similaires » |
+| | Ce sont de **larges paniers**, façon portail : Action, Habillage, Rapidité, Réflexion. Une catégorie par jeu ne fait pas un rail de catégories — quand chaque compteur vaut 1, autant ne rien afficher. Aventure et Course ont été refondues dans Action, Rythme dans Rapidité, pour cette raison. |
 | `note` (sur 10), `votes` | les étoiles, le tri « les mieux notés » |
 | `parties` | le classement, la barre d'outils, le total de l'en-tête |
 | `ajoute_le` (`AAAA-MM-JJ`) | le tri « nouveautés » et le choix du **jeu à la une** |
