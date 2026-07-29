@@ -12,9 +12,24 @@ ou d'une fenêtre de jugement. Ces scripts, si.
 
 ```bash
 node outils/test-jeux.js              # 49 vérifications sur les 3 jeux + la fabrique de personnages
+node outils/test-collisions.js        # aucun nom de classe CSS partagé entre la coque et les jeux
 node outils/test-serie-elias.js       # la série de bons coups et la courbe de vagues de Sanity Whack
 node outils/mesure-difficulte-eoghan.js   # ~2 min : mesure la difficulté des 3 décors de Kiss & Cache
 ```
+
+## Ce que vérifie `test-collisions.js`
+
+Le CSS n'a qu'un seul espace de noms, et le style d'un jeu est chargé **après**
+les feuilles partagées : un nom de classe commun, et c'est le jeu qui gagne
+silencieusement. C'est arrivé — `.note` désigne les notes qui tombent chez
+Glinda ; la note sur 10 du lecteur, qui portait la même classe, s'est retrouvée
+projetée en haut de la page en énorme. Elle s'appelle `.notation` depuis.
+
+Le script compare les classes de `shared/*.css` + `style-hub.css` à celles des
+quatre `games/*/style.css`. Les points d'extension volontaires (`.fun-btn`,
+`.tab-btn`, `.active`, `.primary`) sont déclarés dans le script ; **tout autre
+nom partagé fait échouer**. Si un jour un partage devient intentionnel, l'ajouter
+à `PARTAGEES_VOLONTAIREMENT` avec un commentaire qui dit pourquoi.
 
 ## Ce que mesure `mesure-difficulte-eoghan.js`
 
