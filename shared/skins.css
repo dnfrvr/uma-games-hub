@@ -64,7 +64,7 @@ body.theme-glinda {
   --titre-casse: uppercase;
   --titre-espacement: 0.01em;
   --titre-cerne: #0b1730;
-  --titre-cerne-epaisseur: clamp(4px, 1.3vw, 7px);
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
   /* Blanc en haut, or en bas, coupé net : le lettrage des maillots. */
   --titre-remplissage: linear-gradient(
     180deg,
@@ -93,10 +93,6 @@ body.theme-glinda {
   --btn-ombre: 0 3px 0 #0b1730;
   --btn-fond-primaire: linear-gradient(180deg, #ffe98a, var(--or));
   --btn-encre-primaire: #16244a;
-
-  --footer-fond:
-    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0 16px, rgba(255, 255, 255, 0) 16px 34px),
-    linear-gradient(180deg, #33497d, #16244a);
 }
 
 /* --- Elias — le dossier classé --------------------------------------------
@@ -121,7 +117,7 @@ body.theme-elias {
   --titre-casse: uppercase;
   --titre-espacement: 0.08em;
   --titre-cerne: #000000;
-  --titre-cerne-epaisseur: clamp(3px, 0.9vw, 5px);
+  --titre-cerne-epaisseur: clamp(2px, 0.55vw, 3px);
   --titre-remplissage: linear-gradient(0deg, #c6f7b8, #c6f7b8);
 
   --tagline-police: "Courier New", Courier, monospace;
@@ -146,10 +142,6 @@ body.theme-elias {
   --btn-ombre: inset 0 1px 0 rgba(255, 255, 255, 0.14);
   --btn-fond-primaire: linear-gradient(180deg, #c0392b, #7e1f16);
   --btn-encre-primaire: #ffe9e6;
-
-  --footer-fond:
-    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0 2px, rgba(0, 0, 0, 0) 2px 4px),
-    linear-gradient(180deg, #343943, #10131a);
 }
 
 /* --- Eoghan — la couverture de magazine à potins --------------------------
@@ -168,7 +160,7 @@ body.theme-eoghan {
   --titre-style: italic;
   --titre-taille: clamp(1.9rem, 6vw, 3.4rem);
   --titre-cerne: #0b3d18;
-  --titre-cerne-epaisseur: clamp(4px, 1.3vw, 7px);
+  --titre-cerne-epaisseur: clamp(2px, 0.7vw, 4px);
   --titre-remplissage: linear-gradient(180deg, #ffffff 0%, #ffe4f3 52%, #ffffff 100%);
 
   --tagline-style: italic;
@@ -186,6 +178,4 @@ body.theme-eoghan {
   --btn-ombre: 0 3px 0 #0a6b28;
   --btn-fond-primaire: linear-gradient(180deg, #ff7ab8, #e01f7f);
   --btn-encre-primaire: #ffffff;
-
-  --footer-fond: linear-gradient(100deg, #ff2f93 0%, #ff8ac4 42%, #6ee7a0 100%);
 }

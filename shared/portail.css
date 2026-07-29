@@ -701,7 +701,9 @@ a.pub-cadre:hover .pub-bouton { background: linear-gradient(180deg, #fff, var(--
    ========================================================= */
 
 .pied-portail {
-  margin-top: 16px;
+  /* Même gabarit que l en-tête : le site est cadré pareil en haut et en bas. */
+  max-width: 1180px;
+  margin: 16px auto 0;
   padding: 14px 16px 16px;
   font-family: var(--font-ui);
   font-size: 11px;
@@ -767,6 +769,10 @@ a.pub-cadre:hover .pub-bouton { background: linear-gradient(180deg, #fff, var(--
 /* Le compteur de visites garde son boîtier noir à chiffres verts. */
 .pied-portail .footer-compteur { justify-content: center; }
 .pied-portail .counter-label { color: var(--coque-texte-faible); }
+
+/* Sur une page de jeu, le pied s aligne sur le duo jeu + colonne latérale,
+   comme l en-tête. */
+body:has(.page) .pied-portail { max-width: 1330px; }
 
 /* =========================================================
    9. Écrans étroits

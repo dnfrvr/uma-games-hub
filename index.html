@@ -103,49 +103,25 @@
           <h2 class="rubrique">
             <span class="rubrique-icone" aria-hidden="true">✎</span>
             Livre d'or
+            <span class="rubrique-info" id="livre-compte"></span>
           </h2>
-          <p class="widget-texte">
-            « meilleur site de jeu de toute l'internet 10/10 »<br />
-            <span class="widget-signature">— un visiteur anonyme, 2012</span>
-          </p>
+          <ul class="livre-dor" id="livre-dor"></ul>
         </section>
       </aside>
     </div>
 
-    <footer class="pied-portail">
-      <div class="pied-liens">
-        <a href="index.html">Accueil</a>
-        <span class="fil-sep">·</span>
-        <a href="index.html">Tous les jeux</a>
-        <span class="fil-sep">·</span>
-        <a href="index.html?favoris=1">Mes favoris</a>
-        <span class="fil-sep">·</span>
-        <a href="index.html" id="pied-hasard">Un jeu au hasard</a>
-      </div>
-
-      <p class="pied-mentions">
-        <strong>© 2012 UMA GAMES</strong> — Tous droits réservés.
-      </p>
-
-      <div class="footer-compteur">
-        <span class="counter-label">Tu es le visiteur n°</span>
-        <span id="counter" class="counter" aria-label="compteur de visites"
-              data-cle="uma_hub_visites" data-base="130370" data-chiffres="7"></span>
-      </div>
-
-      <div class="pied-badges" aria-hidden="true">
-        <span class="pied-badge badge-flash">Nécessite Flash Player 11</span>
-        <span class="pied-badge">★ Powered by le pouvoir de l'amitier ★</span>
-      </div>
-    </footer>
+    <!-- Pied de page du portail, commun à toutes les pages -->
+    <div id="pied"></div>
   </div>
 
   <script src="shared/favoris.js"></script>
   <script src="shared/sparkle.js"></script>
   <script src="shared/navbar.js"></script>
   <script src="shared/pub.js"></script>
+  <script src="shared/pied.js"></script>
   <script>
     renderNavbar(null, "navbar");
+    renderPied("pied");
     renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
   </script>
 <script>
@@ -579,6 +555,47 @@
       location.href = jeux[Math.floor(Math.random() * jeux.length)].url;
     });
   }
+
+  /* ---------------------------------------------------------
+     Le livre d'or : le mur de commentaires de 2012, fautes comprises.
+     Trois messages tirés au sort à chaque visite, sur un registre qui
+     en compte bien plus — c'est ce qui donne l'impression d'un vrai
+     livre d'or plutôt que d'une citation posée là.
+     --------------------------------------------------------- */
+  const LIVRE_DOR = [
+    ["meilleur site de jeu de toute l'internet 10/10", "un visiteur anonyme", "14/12/2012"],
+    ["jarrive pas a passer la finale du championnat qq peut maider ???", "xX_lilou_Xx", "09/12/2012"],
+    ["trop bien mé sa rame un peu sur le pc du cdi", "kevin_62", "06/12/2012"],
+    ["jai fait la pire tenue possible a drew jsuis trop fiere", "Manon♥", "02/12/2012"],
+    ["slt qui veut etre mon ami ? repondez svp", "dark_shadow_95", "28/11/2012"],
+    ["site pourri............ non jrigole c trop cool", "TheGamerZ", "25/11/2012"],
+    ["merci pour les jeux gratuit mon petit fils adore", "mamie_jocelyne", "21/11/2012"],
+    ["pk on peut pas mettre une photo de profil ?? svp ajoutez", "lea_du_59", "17/11/2012"],
+    ["jsuis premier au classement venez me battre si vous pouvez", "N0OB_KILLER", "12/11/2012"],
+    ["ce jeu ma fait louper mon bus", "clément", "08/11/2012"],
+    ["mettez plus de jeux de chevaux stp", "poney_lover_2000", "03/11/2012"],
+    ["mon frere a casse mon score jvais le tuer", "sarah&co", "29/10/2012"],
+  ];
+
+  (function afficheLivreDor() {
+    const liste = document.getElementById("livre-dor");
+    if (!liste) return;
+    const tire = LIVRE_DOR.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+    tire.forEach(([mot, pseudo, date]) => {
+      const li = document.createElement("li");
+      li.className = "livre-mot";
+      const p = document.createElement("p");
+      p.className = "livre-texte";
+      p.textContent = "« " + mot + " »";
+      const sig = document.createElement("span");
+      sig.className = "livre-signature";
+      sig.textContent = "— " + pseudo + ", " + date;
+      li.append(p, sig);
+      liste.appendChild(li);
+    });
+    document.getElementById("livre-compte").textContent =
+      LIVRE_DOR.length + " messages";
+  })();
 
   /* Petit gadget d'ambiance : une anecdote au hasard à chaque visite. */
   const ANECDOTES = [

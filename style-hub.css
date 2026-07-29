@@ -66,7 +66,37 @@
   line-height: 1.45;
 }
 
-.widget-livre-dor .widget-texte { font-style: italic; }
+/* --- Le livre d'or : une pile de messages, séparés d'un filet --- */
+.livre-dor {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.livre-mot {
+  padding: 8px 12px;
+  border-bottom: 1px dotted var(--reglure-forte);
+}
+
+.livre-mot:last-child { border-bottom: none; }
+.livre-mot:nth-child(even) { background: #fff8fd; }
+
+.livre-texte {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 12px;
+  font-style: italic;
+  line-height: 1.35;
+}
+
+.livre-signature {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  text-align: right;
+  color: var(--gris-ui);
+}
 
 .widget-signature {
   display: block;

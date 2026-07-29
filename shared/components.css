@@ -114,8 +114,12 @@ body::before {
   margin: 0 auto;
 }
 
+/* Elle empile le rail « jeux similaires » et l'emplacement publicitaire. */
 .colonne-sidebar {
   flex: 0 0 196px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   position: sticky;
   top: 14px;
 }
@@ -167,8 +171,8 @@ header,
   font-size: var(--titre-taille, clamp(2rem, 6.5vw, 3.8rem));
   letter-spacing: var(--titre-espacement, normal);
   text-transform: var(--titre-casse, none);
-  /* Le contour épais déborde du bloc de texte : on lui laisse la place. */
-  line-height: 1.25;
+  /* Le contour déborde du bloc de texte : on lui laisse un peu de place. */
+  line-height: 1.18;
 }
 
 .wordart::before {
@@ -176,15 +180,15 @@ header,
   position: absolute;
   inset: 0;
   color: var(--titre-cerne, var(--text-color));
-  -webkit-text-stroke: var(--titre-cerne-epaisseur, clamp(5px, 1.6vw, 9px))
+  -webkit-text-stroke: var(--titre-cerne-epaisseur, clamp(2px, 0.7vw, 4px))
     var(--titre-cerne, var(--text-color));
-  text-shadow: 4px 5px 0 rgba(59, 10, 69, 0.45);
+  text-shadow: 2px 3px 0 rgba(0, 0, 0, 0.32);
 }
 
 .wordart span {
   position: relative;
   background: var(--titre-remplissage,
-    linear-gradient(100deg, #fff 0%, var(--or) 18%, #fff 34%, var(--barbe) 50%, var(--or) 66%, #fff 82%, var(--or) 100%));
+    linear-gradient(100deg, var(--or) 0%, #fff6cf 22%, var(--or) 42%, #ffc400 62%, #fff6cf 82%, var(--or) 100%));
   background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -274,17 +278,9 @@ header,
    Pied de page : compteur de visites factice + badge d'époque
    ========================================================= */
 
-/* Le pied de page À L'INTÉRIEUR d'un jeu (compteur de visites + badge) :
-   il fait partie de l'écran du jeu, donc il suit son habillage. À ne pas
-   confondre avec `.pied-portail`, qui est la coque du site et ne bouge pas. */
-footer {
-  text-align: center;
-  padding: 14px;
-  border-top: var(--trait);
-  background: var(--footer-fond,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon)));
-}
+/* Les jeux n'ont plus de pied de page à eux : il n'y en a qu'un, celui du
+   site (`.pied-portail`, voir shared/portail.css), rendu par shared/pied.js.
+   Les classes ci-dessous — compteur et badges — lui servent encore. */
 
 .footer-compteur {
   display: flex;

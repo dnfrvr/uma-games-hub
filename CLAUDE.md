@@ -60,6 +60,7 @@ uma-games-hub/
 │   ├── sidebar.js / sidebar.css # renderSidebar(currentGameId, targetElementId)
 │   ├── lecteur.js               # renderLecteur(gameId) : habillage d'une page de jeu
 │   ├── pub.js                   # renderPubs(...) : la régie, créations en rotation
+│   ├── pied.js                  # renderPied(...) : LE pied de page, celui du site
 │   ├── favoris.js               # umaFavoris : le ★ des jeux, en localStorage
 │   ├── sparkle.js               # paillettes du curseur + compteur de visites
 │   └── vignettes/               # vignettes SVG des jeux (placeholders)
@@ -128,6 +129,23 @@ pointant vers `index.html?categorie=…` que le hub sait filtrer. L'onglet allum
 est celui de la catégorie du jeu ouvert (et prend la couleur du perso), ou celui
 qu'on filtre sur l'accueil ; sinon c'est « Accueil ». Rien n'est écrit en dur :
 les catégories et leurs comptes se déduisent du manifest.
+
+### Un seul pied de page, et des pubs partout
+Les jeux avaient chacun leur pied de page avec son compteur de visites : ça
+faisait deux pieds empilés sur une page de jeu, et autant de compteurs que de
+jeux, ce qui ne veut rien dire. Il n'y en a plus qu'UN, celui du site
+(`shared/pied.js`), sur les cinq pages, avec **un seul** compteur (`uma_visites`).
+Le rendu est synchrone et appelé en fin de `<body>` : le compteur existe donc
+avant que `sparkle.js` ne le remplisse au DOMContentLoaded.
+
+La régie tourne aussi sur les pages de jeu — bannière sous le fil d'Ariane,
+pavé sous le rail « jeux similaires » — avec la même rotation qu'à l'accueil.
+
+**Lisibilité des titres.** Le contour du WordArt était à 5–9 px : à cette
+épaisseur il bouche les contre-formes et le titre devient un pâté. Il est à
+2–4 px, l'ombre portée est passée de 4/5 px durs à 2/3 px doux, et le
+remplissage doré a perdu ses arrêts blancs — le balayage de brillance effaçait
+les lettres au passage. Ne pas les remonter.
 
 ### La coque et la feuille — la hiérarchie visuelle
 La référence n'est pas seulement girlsgogames mais **les portails Flash de 2012

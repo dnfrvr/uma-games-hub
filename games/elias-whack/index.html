@@ -27,6 +27,9 @@
     <div class="colonne-jeu">
       <nav id="fil-ariane"></nav>
 
+      <!-- Régie du portail : bannière au-dessus du lecteur -->
+      <div class="pub pub-banniere" id="pub-haut"></div>
+
       <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
       <div class="lecteur">
         <div id="lecteur-chargement"></div>
@@ -102,16 +105,6 @@
         </aside>
       </div>
 
-      <footer>
-        <div class="footer-compteur">
-          <span class="counter-label">Tu es le visiteur n°</span>
-          <span id="counter" class="counter" aria-label="compteur de visites"
-                data-cle="elias_visites" data-base="1147" data-chiffres="6"></span>
-        </div>
-        <div class="badges" aria-hidden="true">
-          <span class="badge">★ LA VÉRITÉ EST AILLEURS (VERS 3 H DU MATIN) ★</span>
-        </div>
-      </footer>
     </div>
         </div>
         <div id="lecteur-outils"></div>
@@ -121,9 +114,16 @@
       <div id="fiche-jeu"></div>
     </div>
 
-    <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
-    <div id="sidebar-autres-jeux" class="colonne-sidebar"></div>
+    <div class="colonne-sidebar">
+      <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+      <div id="sidebar-autres-jeux"></div>
+      <!-- Régie du portail : pavé sous le rail -->
+      <div class="pub pub-pave" id="pub-cote"></div>
+    </div>
   </div>
+
+  <!-- Pied de page du portail, commun à toutes les pages -->
+  <div id="pied"></div>
 
   <script src="../../shared/perso.js"></script>
   <script src="roster.js"></script>
@@ -133,9 +133,13 @@
   <script src="../../shared/navbar.js"></script>
   <script src="../../shared/sidebar.js"></script>
   <script src="../../shared/lecteur.js"></script>
+  <script src="../../shared/pub.js"></script>
+  <script src="../../shared/pied.js"></script>
   <script>
     renderNavbar("elias", "navbar");
     renderSidebar("elias", "sidebar-autres-jeux");
+    renderPied("pied");
+    renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
     renderLecteur("elias");
   </script>
 </body>
