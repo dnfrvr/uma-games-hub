@@ -1,0 +1,484 @@
+/* =========================================================
+   Balance ta tomate — habillage propre au jeu
+   À charger APRÈS shared/style-tokens.css, components.css, portail.css et
+   skins.css. Tout ce qui est générique (fond du site, cadre, bandeau-titre,
+   boutons) vient de là ; ce fichier ne décrit que la baraque de foire.
+
+   Toutes les classes sont préfixées `tom-` : le CSS n'a qu'un seul espace de
+   noms et la feuille d'un jeu est chargée APRÈS la coque du portail — un nom
+   commun et c'est le mobilier du site qui hérite en silence de règles de
+   fête foraine. `node outils/test-collisions.js` monte la garde.
+   ========================================================= */
+
+/* Le thème `theme-tomates` (shared/skins.css) rhabille le bandeau, le titre,
+   les panneaux et les boutons, mais il ne fixe pas d'accent : c'est le rouge
+   du manifest. Posé sur `body` — donc l'onglet de catégorie et le fil
+   d'Ariane du portail prennent la couleur du jeu, comme partout ailleurs. */
+body {
+  --accent: #e03131;
+  --tom-encre: #4a0808;
+  --tom-bois: #8a5a2b;
+}
+
+.tom-jeu {
+  display: flex;
+  align-items: stretch;
+  min-height: 440px;
+}
+
+/* =========================================================
+   La baraque
+   ========================================================= */
+
+.tom-stand {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* La scène est un repère fixe de 160 × 90 unités : en lui imposant le même
+   rapport, une unité de monde vaut toujours la même fraction de la boîte,
+   quel que soit l'écran. C'est ce qui permet de placer les personnages en
+   pourcentages et la physique en unités, sans une seule conversion en
+   pixels ni un seul recalcul au redimensionnement. */
+.tom-scene {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, #2c1b4a 0%, #6d3a6a 42%, #c96a4e 78%, #f0a86b 100%);
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.tom-scene:focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: -3px;
+}
+
+/* Trois couches au même repère. L'ordre est le sujet : les abris sont
+   DEVANT Mads, sinon « se cacher derrière un tonneau » ne se voit pas. */
+.tom-couche {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tom-avant { pointer-events: none; }
+
+.tom-acteurs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Les fanions de la guirlande battent doucement. `transform-box: fill-box`
+   est indispensable dans un SVG : sans lui, l'origine de rotation est celle
+   du viewBox entier et les fanions partent en orbite. */
+.tom-fanion {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: tomFanion 2.6s ease-in-out infinite alternate;
+}
+
+.tom-fanion:nth-child(3n) { animation-delay: -0.9s; }
+.tom-fanion:nth-child(3n + 1) { animation-delay: -1.7s; }
+
+@keyframes tomFanion {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(6deg); }
+}
+
+/* Les personnages sortent de la fabrique commune (shared/perso.js) : ce sont
+   des SVG en 48 × 72, posés en pourcentages du repère de la scène. */
+.tom-perso {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+
+.tom-perso svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 0 rgba(0, 0, 0, 0.3));
+}
+
+.tom-mads.tom-encaisse { animation: tomSecoue 0.45s ease-out; }
+
+@keyframes tomSecoue {
+  0%, 100% { transform: var(--tom-pose) rotate(0deg); }
+  25% { transform: var(--tom-pose) rotate(-9deg); }
+  60% { transform: var(--tom-pose) rotate(7deg); }
+}
+
+/* =========================================================
+   La bulle de Mads
+   ========================================================= */
+
+.tom-bulle {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  max-width: 34%;
+  padding: 5px 9px;
+  font-family: var(--font-title);
+  font-size: clamp(0.6rem, 1.5vw, 0.82rem);
+  line-height: 1.25;
+  text-align: center;
+  color: var(--tom-encre);
+  background: #fff8ee;
+  border: 2px solid var(--tom-encre);
+  border-radius: 8px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.tom-bulle.tom-visible { opacity: 1; }
+
+/* La petite pointe qui désigne celui qui parle. */
+.tom-bulle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -8px;
+  width: 10px;
+  height: 10px;
+  margin-left: -5px;
+  background: #fff8ee;
+  border-right: 2px solid var(--tom-encre);
+  border-bottom: 2px solid var(--tom-encre);
+  transform: rotate(45deg);
+}
+
+/* =========================================================
+   Le rideau : écrans de titre, de manche et de fin
+   ========================================================= */
+
+.tom-rideau {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-content: center;
+  padding: 14px;
+  overflow-y: auto;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.22) 0 18px, rgba(0, 0, 0, 0) 18px 36px),
+    linear-gradient(180deg, rgba(90, 8, 8, 0.9), rgba(40, 4, 20, 0.92));
+}
+
+.tom-rideau.tom-visible { display: grid; }
+
+.tom-boite {
+  max-width: 560px;
+  margin: auto;
+  padding: 16px 20px;
+  text-align: center;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--ombre-dure);
+}
+
+.tom-titre {
+  margin: 0 0 8px;
+  font-family: var(--font-deco);
+  font-size: clamp(1.2rem, 3.4vw, 1.7rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  text-shadow: 1px 1px 0 #fff, 2px 2px 0 var(--tom-encre);
+}
+
+.tom-texte {
+  margin: 0 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.tom-record { color: var(--accent); }
+
+.tom-boniment {
+  display: block;
+  margin-top: 6px;
+  font-style: italic;
+  font-size: 0.78rem;
+  color: var(--gris-ui);
+}
+
+/* Le récapitulatif chiffré d'une manche : les réglages annoncés d'avance,
+   pour qu'on sache ce qui change avant de tirer et pas après. */
+.tom-fiche {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.tom-fiche div {
+  padding: 5px 6px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 2px solid var(--tom-encre);
+  border-radius: var(--radius-controle);
+}
+
+.tom-fiche dt {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gris-ui);
+}
+
+.tom-fiche dd {
+  margin: 1px 0 0;
+  font-family: var(--font-chiffres);
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--tom-encre);
+}
+
+/* =========================================================
+   La visée : angle, jauge de puissance
+   ========================================================= */
+
+.tom-visee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: linear-gradient(180deg, #5e0a0a, #3a0505);
+  border-top: 3px solid var(--tom-encre);
+}
+
+.tom-visee-etiq {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f0b8a8;
+}
+
+.tom-visee-val {
+  min-width: 44px;
+  font-family: var(--font-chiffres);
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--or);
+}
+
+.tom-jauge {
+  flex: 1 1 auto;
+  height: 15px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 2px solid var(--tom-encre);
+  border-radius: var(--radius-controle);
+  overflow: hidden;
+}
+
+.tom-jauge i {
+  display: block;
+  width: 58%;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd84d 0%, #ff9c3d 55%, #c92a2a 100%);
+}
+
+/* Charger, ça se voit : la jauge pulse tant qu'on maintient. */
+.tom-scene.tom-charge ~ .tom-visee .tom-jauge i { animation: tomPulse 0.5s ease-in-out infinite alternate; }
+
+@keyframes tomPulse {
+  to { filter: brightness(1.35); }
+}
+
+/* =========================================================
+   Le comptoir du forain (le tableau de bord)
+   ========================================================= */
+
+.tom-comptoir {
+  flex: 0 0 196px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0 8px, rgba(0, 0, 0, 0.05) 8px 16px),
+    linear-gradient(180deg, #7a1414, #4a0808);
+  border-left: 3px solid var(--tom-encre);
+}
+
+.tom-bloc {
+  padding: 6px 9px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--radius-controle);
+}
+
+.tom-etiquette {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f3b8a8;
+}
+
+.tom-valeur {
+  display: block;
+  font-family: var(--font-chiffres);
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--or);
+}
+
+.tom-comptoir .tom-texte {
+  display: block;
+  margin: 0;
+  font-size: 0.78rem;
+  color: #fff;
+}
+
+.tom-mention {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  color: #f3b8a8;
+}
+
+/* Le cageot : une tomate par munition restante, c'est plus lisible qu'un
+   compteur — on voit d'un coup d'œil qu'il ne reste plus grand-chose. */
+.tom-cageot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 3px;
+}
+
+.tom-munition {
+  width: 11px;
+  height: 11px;
+  background: radial-gradient(circle at 35% 30%, #ff8a7a, #c92a2a 70%);
+  border: 1.5px solid var(--tom-encre);
+  border-radius: 50%;
+}
+
+.tom-munition.tom-vide {
+  background: none;
+  border-style: dotted;
+  opacity: 0.45;
+}
+
+.tom-journal {
+  margin: 4px 0 0;
+  padding: 6px 8px;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  color: #fff6e8;
+  background: rgba(0, 0, 0, 0.28);
+  border-left: 3px solid var(--or);
+  border-radius: 0 var(--radius-controle) var(--radius-controle) 0;
+}
+
+.tom-journal b { color: var(--or); }
+
+.tom-aide {
+  margin: auto 0 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  line-height: 1.45;
+  color: #f3b8a8;
+}
+
+.tom-aide b { color: #fff; }
+
+/* =========================================================
+   Commandes au doigt
+   ========================================================= */
+
+.tom-tactile {
+  display: none;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: 3px solid var(--tom-encre);
+}
+
+.tom-tact {
+  flex: 1 1 0;
+  padding: 14px 0;
+  font-family: var(--font-title);
+  font-size: 1.15rem;
+  color: var(--tom-encre);
+  background: linear-gradient(180deg, #fff, #ffd3c8);
+  border: 2px solid var(--tom-encre);
+  border-radius: var(--radius-controle);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.tom-tact:focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: 2px;
+}
+
+.tom-tact.tom-appuye { background: var(--or); transform: translateY(2px); }
+.tom-tact-tir { flex: 2 1 0; letter-spacing: 0.08em; }
+
+/* Le doigt vise mal une flèche de 30 px : les pavés n'apparaissent que là
+   où il n'y a pas de clavier. */
+@media (pointer: coarse) {
+  .tom-tactile { display: flex; }
+}
+
+/* =========================================================
+   Écrans étroits
+   ========================================================= */
+
+@media (max-width: 860px) {
+  .tom-jeu { flex-direction: column; min-height: 0; }
+
+  .tom-comptoir {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    border-left: none;
+    border-top: 3px solid var(--tom-encre);
+  }
+
+  .tom-bloc { flex: 1 1 110px; }
+  .tom-journal { flex: 1 1 100%; margin: 0; }
+  .tom-aide { flex: 1 1 100%; margin: 0; }
+  .tom-tactile { display: flex; }
+  .tom-bulle { max-width: 46%; font-size: 0.62rem; }
+}
+
+@media (max-width: 460px) {
+  .tom-visee-etiq { display: none; }
+  .tom-visee-val { min-width: 38px; font-size: 0.85rem; }
+}
+
+/* =========================================================
+   Moins d'animation, quand le système le demande
+   ---------------------------------------------------------
+   On coupe la décoration (fanions, secousses, pulsation), jamais le vol de
+   la tomate : c'est le jeu lui-même, pas un effet.
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .tom-mads.tom-encaisse,
+  .tom-scene.tom-charge ~ .tom-visee .tom-jauge i,
+  .tom-fanion {
+    animation: none;
+  }
+  .tom-bulle { transition: none; }
+}

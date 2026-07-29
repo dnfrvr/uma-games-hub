@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>💨 Run, Glinda, Run 💨</title>
+<link rel="icon" type="image/svg+xml" href="../../shared/vignettes/glinda-run.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="../../shared/portail.css" />
+<link rel="stylesheet" href="../../shared/skins.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-glinda-run">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- En-tête du portail : barre de service, navigation, annonces -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="colonne-jeu">
+      <nav id="fil-ariane"></nav>
+
+      <!-- Régie du portail : bannière au-dessus du lecteur -->
+      <div class="pub pub-banniere" id="pub-haut"></div>
+
+      <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
+      <div class="lecteur">
+        <div id="lecteur-chargement"></div>
+        <div class="lecteur-scene">
+          <div class="shell">
+            <header class="banner">
+              <h1 class="wordart" data-text="Run, Glinda, Run"><span>Run, Glinda, Run</span></h1>
+              <p class="tagline">Boq veut te parler cinq minutes. Ne t'arrête surtout pas.</p>
+            </header>
+
+            <div class="run-jeu">
+              <!-- ===== La piste : décor en parallaxe, acteurs, écrans ===== -->
+              <section class="run-piste">
+                <div class="run-scene" id="run-scene">
+                  <div class="run-decor" id="run-decor" aria-hidden="true"></div>
+                  <div class="run-sol" aria-hidden="true"></div>
+                  <div class="run-acteurs" id="run-acteurs" aria-hidden="true">
+                    <div class="run-boq" id="run-boq"></div>
+                    <div class="run-glinda" id="run-glinda"></div>
+                  </div>
+                  <div class="run-ecran run-visible" id="run-ecran"></div>
+                </div>
+
+                <!-- Commandes au doigt : deux grandes moitiés, pas des flèches -->
+                <div class="run-tactile" aria-hidden="true">
+                  <button type="button" class="run-tact" id="run-tact-saut">SAUTER</button>
+                  <button type="button" class="run-tact" id="run-tact-glisse">GLISSER</button>
+                </div>
+              </section>
+
+              <!-- ===== Tableau de bord ===== -->
+              <aside class="run-tableau">
+                <div class="run-bloc">
+                  <span class="run-etiquette">Distance</span>
+                  <span id="run-distance" class="run-valeur">0 m</span>
+                </div>
+
+                <div class="run-bloc">
+                  <span class="run-etiquette">Score</span>
+                  <span id="run-score" class="run-valeur">0</span>
+                </div>
+
+                <div class="run-bloc">
+                  <span class="run-etiquette">Record de la session</span>
+                  <span id="run-record" class="run-texte">—</span>
+                </div>
+
+                <div class="run-bloc run-bloc-boq">
+                  <span class="run-etiquette">Avance sur Boq</span>
+                  <span class="run-jauge"><i id="run-jauge-barre"></i></span>
+                  <span id="run-alerte" class="run-texte">Il est loin. Respire.</span>
+                </div>
+
+                <div class="run-bloc">
+                  <span class="run-etiquette">Allure</span>
+                  <span id="run-allure" class="run-texte">×1,0</span>
+                </div>
+
+                <div class="run-bloc">
+                  <span class="run-etiquette">Pompons</span>
+                  <span id="run-pompons" class="run-texte">0</span>
+                </div>
+
+                <p class="run-aide">
+                  <b>Espace</b> ou <b>↑</b> pour sauter — relâche tôt pour sauter court.<br />
+                  <b>↓</b> maintenu pour glisser sous les banderoles.<br />
+                  Les pompons rapportent des points et font reculer Boq.
+                </p>
+
+                <p class="run-annonce" role="status" aria-live="polite"></p>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div id="lecteur-outils"></div>
+      </div>
+
+      <!-- Fiche du jeu, remplie depuis games-manifest.json -->
+      <div id="fiche-jeu"></div>
+    </div>
+
+    <div class="colonne-sidebar">
+      <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+      <div id="sidebar-autres-jeux"></div>
+      <!-- Régie du portail : pavé sous le rail -->
+      <div class="pub pub-pave" id="pub-cote"></div>
+    </div>
+  </div>
+
+  <!-- Pied de page du portail, commun à toutes les pages -->
+  <div id="pied"></div>
+
+  <script src="../../shared/perso.js"></script>
+  <script src="donnees.js"></script>
+  <script src="generateur.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/favoris.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script src="../../shared/lecteur.js"></script>
+  <script src="../../shared/pub.js"></script>
+  <script src="../../shared/pied.js"></script>
+  <script>
+    renderNavbar("glinda-run", "navbar");
+    renderSidebar("glinda-run", "sidebar-autres-jeux");
+    renderPied("pied");
+    renderLecteur("glinda-run");
+    renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
+  </script>
+</body>
+</html>

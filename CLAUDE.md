@@ -10,23 +10,29 @@ qui regroupe des mini-jeux, un par personnage principal d'un JDR/univers narrati
 appelé *IT: Welcome to UMA*. Chaque jeu est goofy et exploite un trait de
 personnalité, sans raconter le lore/l'intrigue.
 
-| Perso       | Jeu                            | Dossier                 | Statut     |
-|-------------|--------------------------------|-------------------------|------------|
-| Drew        | Dress-up (mauvais goût)        | `games/drew-dress-up/`  | Jouable    |
-| Glinda      | Pep Rally Rhythm (rythme/QTE)  | `games/glinda-cheer/`   | Jouable    |
-| Elias       | Sanity Whack (whack-a-mole)    | `games/elias-whack/`    | Jouable    |
-| Eoghan      | Kiss & Cache (infiltration)    | `games/eoghan-office/`  | Jouable    |
-| Tout le monde | UMA Memory (paires)          | —                       | **Placeholder** |
-| Glinda      | Run, Glinda, Run (course sans fin, façon Temple Run — Boq la poursuit) | — | **Placeholder** |
-| Drew        | Derry Driver (conduite de profil, obstacles, son camion vert) | — | **Placeholder** |
-| Tout le monde | Love Tester (deux prénoms, un pourcentage) | —          | **Placeholder** |
-| Mads Prout  | Balance ta tomate (viser l'ennemi du JDR)  | —              | **Placeholder** |
+| Perso | Jeu | Dossier | Genre |
+|-------|-----|---------|-------|
+| Drew | **Dress my Drew** | `games/drew-dress-up/` | habillage, score de mauvais goût |
+| Glinda | **Pep Rally Rhythm** | `games/glinda-cheer/` | rythme, 4 chorégraphies |
+| Elias | **Sanity Whack** | `games/elias-whack/` | whack-a-mole, difficulté sans plafond |
+| Eoghan | **Kiss & Cache** | `games/eoghan-office/` | infiltration, 4 décors |
+| Au choix | **UMA Bros** | `games/uma-bros/` | plateforme, 3 niveaux, 7 ennemis |
+| Glinda | **Run, Glinda, Run** | `games/glinda-run/` | course sans fin, Boq poursuit |
+| Drew | **Derry Driver** | `games/derry-driver/` | conduite de profil, relief et élan |
+| Mads Prout | **Balance ta tomate** | `games/tomates/` | tir à trajectoire, cible qui esquive |
+| Tout le monde | **UMA Memory** | `games/uma-memory/` | paires par duos, pas par doublons |
+| Tout le monde | **Love Tester** | `games/love-tester/` | gadget, verdict déterministe |
 
-**Les 4 premiers jeux sont finis et branchés au hub.** Les cinq autres n'existent
-que comme entrées `"statut": "bientot"` dans le manifest, avec une vignette : ils
-apparaissent partout (grille grisée, onglet inactif, catégories, rail « jeux
-similaires ») sans qu'une seule ligne de moteur soit écrite. On verra plus tard
-lesquels sont développés.
+**Les dix jeux sont finis, jouables et branchés au hub.** Chacun a son propre
+habillage (voir la règle des habillages plus bas) et, pour la plupart, son banc
+d'essai dans son dossier ou dans `outils/`. Ce qui reste est du contenu et du
+polish — voir « État d'avancement » en bas de ce fichier.
+
+**Aucun des jeux récents n'a été vu à l'œil en écran étroit ni en plein écran.**
+Ils ont été construits en parallèle par des agents dont l'onglet de navigateur
+était en arrière-plan, ce qui y gèle `requestAnimationFrame` : toute leur
+logique est éprouvée en Node, leur ALLURE ne l'est pas. C'est la première chose
+à reprendre.
 
 Voir `uma-games-hub-SPEC.md` pour l'architecture du hub/sidebar, et les fichiers
 `dress-my-drew-SPEC.md` / futures specs Glinda-Elias pour le détail de chaque jeu.

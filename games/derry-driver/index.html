@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>🚚 Derry Driver 🚚</title>
+<link rel="icon" type="image/svg+xml" href="../../shared/vignettes/derry-driver.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="../../shared/portail.css" />
+<link rel="stylesheet" href="../../shared/skins.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-derry-driver">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- En-tête du portail : barre de service, navigation, annonces -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="colonne-jeu">
+      <nav id="fil-ariane"></nav>
+
+      <!-- Régie du portail : bannière au-dessus du lecteur -->
+      <div class="pub pub-banniere" id="pub-haut"></div>
+
+      <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
+      <div class="lecteur">
+        <div id="lecteur-chargement"></div>
+        <div class="lecteur-scene">
+          <div class="shell">
+            <header class="banner">
+              <h1 class="wordart" data-text="Derry Driver"><span>Derry Driver</span></h1>
+              <p class="tagline">Le camion vert de Drew, une route défoncée, aucun frein à main.</p>
+            </header>
+
+            <div class="dd-jeu">
+              <!-- ===== La scène : la route, dessinée au canvas ===== -->
+              <section class="dd-piste">
+                <div class="dd-scene" id="dd-scene" tabindex="0"
+                     aria-label="Piste de conduite. Flèche droite pour accélérer, flèche gauche pour freiner, espace pour donner un coup de suspension.">
+                  <canvas id="dd-toile" aria-hidden="true"></canvas>
+                  <div class="dd-ecran" id="dd-ecran"></div>
+                </div>
+
+                <!-- L'avancement sur le parcours, sous la scène -->
+                <div class="dd-avancement" aria-hidden="true">
+                  <span class="dd-avancement-plein" id="dd-avancement-plein"></span>
+                </div>
+
+                <!-- Commandes au doigt, seulement sans clavier -->
+                <div class="dd-tactile" aria-hidden="true">
+                  <button type="button" class="dd-tact" id="dd-tact-frein">◀ FREIN</button>
+                  <button type="button" class="dd-tact dd-tact-saut" id="dd-tact-saut">SUSPENSION</button>
+                  <button type="button" class="dd-tact" id="dd-tact-gaz">GAZ ▶</button>
+                </div>
+              </section>
+
+              <!-- ===== Tableau de bord ===== -->
+              <aside class="dd-dock">
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Parcours</span>
+                  <span id="dd-parcours" class="dd-texte">—</span>
+                </div>
+
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Carburant</span>
+                  <span class="dd-jauge"><span class="dd-jauge-plein" id="dd-jauge-plein"></span></span>
+                  <span id="dd-carburant" class="dd-texte">100 %</span>
+                </div>
+
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Cargaison</span>
+                  <span id="dd-cargaison" class="dd-valeur">—</span>
+                </div>
+
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Vitesse</span>
+                  <span id="dd-vitesse" class="dd-valeur">0 km/h</span>
+                </div>
+
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Distance</span>
+                  <span id="dd-distance" class="dd-texte">—</span>
+                </div>
+
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Chrono</span>
+                  <span id="dd-chrono" class="dd-texte">0,0 s</span>
+                </div>
+
+                <div class="dd-bloc">
+                  <span class="dd-etiquette">Record du parcours</span>
+                  <span id="dd-record" class="dd-texte">—</span>
+                </div>
+
+                <p class="dd-aide">
+                  <b>→</b> accélérer, <b>←</b> freiner puis reculer.<br />
+                  <b>Espace</b> : coup de suspension pour franchir.<br />
+                  En l'air, <b>←</b> et <b>→</b> redressent la caisse.<br />
+                  Lance-toi dans les descentes : sans élan, ça ne monte pas.
+                </p>
+
+                <!-- Ce que le jeu dit à voix haute, pour qui ne voit pas l'écran -->
+                <p class="dd-annonce" id="dd-annonce" role="status" aria-live="polite"></p>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div id="lecteur-outils"></div>
+      </div>
+
+      <!-- Fiche du jeu, remplie depuis games-manifest.json -->
+      <div id="fiche-jeu"></div>
+    </div>
+
+    <div class="colonne-sidebar">
+      <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+      <div id="sidebar-autres-jeux"></div>
+      <!-- Régie du portail : pavé sous le rail -->
+      <div class="pub pub-pave" id="pub-cote"></div>
+    </div>
+  </div>
+
+  <!-- Pied de page du portail, commun à toutes les pages -->
+  <div id="pied"></div>
+
+  <script src="../../shared/perso.js"></script>
+  <script src="parcours.js"></script>
+  <script src="physique.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/favoris.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script src="../../shared/lecteur.js"></script>
+  <script src="../../shared/pub.js"></script>
+  <script src="../../shared/pied.js"></script>
+  <script>
+    renderNavbar("derry-driver", "navbar");
+    renderSidebar("derry-driver", "sidebar-autres-jeux");
+    renderPied("pied");
+    renderLecteur("derry-driver");
+    renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
+  </script>
+</body>
+</html>

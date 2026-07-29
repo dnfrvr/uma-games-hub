@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>🍅 Balance ta tomate 🍅</title>
+<link rel="icon" type="image/svg+xml" href="../../shared/vignettes/tomates.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="../../shared/portail.css" />
+<link rel="stylesheet" href="../../shared/skins.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-tomates">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- En-tête du portail : barre de service, navigation, annonces -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="colonne-jeu">
+      <nav id="fil-ariane"></nav>
+
+      <!-- Régie du portail : bannière au-dessus du lecteur -->
+      <div class="pub pub-banniere" id="pub-haut"></div>
+
+      <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
+      <div class="lecteur">
+        <div id="lecteur-chargement"></div>
+        <div class="lecteur-scene">
+          <div class="shell">
+            <header class="banner">
+              <h1 class="wordart" data-text="Balance ta tomate"><span>Balance ta tomate</span></h1>
+              <p class="tagline">Mads Prout monte sur scène. Tu as un cageot. Vise bien.</p>
+            </header>
+
+            <div class="tom-jeu">
+              <!-- ===== La baraque de foire ===== -->
+              <section class="tom-stand">
+                <!-- La scène est un carré de 160 × 90 unités : trois couches
+                     superposées au même repère, pour que les abris passent
+                     DEVANT Mads quand il se planque derrière. -->
+                <div
+                  class="tom-scene"
+                  id="tom-scene"
+                  tabindex="0"
+                  role="application"
+                  aria-label="Baraque de foire : vise Mads Prout et lance ta tomate"
+                >
+                  <svg class="tom-couche tom-fond" id="tom-fond" viewBox="0 0 160 90" aria-hidden="true"></svg>
+                  <div class="tom-acteurs" id="tom-acteurs" aria-hidden="true">
+                    <div class="tom-perso tom-lanceur" id="tom-lanceur"></div>
+                    <div class="tom-perso tom-mads" id="tom-mads"></div>
+                  </div>
+                  <svg class="tom-couche tom-avant" id="tom-avant" viewBox="0 0 160 90" aria-hidden="true"></svg>
+                  <div class="tom-bulle" id="tom-bulle" aria-hidden="true"></div>
+                  <div class="tom-rideau" id="tom-rideau"></div>
+                </div>
+
+                <!-- La jauge de puissance, sous la scène : c'est le geste. -->
+                <div class="tom-visee">
+                  <span class="tom-visee-etiq">Angle</span>
+                  <span class="tom-visee-val" id="tom-angle">42°</span>
+                  <span class="tom-jauge" aria-hidden="true"><i id="tom-jauge-barre"></i></span>
+                  <span class="tom-visee-etiq">Puissance</span>
+                  <span class="tom-visee-val" id="tom-puissance">58 %</span>
+                </div>
+
+                <!-- Commandes au doigt, là où il n'y a pas de clavier -->
+                <div class="tom-tactile" aria-hidden="true">
+                  <button type="button" class="tom-tact" id="tom-tact-haut">▲</button>
+                  <button type="button" class="tom-tact" id="tom-tact-bas">▼</button>
+                  <button type="button" class="tom-tact tom-tact-tir" id="tom-tact-tir">LANCER</button>
+                </div>
+              </section>
+
+              <!-- ===== Le comptoir du forain ===== -->
+              <aside class="tom-comptoir">
+                <div class="tom-bloc">
+                  <span class="tom-etiquette">Manche</span>
+                  <span class="tom-texte" id="tom-manche">—</span>
+                </div>
+
+                <div class="tom-bloc">
+                  <span class="tom-etiquette">Score</span>
+                  <span class="tom-valeur" id="tom-score">0</span>
+                  <span class="tom-mention" id="tom-record"></span>
+                </div>
+
+                <div class="tom-bloc">
+                  <span class="tom-etiquette">Touches</span>
+                  <span class="tom-texte" id="tom-touches">0 / 0</span>
+                  <span class="tom-mention" id="tom-serie">Série : 0</span>
+                </div>
+
+                <div class="tom-bloc">
+                  <span class="tom-etiquette">Cageot</span>
+                  <span class="tom-cageot" id="tom-cageot"></span>
+                </div>
+
+                <div class="tom-bloc">
+                  <span class="tom-etiquette">Vent</span>
+                  <span class="tom-texte" id="tom-vent">—</span>
+                </div>
+
+                <p class="tom-journal" id="tom-journal" role="status" aria-live="polite">
+                  Approchez, approchez !
+                </p>
+
+                <p class="tom-aide">
+                  <b>↑ ↓</b> l'angle, <b>← →</b> la puissance.<br />
+                  <b>Espace</b> maintenu pour charger, relâche pour lancer.<br />
+                  <b>Entrée</b> lance tout de suite. À la souris : bouge pour viser, maintiens pour charger.
+                </p>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div id="lecteur-outils"></div>
+      </div>
+
+      <!-- Fiche du jeu, remplie depuis games-manifest.json -->
+      <div id="fiche-jeu"></div>
+    </div>
+
+    <div class="colonne-sidebar">
+      <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+      <div id="sidebar-autres-jeux"></div>
+      <!-- Régie du portail : pavé sous le rail -->
+      <div class="pub pub-pave" id="pub-cote"></div>
+    </div>
+  </div>
+
+  <!-- Pied de page du portail, commun à toutes les pages -->
+  <div id="pied"></div>
+
+  <script src="../../shared/perso.js"></script>
+  <script src="reglages.js"></script>
+  <script src="cinematique.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/favoris.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script src="../../shared/lecteur.js"></script>
+  <script src="../../shared/pub.js"></script>
+  <script src="../../shared/pied.js"></script>
+  <script>
+    renderNavbar("tomates", "navbar");
+    renderSidebar("tomates", "sidebar-autres-jeux");
+    renderPied("pied");
+    renderLecteur("tomates");
+    renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
+  </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>🃏 UMA Memory 🃏</title>
+<link rel="icon" type="image/svg+xml" href="../../shared/vignettes/memory.svg" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet" />
+<!-- DA commune du hub, à charger AVANT le style propre au jeu -->
+<link rel="stylesheet" href="../../shared/style-tokens.css" />
+<link rel="stylesheet" href="../../shared/components.css" />
+<link rel="stylesheet" href="../../shared/navbar.css" />
+<link rel="stylesheet" href="../../shared/sidebar.css" />
+<link rel="stylesheet" href="../../shared/portail.css" />
+<link rel="stylesheet" href="../../shared/skins.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-memory">
+  <div id="sparkles" aria-hidden="true"></div>
+
+  <!-- En-tête du portail : barre de service, navigation, annonces -->
+  <div id="navbar"></div>
+
+  <div class="page">
+    <div class="colonne-jeu">
+      <nav id="fil-ariane"></nav>
+
+      <!-- Régie du portail : bannière au-dessus du lecteur -->
+      <div class="pub pub-banniere" id="pub-haut"></div>
+
+      <!-- Le lecteur : bande de chargement, jeu encastré, barre d'outils -->
+      <div class="lecteur">
+        <div id="lecteur-chargement"></div>
+        <div class="lecteur-scene">
+          <div class="shell">
+            <header class="banner">
+              <h1 class="wordart" data-text="UMA Memory"><span>UMA Memory</span></h1>
+              <p class="tagline">On ne cherche pas la même carte. On cherche celle qui va avec.</p>
+            </header>
+
+            <div class="game">
+              <!-- ===== Le tapis ===== -->
+              <section class="mem-tapis">
+                <div class="mem-grille" id="mem-grille"></div>
+                <!-- Écran de choix de grille, puis de fin de partie -->
+                <div class="mem-ecran" id="mem-ecran"></div>
+              </section>
+
+              <!-- ===== Le carnet : tout ce qui se compte ===== -->
+              <aside class="mem-carnet">
+                <div class="mem-bloc">
+                  <span class="mem-etiquette">Grille</span>
+                  <span class="mem-mot" id="mem-grille-nom">—</span>
+                </div>
+
+                <div class="mem-bloc">
+                  <span class="mem-etiquette">Coups</span>
+                  <span class="mem-valeur" id="mem-coups">0</span>
+                </div>
+
+                <div class="mem-bloc">
+                  <span class="mem-etiquette">Chrono</span>
+                  <span class="mem-valeur" id="mem-chrono">0 : 00</span>
+                </div>
+
+                <div class="mem-bloc mem-bloc-fort">
+                  <span class="mem-etiquette">Duos reformés</span>
+                  <span class="mem-mot" id="mem-duos">—</span>
+                </div>
+
+                <div class="mem-bloc">
+                  <span class="mem-etiquette">Score</span>
+                  <span class="mem-valeur" id="mem-score">0</span>
+                </div>
+
+                <div class="mem-bloc">
+                  <span class="mem-etiquette">Série</span>
+                  <span class="mem-mot" id="mem-serie">—</span>
+                </div>
+
+                <div class="mem-bloc">
+                  <span class="mem-etiquette">Record de la grille</span>
+                  <span class="mem-mot" id="mem-record">aucun</span>
+                </div>
+
+                <!-- Le commentaire en direct, lu aussi par les lecteurs d'écran -->
+                <p class="mem-bulle" id="mem-bulle" aria-live="polite"></p>
+
+                <p class="mem-aide">
+                  <b>Clic</b> ou <b>Entrée</b> pour retourner une carte.<br />
+                  <b>Tab</b> et les <b>flèches</b> pour se déplacer sur le tapis.<br />
+                  Aucune carte n'est là deux fois : cherche celle qui va
+                  avec l'autre.
+                </p>
+              </aside>
+            </div>
+          </div>
+        </div>
+        <div id="lecteur-outils"></div>
+      </div>
+
+      <!-- Fiche du jeu, remplie depuis games-manifest.json -->
+      <div id="fiche-jeu"></div>
+    </div>
+
+    <div class="colonne-sidebar">
+      <!-- Colonne « Tu aimeras aussi... », remplie depuis games-manifest.json -->
+      <div id="sidebar-autres-jeux"></div>
+      <!-- Régie du portail : pavé sous le rail -->
+      <div class="pub pub-pave" id="pub-cote"></div>
+    </div>
+  </div>
+
+  <!-- Pied de page du portail, commun à toutes les pages -->
+  <div id="pied"></div>
+
+  <script src="../../shared/perso.js"></script>
+  <script src="cartes.js"></script>
+  <script src="main.js"></script>
+  <script src="../../shared/favoris.js"></script>
+  <script src="../../shared/sparkle.js"></script>
+  <script src="../../shared/navbar.js"></script>
+  <script src="../../shared/sidebar.js"></script>
+  <script src="../../shared/lecteur.js"></script>
+  <script src="../../shared/pub.js"></script>
+  <script src="../../shared/pied.js"></script>
+  <script>
+    renderNavbar("memory", "navbar");
+    renderSidebar("memory", "sidebar-autres-jeux");
+    renderPied("pied");
+    renderLecteur("memory");
+    renderPubs([["pub-haut", "banniere"], ["pub-cote", "pave"]]);
+  </script>
+</body>
+</html>

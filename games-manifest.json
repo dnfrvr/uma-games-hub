@@ -83,13 +83,17 @@
     "id": "memory",
     "titre": "UMA Memory",
     "perso": "Tout le monde",
-    "description": "Retrouve les paires. Certaines cartes n'ont pas de paire.",
+    "description": "Aucune carte n’est là deux fois. Retrouve celle qui va avec l’autre.",
     "vignette": "shared/vignettes/memory.svg",
-    "url": null,
+    "url": "games/uma-memory/index.html",
     "couleur": "#9b4dff",
-    "statut": "bientot",
+    "statut": "disponible",
     "categorie": "Réflexion",
-    "controles": "Souris"
+    "controles": "Souris ou clavier",
+    "note": 8.1,
+    "votes": 2240,
+    "parties": 61480,
+    "ajoute_le": "2012-07-05"
   },
   {
     "id": "glinda-run",
@@ -97,11 +101,15 @@
     "perso": "Glinda",
     "description": "Boq veut te parler. Cours.",
     "vignette": "shared/vignettes/glinda-run.svg",
-    "url": null,
+    "url": "games/glinda-run/index.html",
     "couleur": "#e91e8c",
-    "statut": "bientot",
+    "statut": "disponible",
     "categorie": "Action",
-    "controles": "Flèches"
+    "controles": "Espace pour sauter, Bas pour glisser",
+    "note": 8.9,
+    "votes": 3127,
+    "parties": 96420,
+    "ajoute_le": "2012-04-17"
   },
   {
     "id": "derry-driver",
@@ -109,11 +117,15 @@
     "perso": "Drew",
     "description": "Le camion vert de Drew, une route défoncée, aucun frein.",
     "vignette": "shared/vignettes/derry-driver.svg",
-    "url": null,
+    "url": "games/derry-driver/index.html",
     "couleur": "#2f9e44",
-    "statut": "bientot",
+    "statut": "disponible",
     "categorie": "Action",
-    "controles": "Flèches"
+    "controles": "Flèches + Espace",
+    "note": 8.4,
+    "votes": 3127,
+    "parties": 41892,
+    "ajoute_le": "2012-09-14"
   },
   {
     "id": "love-tester",
@@ -137,10 +149,14 @@
     "perso": "Mads Prout",
     "description": "Mads Prout monte sur scène. Tu as un cageot. Vise bien.",
     "vignette": "shared/vignettes/tomates.svg",
-    "url": null,
+    "url": "games/tomates/index.html",
     "couleur": "#e03131",
-    "statut": "bientot",
+    "statut": "disponible",
     "categorie": "Action",
-    "controles": "Souris"
+    "controles": "Clavier ou souris",
+    "note": 8.6,
+    "votes": 3449,
+    "parties": 88640,
+    "ajoute_le": "2012-06-21"
   }
 ]

@@ -1,0 +1,398 @@
+/* =========================================================
+   Derry Driver — habillage propre au jeu
+   À charger APRÈS shared/style-tokens.css, components.css, portail.css et
+   skins.css. Tout ce qui est générique (fond, cadre, bandeau, boutons) vient
+   de là ; ce fichier ne décrit que l'intérieur du cadre.
+
+   Toutes les classes sont préfixées `dd-` : le CSS n'a qu'un seul espace de
+   noms et le style d'un jeu est chargé APRÈS la coque du portail, donc un
+   nom commun et c'est le portail qui hérite d'une règle qui ne le concerne
+   pas. `node outils/test-collisions.js` monte la garde.
+
+   La couleur d'accent du thème, elle, n'est PAS posée ici : `main.js` l'écrit
+   sur le `<body>`. Réécrire `body.theme-derry-driver` dans ce fichier serait
+   exactement la collision que le banc d'essai traque.
+   ========================================================= */
+
+.dd-jeu {
+  display: flex;
+  align-items: stretch;
+  min-height: 470px;
+}
+
+/* =========================================================
+   La piste
+   ========================================================= */
+
+.dd-piste {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dd-scene {
+  position: relative;
+  flex: 1 1 auto;
+  height: 430px;
+  overflow: hidden;
+  background: #8ed6ff; /* repli : le ciel réel est peint par le parcours */
+}
+
+/* La scène se prend le focus au clavier : sans anneau visible, on ne sait
+   plus où on est dans la page. */
+.dd-scene:focus-visible {
+  outline: 4px solid var(--or);
+  outline-offset: -4px;
+}
+
+.dd-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* --- L'avancement sur le parcours --- */
+.dd-avancement {
+  position: relative;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border-top: var(--trait);
+}
+
+.dd-avancement-plein {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: linear-gradient(180deg, #a9e0b6, #2f9e44);
+  transition: width 0.15s linear;
+}
+
+/* =========================================================
+   Écrans superposés
+   ========================================================= */
+
+.dd-ecran {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-content: center;
+  padding: 14px;
+  overflow-y: auto;
+  background: rgba(9, 26, 15, 0.62);
+}
+
+.dd-ecran.dd-visible { display: grid; }
+
+.dd-boite {
+  max-width: 640px;
+  margin: auto;
+  padding: 16px 18px;
+  text-align: center;
+  background: var(--panel-bg);
+  border: var(--trait);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--ombre-dure);
+}
+
+.dd-mince .dd-boite { max-width: 420px; }
+
+.dd-titre {
+  margin: 0 0 8px;
+  font-family: var(--font-deco);
+  font-size: 1.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: #1f7a33;
+  text-shadow: 1px 1px 0 #fff, 2px 2px 0 #0d2e15;
+}
+
+.dd-texte {
+  margin: 0 0 12px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.dd-score {
+  margin: 0 0 12px;
+  font-family: var(--font-chiffres);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.dd-record-neuf {
+  padding: 1px 7px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0d2e15;
+  background: var(--or);
+  border: 2px solid #0d2e15;
+  border-radius: var(--radius-etiquette);
+}
+
+.dd-suite {
+  font-size: 0.74rem;
+  font-style: italic;
+  color: var(--gris-ui);
+}
+
+.dd-aide-ecran {
+  margin: 12px 0 0;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--gris-ui);
+}
+
+/* Drew, à l'écran-titre : c'est lui qui conduit, autant le montrer en entier
+   une fois avant de le réduire à une tête derrière un pare-brise. */
+.dd-drew {
+  margin: 0 0 4px;
+}
+
+.dd-drew svg {
+  width: 62px;
+  height: 93px;
+  display: inline-block;
+}
+
+/* --- Le choix du chargement --- */
+.dd-choix {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.dd-carte {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 9px 7px 11px;
+  font-family: inherit;
+  text-align: center;
+  color: var(--text-color);
+  background: linear-gradient(180deg, #fff, var(--panel-bg));
+  border: 3px solid #2f9e44;
+  border-radius: var(--radius-panel);
+  box-shadow: 0 3px 0 #0d2e15;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.dd-carte:hover,
+.dd-carte:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 0 #0d2e15;
+}
+
+.dd-carte-nom {
+  font-family: var(--font-deco);
+  font-size: 1.05rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.dd-carte-cartons {
+  padding: 1px 8px;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #1f7a33;
+  border-radius: var(--radius-etiquette);
+}
+
+.dd-carte-resume {
+  margin-top: 2px;
+  font-size: 0.76rem;
+  line-height: 1.25;
+}
+
+.dd-carte-detail {
+  font-size: 0.68rem;
+  line-height: 1.25;
+  color: var(--gris-ui);
+}
+
+/* =========================================================
+   Tableau de bord
+   ---------------------------------------------------------
+   Une planche de bord : fond sombre, étiquettes gravées, chiffres au
+   compteur. C'est le seul endroit du jeu qui n'est pas dessiné au canvas.
+   ========================================================= */
+
+.dd-dock {
+  flex: 0 0 196px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px;
+  background: linear-gradient(180deg, #1f6b33, #123f1e);
+  border-left: var(--trait);
+}
+
+.dd-bloc {
+  padding: 6px 9px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-controle);
+}
+
+.dd-etiquette {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b7e2c1;
+}
+
+.dd-valeur {
+  display: block;
+  font-family: var(--font-chiffres);
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: var(--or);
+}
+
+.dd-texte {
+  display: block;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: #fff;
+}
+
+/* --- La jauge de carburant --- */
+.dd-jauge {
+  display: block;
+  height: 12px;
+  margin: 3px 0 2px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-etiquette);
+  overflow: hidden;
+}
+
+.dd-jauge-plein {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(180deg, #d8f3dd, #2f9e44);
+}
+
+/* Sous 25 %, la jauge passe au rouge et clignote : c'est le seul avertissement
+   du jeu, il vaut mieux qu'il se voie. */
+.dd-jauge-plein.dd-reserve {
+  background: linear-gradient(180deg, #ffb4b4, #c92a2a);
+  animation: ddReserve 0.7s steps(2, end) infinite;
+}
+
+@keyframes ddReserve {
+  50% { opacity: 0.45; }
+}
+
+.dd-aide {
+  margin: auto 0 0;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  line-height: 1.5;
+  color: #b7e2c1;
+}
+
+.dd-aide b { color: #fff; }
+
+/* L'annonce parlée : lue par les lecteurs d'écran, et lisible à l'œil aussi —
+   un message d'état caché est un message qu'on oublie de mettre à jour. */
+.dd-annonce {
+  margin: 6px 0 0;
+  min-height: 1.4em;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--or);
+}
+
+/* =========================================================
+   Commandes tactiles
+   ========================================================= */
+
+.dd-tactile {
+  display: none;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-top: var(--trait);
+}
+
+.dd-tact {
+  flex: 1 1 0;
+  padding: 15px 0;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  color: #0d2e15;
+  background: linear-gradient(180deg, #fff, #d8f3dd);
+  border: 2px solid #0d2e15;
+  border-radius: var(--radius-controle);
+  touch-action: none;
+  cursor: pointer;
+}
+
+.dd-tact.dd-appuye {
+  background: var(--or);
+  transform: translateY(2px);
+}
+
+.dd-tact-saut { flex: 1.5 1 0; }
+
+/* Le doigt vise mal un bouton de 30 px : les pavés n'apparaissent que là où
+   il n'y a pas de clavier. */
+@media (pointer: coarse) {
+  .dd-tactile { display: flex; }
+}
+
+/* =========================================================
+   Écrans étroits
+   ========================================================= */
+
+@media (max-width: 860px) {
+  .dd-jeu { flex-direction: column; min-height: 0; }
+  .dd-scene { height: min(58vh, 390px); }
+
+  .dd-dock {
+    flex: 0 0 auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    border-left: none;
+    border-top: var(--trait);
+  }
+
+  .dd-bloc { flex: 1 1 110px; }
+  .dd-aide { flex: 1 1 100%; margin: 0; }
+  .dd-annonce { flex: 1 1 100%; }
+  .dd-tactile { display: flex; }
+}
+
+/* Le jeu, lui, ne peut pas s'arrêter de bouger — c'est un jeu de conduite.
+   Ce qu'on coupe, c'est tout ce qui bouge SANS raison : le tremblement de
+   caméra, la poussière et le flottement des bonus sont déjà désactivés dans
+   main.js, il reste les animations de la page. */
+@media (prefers-reduced-motion: reduce) {
+  .dd-jauge-plein.dd-reserve { animation: none; }
+  .dd-avancement-plein { transition: none; }
+  .dd-carte { transition: none; }
+}
