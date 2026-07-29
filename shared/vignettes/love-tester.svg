@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Love Tester">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#ff3d9a"/>
+  <rect width="320" height="240" fill="url(#love-rayures)"/>
+  <defs>
+    <pattern id="love-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+
+  <!-- les deux champs de prénom -->
+  <g stroke="#3b0a45" stroke-width="8">
+    <rect x="24" y="66" width="104" height="34" rx="6" fill="#ffffff"/>
+    <rect x="192" y="66" width="104" height="34" rx="6" fill="#ffffff"/>
+  </g>
+  <g stroke="#c9a3ff" stroke-width="7" stroke-linecap="round">
+    <path d="M44 83h60"/><path d="M212 83h60"/>
+  </g>
+
+  <!-- le cœur du verdict -->
+  <path d="M160 200c-40-29-64-48-64-73 0-18 14-32 32-32 11 0 22 5 32 16 10-11 21-16 32-16 18 0 32 14 32 32 0 25-24 44-64 73z"
+        fill="#ffffff" stroke="#3b0a45" stroke-width="9" stroke-linejoin="round"/>
+  <path d="M160 200c-40-29-64-48-64-73 0-18 14-32 32-32 11 0 22 5 32 16z" fill="#ff8ac4"/>
+  <text x="160" y="152" text-anchor="middle" font-family="Courier New, monospace"
+        font-size="38" font-weight="bold" fill="#3b0a45">87%</text>
+
+  <g fill="#ffd84d">
+    <path d="M40 176l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+    <path d="M282 168l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+  </g>
+</svg>

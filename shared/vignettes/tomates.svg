@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Balance ta tomate">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#e03131"/>
+  <rect width="320" height="240" fill="url(#tomate-rayures)"/>
+  <defs>
+    <pattern id="tomate-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+
+  <!-- la scène -->
+  <path d="M0 194h320v46H0z" fill="#3b0a45" opacity=".4"/>
+
+  <!-- la cible, bras levés, déjà touchée -->
+  <g stroke="#3b0a45" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="212" cy="96" r="28" fill="#ffd3ef"/>
+    <path d="M212 124v50"/>
+    <path d="M212 174l-18 22M212 174l20 20"/>
+    <path d="M212 136l-34-22M212 136l36-20"/>
+  </g>
+
+  <!-- l'éclaboussure en pleine figure -->
+  <path d="M212 96c14-16 34-6 32 10-2 15-20 16-24 26-6-9-22-9-24-22-2-14 8-22 16-14z" fill="#ff4d4d" opacity=".95"/>
+  <g fill="#c92a2a">
+    <circle cx="248" cy="72" r="7"/><circle cx="182" cy="70" r="6"/><circle cx="240" cy="128" r="6"/>
+  </g>
+
+  <!-- la tomate en vol, avec sa trajectoire -->
+  <path d="M24 176C60 118 92 106 118 122" fill="none" stroke="#ffffff" stroke-width="6"
+        stroke-linecap="round" stroke-dasharray="4 14" opacity=".8"/>
+  <circle cx="124" cy="126" r="26" fill="#ff4d4d" stroke="#3b0a45" stroke-width="9"/>
+  <path d="M124 100c-8-10-2-18 6-14 5-8 14-4 12 6" fill="#4ad66d" stroke="#3b0a45" stroke-width="7" stroke-linejoin="round"/>
+
+  <g fill="#ffd84d">
+    <path d="M40 52l6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/>
+    <path d="M284 190l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+  </g>
+</svg>

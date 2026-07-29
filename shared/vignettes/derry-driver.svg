@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" width="320" height="240" role="img" aria-label="Derry Driver">
+  <!-- Vignette placeholder — à remplacer par une vraie image quand l'art sera prêt. -->
+  <rect width="320" height="240" fill="#2f9e44"/>
+  <rect width="320" height="240" fill="url(#derry-rayures)"/>
+  <defs>
+    <pattern id="derry-rayures" width="40" height="40" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <rect width="20" height="40" fill="#ffffff" opacity=".16"/>
+    </pattern>
+  </defs>
+
+  <!-- la route, vue de profil -->
+  <path d="M0 186h320v54H0z" fill="#3b0a45" opacity=".45"/>
+  <g stroke="#ffd84d" stroke-width="7" stroke-linecap="round" opacity=".85">
+    <path d="M14 212h40"/><path d="M84 212h40"/><path d="M154 212h40"/><path d="M224 212h40"/><path d="M294 212h20"/>
+  </g>
+
+  <!-- obstacles sur la voie -->
+  <path d="M36 186l16-30 16 30z" fill="#ff8a3d" stroke="#3b0a45" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M270 186l14-26 14 26z" fill="#ff8a3d" stroke="#3b0a45" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- le camion vert de Drew, de profil -->
+  <g stroke="#3b0a45" stroke-width="9" stroke-linejoin="round">
+    <path d="M96 186v-46h84v46z" fill="#4ad66d"/>
+    <path d="M180 186v-34h30l18 34z" fill="#37b24d"/>
+    <path d="M188 160h18l9 16h-27z" fill="#ffffff" stroke-width="6"/>
+  </g>
+  <g fill="#3b0a45">
+    <circle cx="126" cy="188" r="20"/>
+    <circle cx="206" cy="188" r="20"/>
+  </g>
+  <g fill="#c9a3ff">
+    <circle cx="126" cy="188" r="8"/>
+    <circle cx="206" cy="188" r="8"/>
+  </g>
+
+  <g fill="#ffd84d">
+    <path d="M44 48l6 15 15 6-15 6-6 15-6-15-15-6 15-6z"/>
+    <path d="M276 66l5 12 12 5-12 5-5 12-5-12-12-5 12-5z"/>
+  </g>
+</svg>

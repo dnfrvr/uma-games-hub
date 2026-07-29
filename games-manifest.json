@@ -86,5 +86,41 @@
     "statut": "bientot",
     "categorie": "Action",
     "controles": "Flèches"
+  },
+  {
+    "id": "derry-driver",
+    "titre": "Derry Driver",
+    "perso": "Drew",
+    "description": "Le camion vert de Drew, une route défoncée, aucun frein.",
+    "vignette": "shared/vignettes/derry-driver.svg",
+    "url": null,
+    "couleur": "#2f9e44",
+    "statut": "bientot",
+    "categorie": "Action",
+    "controles": "Flèches"
+  },
+  {
+    "id": "love-tester",
+    "titre": "Love Tester",
+    "perso": "Tout le monde",
+    "description": "Deux prénoms, un pourcentage. La machine ne se trompe jamais.",
+    "vignette": "shared/vignettes/love-tester.svg",
+    "url": null,
+    "couleur": "#ff3d9a",
+    "statut": "bientot",
+    "categorie": "Réflexion",
+    "controles": "Clavier"
+  },
+  {
+    "id": "tomates",
+    "titre": "Balance ta tomate",
+    "perso": "Mads Prout",
+    "description": "Mads Prout monte sur scène. Tu as un cageot. Vise bien.",
+    "vignette": "shared/vignettes/tomates.svg",
+    "url": null,
+    "couleur": "#e03131",
+    "statut": "bientot",
+    "categorie": "Action",
+    "controles": "Souris"
   }
 ]

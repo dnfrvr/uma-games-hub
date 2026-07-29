@@ -67,7 +67,7 @@
 
 a.sidebar-lien:hover,
 a.sidebar-lien:focus-visible {
-  background: var(--panel-bg);
+  background: var(--chrome-panel);
   border-left-color: var(--accent);
 }
 

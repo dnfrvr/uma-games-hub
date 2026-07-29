@@ -181,15 +181,11 @@
     const titre = document.createElement("strong");
     titre.textContent = pub.titre;
 
-    const ligne = document.createElement("span");
-    ligne.className = "pub-ligne";
-    ligne.textContent = pub.accroche;
-
     const bouton = document.createElement("span");
     bouton.className = "pub-bouton";
     bouton.textContent = pub.bouton;
 
-    texte.append(annonceur, titre, ligne, bouton);
+    texte.append(annonceur, titre, bouton);
     bloc.appendChild(texte);
     cadre.appendChild(bloc);
     return cadre;

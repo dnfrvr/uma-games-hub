@@ -18,11 +18,15 @@ personnalité, sans raconter le lore/l'intrigue.
 | Eoghan      | Kiss & Cache (infiltration)    | `games/eoghan-office/`  | Jouable    |
 | Tout le monde | UMA Memory (paires)          | —                       | **Placeholder** |
 | Glinda      | Run, Glinda, Run (course sans fin, façon Temple Run — Boq la poursuit) | — | **Placeholder** |
+| Drew        | Derry Driver (conduite de profil, obstacles, son camion vert) | — | **Placeholder** |
+| Tout le monde | Love Tester (deux prénoms, un pourcentage) | —          | **Placeholder** |
+| Mads Prout  | Balance ta tomate (viser l'ennemi du JDR)  | —              | **Placeholder** |
 
-**Les 4 premiers jeux sont finis et branchés au hub.** Les deux derniers n'existent
+**Les 4 premiers jeux sont finis et branchés au hub.** Les cinq autres n'existent
 que comme entrées `"statut": "bientot"` dans le manifest, avec une vignette : ils
-apparaissent partout (grille grisée, onglet inactif, catégories) sans qu'une seule
-ligne de moteur soit écrite. On verra plus tard s'ils sont développés.
+apparaissent partout (grille grisée, onglet inactif, catégories, rail « jeux
+similaires ») sans qu'une seule ligne de moteur soit écrite. On verra plus tard
+lesquels sont développés.
 
 Voir `uma-games-hub-SPEC.md` pour l'architecture du hub/sidebar, et les fichiers
 `dress-my-drew-SPEC.md` / futures specs Glinda-Elias pour le détail de chaque jeu.
@@ -50,6 +54,7 @@ uma-games-hub/
 │   ├── components.css           # mobilier commun (fond, .shell, bandeau, footer…)
 │   ├── portail.css              # LA COQUE : barre de service, annonces, fil
 │   │                            #   d'Ariane, pubs, notes, lecteur, pied de page
+│   ├── skins.css                # un habillage de bandeau-titre PAR JEU
 │   ├── perso.js                 # fabrique de personnages chibi (persoSVG, spectateurSVG)
 │   ├── navbar.js / navbar.css   # en-tête du site (service + navigation + annonces)
 │   ├── sidebar.js / sidebar.css # renderSidebar(currentGameId, targetElementId)
@@ -102,6 +107,7 @@ Tous les jeux + le hub partagent la même DA rétro 2012 kitsch via `shared/`.
   <link rel="stylesheet" href="../../shared/navbar.css" />
   <link rel="stylesheet" href="../../shared/sidebar.css" />
   <link rel="stylesheet" href="../../shared/portail.css" />
+  <link rel="stylesheet" href="../../shared/skins.css" />
   <link rel="stylesheet" href="style.css" /> <!-- spécifique au jeu, en dernier -->
   ```
   (adapter le nombre de `../` selon la profondeur réelle du fichier)
@@ -175,6 +181,54 @@ clair→sombre, filet blanc translucide en haut, filet sombre en bas.
   dessine un chibi paramétrable (peau, coiffure, tenue, jupe, pompons, regard, bouche,
   pose, accessoire) et `spectateurSVG()` une silhouette allégée pour les foules. Un
   nouveau personnage = de nouvelles options, jamais un nouveau style de dessin.
+
+### RÈGLE : un habillage complet par jeu
+**Chaque jeu a son propre habillage** — écran-titre ET interface — pour qu'on
+sache d'un coup d'œil sur lequel on est. C'est ce que faisaient les portails
+Flash : le site avait sa coque, mais chaque jeu arrivait avec sa police, ses
+couleurs et ses boutons.
+
+Tout se joue dans `shared/skins.css`, qui ne contient **que des variables**
+posées sur la classe de thème du `<body>` :
+
+| Famille | Variables | Ce que ça rhabille |
+|---------|-----------|--------------------|
+| Bandeau | `--banner-fond`, `--banner-trait` | le fond de l'écran-titre |
+| Titre | `--titre-police`, `-graisse`, `-style`, `-taille`, `-casse`, `-espacement`, `-cerne`, `-cerne-epaisseur`, `-remplissage` | le WordArt |
+| Accroche | `--tagline-*` | la ligne sous le titre |
+| Panneaux | `--panel-bg`, `--trait`, `--radius-panel` | les encadrés et le HUD du jeu |
+| Boutons | `--btn-fond`, `-cadre`, `-encre`, `-rayon`, `-ombre`, `-police`, `-casse`, `-espacement`, `-fond-primaire`, `-encre-primaire` | `.fun-btn` |
+| Pied de jeu | `--footer-fond` | le pied de page DANS le cadre du jeu |
+
+Les règles qui les consomment sont dans `components.css`, avec les valeurs de
+Drew en repli. **Attention à `--panel-bg`** : les thèmes le réhabillent, donc
+le mobilier de portail qui s'en servait (pastilles de navigation, survol du
+rail) pointe désormais sur `--chrome-panel`, figé. Sans ça la coque changeait
+de couleur d'un jeu à l'autre.
+
+| Jeu | Habillage | Titre | Boutons |
+|-----|-----------|-------|---------|
+| Drew | carnet à stickers, dégradé bonbon | Comic Sans cerné, doré scintillant | pilules roses à ombre dure (la référence) |
+| Glinda | tribune d'Augusta, bleu marine à bandes obliques | Impact capitales, blanc sur or | marine cerclés d'or, capitales |
+| Elias | dossier classé, bande vidéo et lignes de balayage | Courier vert moniteur | ardoise en Courier, le principal en rouge REC |
+| Eoghan | couverture de magazine à potins, rose vers vert, semé de cœurs | Georgia italique | blancs cerclés de vert épais, encre rose |
+
+**Aucune police de titre n'est partagée entre deux jeux.** `--font-deco`
+(Titan One) est l'enseigne du SITE — le logo et le héros de l'accueil — et rien
+d'autre. Elle a remplacé Lobster, qui traînait sur le logo, sur le hub et sur les
+titres de jeux à la fois, et finissait par tout aplatir.
+
+Deux garde-fous en ajoutant un jeu :
+1. **La coque du portail ne bouge pas.** En-tête, lecteur, fil d'Ariane, pied de
+   page et colonne latérale restent identiques partout : c'est ce qui fait qu'on
+   reste sur le même site. Seul l'INTÉRIEUR du cadre change.
+2. **On reste en 2012.** Des polices présentes sur les machines de l'époque
+   (Impact, Courier New, Georgia) ou déjà chargées (Lobster), des contours
+   épais, des dégradés verticaux. Pas de subtilité typographique.
+
+Un remplissage plat s'écrit en dégradé d'une seule couleur
+(`linear-gradient(0deg, #x, #x)`) : la machinerie de brillance reste en place,
+elle n'a simplement plus rien à faire scintiller.
 
 ## `games-manifest.json`
 Source unique de vérité pour le hub, l'en-tête, la sidebar ET le lecteur.

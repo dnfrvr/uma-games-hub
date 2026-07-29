@@ -30,7 +30,11 @@
   /* Rôles génériques : c'est ce que les composants partagés utilisent */
   --text-color: #3b0a45;    /* l'encre violette de tous les traits */
   --shadow-color: #3b0a45;
-  --panel-bg: #fff0fa;      /* fond des panneaux, rose très pâle */
+  --panel-bg: #fff0fa;      /* fond des panneaux DE JEU — réhabillé par thème */
+  /* Le même rose, mais figé : c'est celui du mobilier de portail (pastilles de
+     navigation, survol du rail). Les thèmes réhabillent --panel-bg, pas lui,
+     sinon la coque changerait de couleur d'un jeu à l'autre. */
+  --chrome-panel: #fff0fa;
   --page-bg: linear-gradient(160deg, #ffc2e8 0%, #f6b8ff 45%, #b8e7ff 100%);
 
   /* --- La coque sombre du portail --------------------------------------
@@ -55,7 +59,12 @@
 
   /* Typo */
   --font-title: "Comic Sans MS", "Comic Sans", "Chalkboard SE", cursive, sans-serif;
-  --font-deco: "Lobster", "Segoe Script", "Brush Script MT", cursive;
+  /* La police d'enseigne du SITE : le logo et le héros de l'accueil, rien
+     d'autre. Chaque jeu a la sienne (voir shared/skins.css) — plus aucune
+     police de titre n'est partagée entre eux. Titan One est la grosse
+     display arrondie des jeux occasionnels de 2012 ; Lobster, qu'elle
+     remplace, traînait partout et finissait par tout aplatir. */
+  --font-deco: "Titan One", "Arial Rounded MT Bold", Impact, sans-serif;
   --font-chiffres: "Courier New", Courier, monospace;
   /* Le mobilier d'un portail (menus, notes, mentions, compteurs) ne s'écrit
      pas en Comic Sans : à 11 px il devient illisible, et surtout ce n'est pas

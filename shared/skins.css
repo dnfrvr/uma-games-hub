@@ -1,0 +1,186 @@
+/* =========================================================
+   Un habillage par jeu — à importer APRÈS shared/components.css
+   ---------------------------------------------------------
+   RÈGLE : chaque jeu a son propre habillage de bandeau-titre, pour qu'on
+   sache d'un coup d'œil sur lequel on est. C'est ce que faisaient les
+   portails Flash : le site avait sa coque, mais chaque jeu arrivait avec son
+   propre écran-titre, sa police et ses couleurs.
+
+   Ce fichier ne contient QUE des variables posées sur `body.theme-*` :
+     --banner-fond / --banner-trait          le bandeau
+     --titre-police / -graisse / -style      la police du titre
+     --titre-taille / -casse / -espacement   son calibrage
+     --titre-cerne / -cerne-epaisseur        son contour
+     --titre-remplissage                     son remplissage (un dégradé)
+     --tagline-*                             la ligne d'accroche sous le titre
+   Les règles qui les consomment sont dans components.css. Comme ce sont des
+   propriétés personnalisées héritées, l'ordre de chargement importe peu —
+   mais on le garde après components.css par lisibilité.
+
+   Deux garde-fous, à respecter en ajoutant un jeu :
+   1. **La coque du portail ne bouge pas.** En-tête, lecteur, fil d'Ariane,
+      pied de page et colonne latérale sont identiques partout : c'est ce qui
+      fait qu'on reste sur le même site. Seul l'INTÉRIEUR du cadre change.
+   2. **On reste en 2012.** Polices déjà présentes sur les machines de
+      l'époque (Comic Sans, Impact, Courier New, Georgia) ou déjà chargées,
+      contours épais, dégradés verticaux, aucune subtilité typographique.
+
+   Un remplissage plat s'écrit en dégradé d'une seule couleur
+   (`linear-gradient(0deg, #x, #x)`) : la machinerie de brillance reste en
+   place, elle n'a simplement plus rien à faire scintiller.
+   ========================================================= */
+
+/* --- Drew — le carnet à stickers ------------------------------------------
+   Dégradé bonbon et remplissage doré qui scintille : la DA de référence. Son
+   titre est en Comic Sans énorme et cerné d'encre — c'est littéralement le
+   lettrage des sites de jeux de filles de l'époque, et ça le sépare de
+   l'enseigne du site, qui est la seule à garder --font-deco. */
+body.theme-drew {
+  --titre-police: var(--font-title);
+  --titre-graisse: 700;
+  --titre-taille: clamp(1.9rem, 6vw, 3.4rem);
+}
+
+/* --- Glinda — la tribune d'Augusta ----------------------------------------
+   Bleu marine et blanc, les couleurs de l'uniforme, avec les bandes obliques
+   d'un maillot. Le titre passe en Impact : c'est LA police de bannière
+   sportive, et elle était sur toutes les machines de 2012. */
+body.theme-glinda {
+  --banner-fond:
+    repeating-linear-gradient(
+      115deg,
+      rgba(255, 255, 255, 0.09) 0 16px,
+      rgba(255, 255, 255, 0) 16px 34px
+    ),
+    linear-gradient(180deg, #33497d 0%, #16244a 100%);
+  --banner-trait: 3px solid var(--or);
+
+  --titre-police: Impact, Haettenschweiler, "Arial Narrow", sans-serif;
+  --titre-graisse: 400;
+  --titre-taille: clamp(2.1rem, 7vw, 4rem);
+  --titre-casse: uppercase;
+  --titre-espacement: 0.01em;
+  --titre-cerne: #0b1730;
+  --titre-cerne-epaisseur: clamp(4px, 1.3vw, 7px);
+  /* Blanc en haut, or en bas, coupé net : le lettrage des maillots. */
+  --titre-remplissage: linear-gradient(
+    180deg,
+    #ffffff 0%,
+    #ffffff 47%,
+    var(--or) 49%,
+    #efa900 100%
+  );
+
+  --tagline-style: normal;
+  --tagline-casse: uppercase;
+  --tagline-espacement: 0.14em;
+  --tagline-couleur: #cfe0ff;
+
+  /* L'UI de jeu : panneaux de vestiaire et boutons de maillot. */
+  --panel-bg: #f1f5ff;
+  --trait: 3px solid #16244a;
+  --radius-panel: 10px;
+
+  --btn-fond: linear-gradient(180deg, #3c5590, #1d2e5c);
+  --btn-cadre: 2px solid var(--or);
+  --btn-encre: #ffffff;
+  --btn-casse: uppercase;
+  --btn-espacement: 0.08em;
+  --btn-rayon: 4px;
+  --btn-ombre: 0 3px 0 #0b1730;
+  --btn-fond-primaire: linear-gradient(180deg, #ffe98a, var(--or));
+  --btn-encre-primaire: #16244a;
+
+  --footer-fond:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0 16px, rgba(255, 255, 255, 0) 16px 34px),
+    linear-gradient(180deg, #33497d, #16244a);
+}
+
+/* --- Elias — le dossier classé --------------------------------------------
+   Gris de bande vidéo, lignes de balayage, filet rouge « REC ». Le titre est
+   tapé à la machine, en vert de moniteur : le jeu a déjà ses effets VHS, le
+   bandeau les annonce. */
+body.theme-elias {
+  --banner-fond:
+    repeating-linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.32) 0 2px,
+      rgba(0, 0, 0, 0) 2px 4px
+    ),
+    linear-gradient(180deg, #343943 0%, #10131a 100%);
+  --banner-trait: 3px solid #8f1f1f;
+
+  --titre-police: "Courier New", Courier, monospace;
+  --titre-graisse: 700;
+  /* Courier est large : à la taille des autres, le titre déborderait. */
+  --titre-taille: clamp(1.4rem, 4.6vw, 2.6rem);
+  --titre-casse: uppercase;
+  --titre-espacement: 0.08em;
+  --titre-cerne: #000000;
+  --titre-cerne-epaisseur: clamp(3px, 0.9vw, 5px);
+  --titre-remplissage: linear-gradient(0deg, #c6f7b8, #c6f7b8);
+
+  --tagline-police: "Courier New", Courier, monospace;
+  --tagline-style: normal;
+  --tagline-casse: uppercase;
+  --tagline-espacement: 0.1em;
+  --tagline-couleur: #9fb0a4;
+
+  /* L'UI de jeu : papier de dossier, angles nets, boutons de magnétoscope.
+     Pas d'ombre portée dure ici — un dossier n'est pas un autocollant. */
+  --panel-bg: #e9eee6;
+  --trait: 2px solid #2a3038;
+  --radius-panel: 4px;
+
+  --btn-fond: linear-gradient(180deg, #3a414c, #1b1f27);
+  --btn-cadre: 1px solid #7d8794;
+  --btn-encre: #c6f7b8;
+  --btn-police: "Courier New", Courier, monospace;
+  --btn-casse: uppercase;
+  --btn-espacement: 0.1em;
+  --btn-rayon: 2px;
+  --btn-ombre: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  --btn-fond-primaire: linear-gradient(180deg, #c0392b, #7e1f16);
+  --btn-encre-primaire: #ffe9e6;
+
+  --footer-fond:
+    repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0 2px, rgba(0, 0, 0, 0) 2px 4px),
+    linear-gradient(180deg, #343943, #10131a);
+}
+
+/* --- Eoghan — la couverture de magazine à potins --------------------------
+   Rose bonbon qui vire au vert (sa couleur), semé de cœurs. Le titre est en
+   Georgia italique : les magazines à ragots avaient tous un titre en romain
+   penché, et ça le distingue nettement du Comic Sans de Drew. */
+body.theme-eoghan {
+  --banner-fond:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Cpath d='M15 23C9 18.6 5 15.7 5 11.9 5 9.2 7.1 7 9.8 7c1.7 0 3.4.8 5.2 2.5C16.8 7.8 18.5 7 20.2 7 22.9 7 25 9.2 25 11.9c0 3.8-4 6.7-10 11.1z' fill='%23ffffff' opacity='.16'/%3E%3C/svg%3E"),
+    linear-gradient(100deg, #ff2f93 0%, #ff8ac4 42%, #6ee7a0 100%);
+  --banner-trait: 3px solid #0a6b28;
+
+  --titre-police: Georgia, "Times New Roman", "Nimbus Roman", serif;
+  --titre-graisse: 700;
+  --titre-style: italic;
+  --titre-taille: clamp(1.9rem, 6vw, 3.4rem);
+  --titre-cerne: #0b3d18;
+  --titre-cerne-epaisseur: clamp(4px, 1.3vw, 7px);
+  --titre-remplissage: linear-gradient(180deg, #ffffff 0%, #ffe4f3 52%, #ffffff 100%);
+
+  --tagline-style: italic;
+  --tagline-couleur: #eaffef;
+
+  /* L'UI de jeu : encadrés de magazine, filet vert épais, boutons roses. */
+  --panel-bg: #f1fff5;
+  --trait: 3px solid #0a6b28;
+  --radius-panel: 16px;
+
+  --btn-fond: linear-gradient(180deg, #ffffff, #ffe4f3);
+  --btn-cadre: 3px solid #0a6b28;
+  --btn-encre: #c2126b;
+  --btn-rayon: 8px;
+  --btn-ombre: 0 3px 0 #0a6b28;
+  --btn-fond-primaire: linear-gradient(180deg, #ff7ab8, #e01f7f);
+  --btn-encre-primaire: #ffffff;
+
+  --footer-fond: linear-gradient(100deg, #ff2f93 0%, #ff8ac4 42%, #6ee7a0 100%);
+}

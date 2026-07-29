@@ -383,14 +383,6 @@ body:has(.page) .entete-site { max-width: 1330px; }
   opacity: 0.75;
 }
 
-.pub-ligne {
-  display: block;
-  margin-top: 2px;
-  font-size: 12px;
-  line-height: 1.25;
-  opacity: 0.9;
-}
-
 .pub-annonceur .pub-bouton {
   color: var(--text-color);
   background: linear-gradient(180deg, #fff, #e8e8e8);

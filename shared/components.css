@@ -141,14 +141,17 @@ body::before {
    Bandeau + titre WordArt
    ========================================================= */
 
+/* Chaque jeu réhabille ce bandeau via les variables --banner-* et --titre-*,
+   posées par shared/skins.css sur la classe de thème du <body>. Les valeurs
+   ci-dessous sont celles du hub et de Drew, donc la référence de la DA. */
 header,
 .banner {
   text-align: center;
   padding: 12px 16px 10px;
-  background:
+  background: var(--banner-fond,
     linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 55%),
-    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%);
-  border-bottom: var(--trait);
+    linear-gradient(95deg, var(--bonbon) 0%, var(--lilas) 50%, var(--piscine) 100%));
+  border-bottom: var(--banner-trait, var(--trait));
 }
 
 /* Titre « WordArt » : remplissage doré animé, contour et ombre portée.
@@ -158,9 +161,12 @@ header,
 .wordart {
   position: relative;
   margin: 0 0 10px;
-  font-family: var(--font-deco);
-  font-weight: 400;
-  font-size: clamp(2rem, 6.5vw, 3.8rem);
+  font-family: var(--titre-police, var(--font-deco));
+  font-weight: var(--titre-graisse, 400);
+  font-style: var(--titre-style, normal);
+  font-size: var(--titre-taille, clamp(2rem, 6.5vw, 3.8rem));
+  letter-spacing: var(--titre-espacement, normal);
+  text-transform: var(--titre-casse, none);
   /* Le contour épais déborde du bloc de texte : on lui laisse la place. */
   line-height: 1.25;
 }
@@ -169,14 +175,16 @@ header,
   content: attr(data-text);
   position: absolute;
   inset: 0;
-  color: #fff;
-  -webkit-text-stroke: clamp(5px, 1.6vw, 9px) var(--text-color);
+  color: var(--titre-cerne, var(--text-color));
+  -webkit-text-stroke: var(--titre-cerne-epaisseur, clamp(5px, 1.6vw, 9px))
+    var(--titre-cerne, var(--text-color));
   text-shadow: 4px 5px 0 rgba(59, 10, 69, 0.45);
 }
 
 .wordart span {
   position: relative;
-  background: linear-gradient(100deg, #fff 0%, var(--or) 18%, #fff 34%, var(--barbe) 50%, var(--or) 66%, #fff 82%, var(--or) 100%);
+  background: var(--titre-remplissage,
+    linear-gradient(100deg, #fff 0%, var(--or) 18%, #fff 34%, var(--barbe) 50%, var(--or) 66%, #fff 82%, var(--or) 100%));
   background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -190,9 +198,12 @@ header,
 
 .tagline {
   margin: 0;
-  font-style: italic;
+  font-family: var(--tagline-police, inherit);
+  font-style: var(--tagline-style, italic);
   font-size: clamp(0.75rem, 2.4vw, 0.95rem);
-  color: #fff;
+  letter-spacing: var(--tagline-espacement, normal);
+  text-transform: var(--tagline-casse, none);
+  color: var(--tagline-couleur, #fff);
   text-shadow: 1px 1px 0 var(--text-color);
 }
 
@@ -208,16 +219,21 @@ header,
   box-shadow: var(--ombre-dure);
 }
 
+/* Le bouton de tous les jeux. Chaque thème le réhabille par les --btn-*
+   (voir shared/skins.css) ; les valeurs ci-dessous sont celles de Drew. */
 .fun-btn {
-  font-family: inherit;
-  font-weight: bold;
+  font-family: var(--btn-police, inherit);
+  font-weight: var(--btn-graisse, bold);
+  text-transform: var(--btn-casse, none);
+  letter-spacing: var(--btn-espacement, normal);
   padding: 8px 14px;
-  border: var(--trait);
-  border-radius: var(--radius-button);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--barbe);
-  color: var(--text-color);
+  border: var(--btn-cadre, var(--trait));
+  border-radius: var(--btn-rayon, var(--radius-button));
+  background: var(--btn-fond,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--barbe));
+  color: var(--btn-encre, var(--text-color));
   cursor: pointer;
-  box-shadow: 3px 4px 0 var(--shadow-color);
+  box-shadow: var(--btn-ombre, 3px 4px 0 var(--shadow-color));
 }
 
 .fun-btn:hover {
@@ -227,7 +243,9 @@ header,
 }
 
 .fun-btn.primary {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--or);
+  background: var(--btn-fond-primaire,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 55%), var(--or));
+  color: var(--btn-encre-primaire, var(--btn-encre, var(--text-color)));
 }
 
 .tab-btn {
@@ -256,13 +274,16 @@ header,
    Pied de page : compteur de visites factice + badge d'époque
    ========================================================= */
 
+/* Le pied de page À L'INTÉRIEUR d'un jeu (compteur de visites + badge) :
+   il fait partie de l'écran du jeu, donc il suit son habillage. À ne pas
+   confondre avec `.pied-portail`, qui est la coque du site et ne bouge pas. */
 footer {
   text-align: center;
   padding: 14px;
   border-top: var(--trait);
-  background:
+  background: var(--footer-fond,
     linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon));
+    linear-gradient(90deg, var(--piscine), var(--lilas), var(--bonbon)));
 }
 
 .footer-compteur {

@@ -27,6 +27,7 @@ const COQUE = [
   "shared/navbar.css",
   "shared/sidebar.css",
   "shared/portail.css",
+  "shared/skins.css",
   "style-hub.css",
 ];
 
