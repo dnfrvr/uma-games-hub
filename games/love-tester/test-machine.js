@@ -246,10 +246,6 @@ verifie(
   el("lt-echelle").children.length + " voyants"
 );
 verifie(
-  "les couples préréglés sont construits depuis verdicts.js",
-  el("lt-couples").children.length === D.COUPLES.length
-);
-verifie(
   "les deux portraits sont posés dès le départ (cadre vide)",
   el("lt-portrait-a").classList.contains("lt-portrait-vide") &&
     el("lt-portrait-b").classList.contains("lt-portrait-vide")
@@ -386,14 +382,14 @@ verifie(
   el("lt-nom-a").value === "Glinda" && el("lt-nom-b").value === "Drew"
 );
 
-el("lt-couples").children[0].declenche("click");
-verifie(
-  "un couple préréglé remplit les champs et lance le test",
-  el("lt-nom-a").value === D.COUPLES[0].a &&
-    el("lt-chiffres").textContent ===
-      String(H.score(D.COUPLES[0].a, D.COUPLES[0].b)).padStart(3, "0")
-);
-
+/* Il faut une ligne au carnet avant de pouvoir le vider. Depuis que les
+   couples préréglés ont disparu, on la fabrique comme le ferait la visiteuse :
+   on saisit deux prénoms et on lance la machine. */
+teste("Drew", "Glinda");
+M.avance(1200 + 1800 + 400);
+verifie("une mesure ajoute bien une ligne au carnet",
+  el("lt-carnet").children.length >= 1 &&
+    !el("lt-carnet").children[0].classList.contains("lt-carnet-vide"));
 el("lt-vider").declenche("click");
 verifie(
   "« Effacer le carnet » le vide",

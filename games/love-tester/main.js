@@ -125,37 +125,6 @@
     return echelle.querySelectorAll(".lt-cran");
   }
 
-  function construitCouples() {
-    const hote = $("lt-couples");
-    hote.innerHTML = "";
-    D.COUPLES.forEach((couple) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "lt-couple";
-      b.innerHTML =
-        '<span class="lt-couple-tetes" aria-hidden="true">' +
-        miniature(couple.a) +
-        miniature(couple.b) +
-        "</span>" +
-        '<span class="lt-couple-noms">' +
-        echappe(couple.a) +
-        " <b>&amp;</b> " +
-        echappe(couple.b) +
-        "</span>" +
-        '<span class="lt-couple-note">' +
-        echappe(couple.note) +
-        "</span>";
-      b.addEventListener("click", () => {
-        champs.a.value = couple.a;
-        champs.b.value = couple.b;
-        majPortrait("a");
-        majPortrait("b");
-        lance();
-      });
-      hote.appendChild(b);
-    });
-  }
-
   function miniature(nom) {
     const perso = connu(nom);
     return (
@@ -198,10 +167,18 @@
       texte: H.pioche(cle, "formulation", tranche.textes),
       mention: H.pioche(cle, "mention", D.MENTIONS),
       etapes: etapes(cle),
-      /* Les trois relevés sont indépendants du pourcentage — voir la note
-         dans verdicts.js : une moyenne se serait tassée autour de 50 %. */
+      /* Chaque relevé GRAVITE autour du verdict au lieu d'en être
+         indépendant. Avant, les trois étaient des tirages séparés : la machine
+         pouvait annoncer 5 % de compatibilité avec 81 % d'alchimie, ce qui ne
+         se lit pas comme un appareil farfelu mais comme un appareil cassé.
+         Chacun garde son écart propre (`ecart`, tiré du hachage donc stable)
+         et son sens (`inverse` pour le risque de drame, qui doit monter quand
+         le verdict descend). Le verdict, lui, reste le hachage brut : c'est
+         seulement l'orbite des relevés qui change, pas leur imprévisibilité. */
       axes: D.AXES.map((axe) => {
-        const valeur = H.tirage(cle, axe.sel, 101);
+        const base = axe.inverse ? 100 - score : score;
+        const derive = H.tirage(cle, axe.sel, 2 * axe.ecart + 1) - axe.ecart;
+        const valeur = Math.max(0, Math.min(100, base + derive));
         const niveau = valeur < 34 ? 0 : valeur < 67 ? 1 : 2;
         return { nom: axe.nom, valeur: valeur, commentaire: axe.commentaires[niveau] };
       }),
@@ -584,7 +561,6 @@
 
   /* --- Démarrage ------------------------------------------------------- */
   construitEchelle();
-  construitCouples();
   carnet.rend();
   majBoutonSon();
   majPortrait("a");

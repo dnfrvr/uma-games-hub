@@ -342,19 +342,48 @@ verifie(
   D.CASTING.every((c) => c.look && c.look.peau && c.look.cheveux && c.mention)
 );
 
+/* Un relevé annexe ne doit plus pouvoir CONTREDIRE le verdict. Avant, les
+   trois étaient des tirages indépendants : la machine annonçait 5 % de
+   compatibilité avec 81 % d'alchimie, ce qui se lit comme un appareil cassé
+   et non comme un appareil farfelu. Chacun gravite désormais autour du
+   verdict, dans les limites de son propre `ecart`. */
 (function () {
-  const connus = new Set(D.CASTING.map((c) => H.normalise(c.nom)));
-  const orphelins = [];
-  D.COUPLES.forEach((c) => {
-    if (!connus.has(H.normalise(c.a))) orphelins.push(c.a);
-    if (!connus.has(H.normalise(c.b))) orphelins.push(c.b);
-  });
+  const noms = D.CASTING.map((c) => c.nom).concat(["Camille", "Sacha", "Alix", "Noa"]);
+  let pire = 0;
+  let exemple = "";
+  for (let i = 0; i < noms.length; i++) {
+    for (let j = i + 1; j < noms.length; j++) {
+      const cle = H.cle(noms[i], noms[j]);
+      const score = H.score(noms[i], noms[j]);
+      for (const axe of D.AXES) {
+        const base = axe.inverse ? 100 - score : score;
+        const derive = H.tirage(cle, axe.sel, 2 * axe.ecart + 1) - axe.ecart;
+        const valeur = Math.max(0, Math.min(100, base + derive));
+        const ecart = Math.abs(valeur - base);
+        if (ecart > pire) {
+          pire = ecart;
+          exemple = noms[i] + "+" + noms[j] + " " + axe.nom + " " + valeur + " % pour " + base + " %";
+        }
+      }
+    }
+  }
+  const plafond = Math.max(...D.AXES.map((a) => a.ecart));
   verifie(
-    "les couples préréglés ne citent que des personnages du casting",
-    orphelins.length === 0,
-    "inconnus : " + orphelins.join(", ")
+    "aucun relevé ne s'écarte du verdict de plus de " + plafond + " points",
+    pire <= plafond,
+    "pire : " + exemple
   );
 })();
+
+verifie(
+  "chaque relevé annonce son écart et son sens",
+  D.AXES.every((a) => typeof a.ecart === "number" && a.ecart > 0 && a.ecart <= 30)
+);
+
+verifie(
+  "le risque de drame va à l'envers du verdict",
+  D.AXES.some((a) => a.inverse === true)
+);
 
 verifie(
   "chaque relevé annexe a trois commentaires (bas, moyen, haut)",
@@ -368,26 +397,6 @@ verifie(
 
 verifie("il y a de quoi marmonner au moins quatre étapes", D.ETAPES.length >= 4);
 verifie("il y a plusieurs mentions de bas de cadran", D.MENTIONS.length >= 4);
-
-/* Un couple préréglé doit tomber dans une tranche différente d'au moins un
-   autre : six boutons qui donnent tous « Amis », ce serait raté. */
-(function () {
-  const rangs = new Set(
-    D.COUPLES.map((c) => {
-      const s = H.score(c.a, c.b);
-      let rang = 0;
-      D.TRANCHES.forEach((t, i) => {
-        if (s >= t.min) rang = i;
-      });
-      return rang;
-    })
-  );
-  verifie(
-    "les couples préréglés couvrent " + rangs.size + " tranches différentes (au moins 3)",
-    rangs.size >= 3,
-    D.COUPLES.map((c) => c.a + "+" + c.b + " = " + H.score(c.a, c.b) + " %").join(", ")
-  );
-})();
 
 /* --------------------------------------------------------- */
 

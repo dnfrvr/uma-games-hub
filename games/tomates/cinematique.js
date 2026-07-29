@@ -142,10 +142,20 @@ function pointTomate(angle, puissance, vent, t) {
 }
 
 /** Un point est-il dans une boîte, à la grosseur de la tomate près ? */
+/* Collision d'un DISQUE avec un rectangle : on mesure la distance du centre au
+   rectangle, et on la compare au rayon.
+
+   La version précédente élargissait simplement la boîte de `marge` des quatre
+   côtés. C'est faux dans les coins : ça leur donne des angles CARRÉS alors que
+   la vraie zone de contact est arrondie. Une tomate qui passait en diagonale
+   au-dessus d'une épaule — 2,4 au-dessus ET 2,4 de côté — était comptée touchée
+   alors qu'elle est à 3,4 du corps pour un rayon de 2,4. Sur un Mads de 11 de
+   large, les coins font une grosse part de la silhouette : c'est ce qui donnait
+   des tomates visiblement passées au-dessus de la tête et pourtant validées. */
 function dansBoite(p, b, marge) {
-  return (
-    p.x >= b.x - marge && p.x <= b.x + b.l + marge && p.y >= b.y - marge && p.y <= b.y + b.h + marge
-  );
+  const dx = Math.max(b.x - p.x, 0, p.x - (b.x + b.l));
+  const dy = Math.max(b.y - p.y, 0, p.y - (b.y + b.h));
+  return dx * dx + dy * dy <= marge * marge;
 }
 
 /* ---------------------------------------------------------

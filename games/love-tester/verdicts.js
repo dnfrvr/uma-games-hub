@@ -102,14 +102,6 @@ const DONNEES_LOVE = {
      test. Ce sont les couples dont tout le monde parle dans les couloirs —
      la machine, elle, n'a pas d'avis avant d'avoir calculé.
      ========================================================= */
-  COUPLES: [
-    { a: "Drew", b: "Glinda", note: "le classique du couloir" },
-    { a: "Glinda", b: "Boq", note: "il insiste" },
-    { a: "Elias", b: "Eoghan", note: "personne ne l'a vu venir" },
-    { a: "Drew", b: "Eoghan", note: "très mauvaise idée" },
-    { a: "Nils", b: "Elphie", note: "le pari du club d'échecs" },
-    { a: "Elias", b: "Mads Prout", note: "pour la science" },
-  ],
 
   /* =========================================================
      3. Les tranches de verdict
@@ -207,6 +199,7 @@ const DONNEES_LOVE = {
     {
       nom: "Alchimie",
       sel: "alchimie",
+      ecart: 20,
       commentaires: [
         "aucune réaction en éprouvette",
         "ça mousse un peu sur les bords",
@@ -216,6 +209,7 @@ const DONNEES_LOVE = {
     {
       nom: "Complicité",
       sel: "complicite",
+      ecart: 24,
       commentaires: [
         "vous ne riez jamais aux mêmes blagues",
         "un fou rire par trimestre",
@@ -225,6 +219,8 @@ const DONNEES_LOVE = {
     {
       nom: "Risque de drame",
       sel: "drame",
+      ecart: 22,
+      inverse: true,
       commentaires: [
         "personne ne pleurera",
         "une dispute pour une histoire de veste",
