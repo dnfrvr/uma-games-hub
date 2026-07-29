@@ -45,12 +45,48 @@ body:has(.page) .navbar { max-width: 1330px; }
 
 .navbar-liens {
   flex: 1 1 auto;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 6px;
   overflow-x: auto;
   overscroll-behavior-x: contain;
   padding: 2px;
+  /* Le ruban ne défile qu'à l'étroit, mais quand il défile la barre grise du
+     navigateur jurait avec tout le reste : on la repeint aux couleurs du site. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-color) rgba(255, 255, 255, 0.5);
+}
+
+.navbar-liens::-webkit-scrollbar { height: 6px; }
+
+.navbar-liens::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+}
+
+.navbar-liens::-webkit-scrollbar-thumb {
+  background: var(--text-color);
+  border-radius: 999px;
+}
+
+/* Un ruban qui déborde le dit : le bord concerné se fond dans la barre, donc
+   une pastille coupée se lit comme « ça continue » et pas comme un bug.
+   Les classes sont posées par navbar.js d'après la position réelle du défilé —
+   sans JS il n'y a pas de fondu, mais le ruban défile quand même. */
+.navbar-liens.deborde-gauche:not(.deborde-droite) {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 22px);
+  mask-image: linear-gradient(90deg, transparent, #000 22px);
+}
+
+.navbar-liens.deborde-droite:not(.deborde-gauche) {
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 22px), transparent);
+}
+
+.navbar-liens.deborde-gauche.deborde-droite {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 22px, #000 calc(100% - 22px), transparent);
 }
 
 /* Un onglet = une pastille blanche à ombre dure ; l'onglet courant prend la
@@ -115,11 +151,36 @@ a.navbar-lien:focus-visible {
   box-shadow: 0 1px 0 var(--shadow-color);
 }
 
+/* =========================================================
+   Téléphone : deux rangées au lieu de trois
+   ---------------------------------------------------------
+   En dessous de 720 px la barre débordait et se cassait en trois lignes
+   (marque / ruban / dé), soit près d'un tiers de la hauteur utile avant même
+   d'arriver au jeu. On en fait un vrai bandeau d'appli : la marque et le dé se
+   partagent la première rangée, le ruban d'onglets prend toute la seconde.
+   ========================================================= */
+
 @media (max-width: 720px) {
-  .navbar { gap: 7px; padding: 6px 8px; }
-  .navbar-marque { font-size: 1.1rem; }
-  .navbar-lien { font-size: 0.66rem; padding: 4px 9px; }
-  .navbar-hasard { font-size: 0.66rem; padding: 5px 10px; }
+  .navbar { gap: 6px 8px; padding: 7px 9px 6px; }
+  .navbar-marque { font-size: 1.15rem; }
+
+  /* `flex: 1 0 100%` sur le ruban force le retour à la ligne ; le dé remonte
+     donc à côté de la marque, poussé à droite par sa marge auto. `order` ne
+     change que l'ordre visuel — au clavier on garde marque → onglets → dé,
+     qui reste la lecture logique de la barre. */
+  .navbar-hasard { order: 1; margin-left: auto; }
+  .navbar-liens { order: 2; flex: 1 0 100%; }
+
+  /* Cibles tactiles : les pastilles faisaient 22 px de haut, soit la moitié de
+     ce qu'un doigt vise correctement. La rangée gagnée les paye largement. */
+  .navbar-lien { font-size: 0.7rem; padding: 8px 12px; }
+  .navbar-hasard { font-size: 0.7rem; padding: 7px 12px; }
+}
+
+@media (max-width: 380px) {
+  /* Écrans les plus étroits : la marque seule tient mal à côté du dé. */
+  .navbar-marque { font-size: 1rem; }
+  .navbar-hasard { padding: 7px 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

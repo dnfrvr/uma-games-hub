@@ -131,6 +131,11 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       Toto le perroquet à éviter.
 - [x] Bancs d'essai rangés dans `outils/` : ils tournent sans navigateur et
       remplacent ce que les captures d'écran ne savent pas vérifier.
+- [x] Barre de navigation retravaillée pour le téléphone (sous 720 px) : deux
+      rangées au lieu de trois (marque + « Au hasard ! » en haut, ruban d'onglets
+      en dessous), pastilles à 35 px de haut au lieu de 22, ascenseur du ruban
+      repeint aux couleurs du site, bords en fondu du côté où il reste des jeux,
+      et l'onglet de la page courante est amené sous les yeux au chargement.
 
 ### PROCHAINE ÉTAPE : remplacer tous les SVG par de vraies illustrations
 C'est la priorité annoncée. Aujourd'hui **tout est dessiné en code** (SVG généré par

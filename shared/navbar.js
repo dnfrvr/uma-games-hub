@@ -51,6 +51,7 @@
       .then((jeux) => {
         jeux.forEach((jeu) => barre.liens.appendChild(onglet(jeu, currentGameId)));
         brancheHasard(barre.hasard, jeux);
+        brancheRuban(barre.liens);
       })
       .catch((err) => {
         console.error("[navbar] manifest illisible :", err);
@@ -104,6 +105,56 @@
     }
     el.textContent = jeu.titre;
     return el;
+  }
+
+  /* Sur téléphone le ruban d'onglets est plus large que l'écran. Deux détails
+     qui changent tout, et qui demandent la position réelle du défilé — donc du
+     JS, mais du JS facultatif : sans lui le ruban défile quand même.
+       1. l'onglet de la page courante est amené sous les yeux, sinon on ne voit
+          pas où on est quand on joue au dernier jeu de la liste ;
+       2. les bords se fondent du côté où il reste des jeux (classes lues par
+          navbar.css), pour que la pastille coupée se lise comme une invitation
+          à faire glisser. */
+  function brancheRuban(liens) {
+    const majFondu = () => {
+      const reste = liens.scrollWidth - liens.clientWidth;
+      const marge = 2; // le défilé n'atteint pas toujours l'entier pile
+      liens.classList.toggle("deborde-gauche", liens.scrollLeft > marge);
+      liens.classList.toggle("deborde-droite", liens.scrollLeft < reste - marge);
+    };
+
+    /* `scrollIntoView` ferait aussi défiler la page verticalement : on ne
+       touche qu'à l'axe du ruban. Le calcul passe par les rectangles et non par
+       `offsetLeft` — l'offsetParent d'une pastille, c'est la barre (elle est
+       `sticky`, donc positionnée), pas le ruban. */
+    let mainMise = false;
+    const centreActif = () => {
+      const actif = liens.querySelector(".navbar-lien.actif");
+      if (!actif || mainMise) return;
+      const pastille = actif.getBoundingClientRect();
+      const cadre = liens.getBoundingClientRect();
+      liens.scrollLeft +=
+        pastille.left - cadre.left - (cadre.width - pastille.width) / 2;
+      majFondu();
+    };
+
+    liens.addEventListener("scroll", majFondu, { passive: true });
+    window.addEventListener("resize", majFondu);
+    if (window.ResizeObserver) new ResizeObserver(majFondu).observe(liens);
+
+    /* Dès que la visiteuse fait glisser le ruban elle-même, on ne le recadre
+       plus dans son dos. */
+    const laMain = () => { mainMise = true; };
+    liens.addEventListener("pointerdown", laMain, { passive: true, once: true });
+    liens.addEventListener("wheel", laMain, { passive: true, once: true });
+
+    centreActif();
+    /* Les polices arrivent après le premier rendu : les pastilles changent de
+       largeur et le centrage calculé sur Times ne vaut plus rien. */
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(centreActif);
+    }
+    majFondu();
   }
 
   /* Le bouton « Au hasard ! » d'époque : il n'envoie que vers un jeu
