@@ -10,6 +10,10 @@
    Tous les textes sont dits par Elias, à la première personne : ce sont
    ses commentaires en direct, affichés dans sa bulle.
 
+   `replique` est la phrase canonique de l'entrée ; `repliques` ajoute des
+   variantes tirées au hasard. Une partie longue fait sortir dix fois la même
+   créature — sans variantes, Elias se met à radoter et on cesse de le lire.
+
    Chaque entrée porte son propre dessin SVG, dans le style chibi du
    portail (cf. shared/perso.js pour les personnages).
    ========================================================= */
@@ -131,40 +135,96 @@ const AMIS = {
 /* --- À taper : tout ce qui est (peut-être) une vraie menace ------------- */
 const CIBLES = [
   { id: "gris", svg: DESSINS.gris, nom: "Petit gris générique", points: 100,
-    replique: "Un petit gris. J'AI DES PREUVES maintenant." },
+    replique: "Un petit gris. J'AI DES PREUVES maintenant.",
+    repliques: [
+      "Encore un gris. Ils sont en réseau, c'est évident.",
+      "Celui-là avait mon adresse. J'en suis sûr.",
+    ] },
   { id: "ovni", svg: DESSINS.ovni, nom: "Ovni de tourisme", points: 120,
-    replique: "L'ovni est reparti. Je l'ai eu en premier." },
+    replique: "L'ovni est reparti. Je l'ai eu en premier.",
+    repliques: [
+      "Une soucoupe. En 2026. Ils ne se cachent même plus.",
+      "Il clignotait en morse. J'ai pas eu le temps de noter.",
+    ] },
   { id: "silhouette", svg: DESSINS.silhouette, nom: "Silhouette floue dans les bois", points: 100,
-    replique: "La chose des bois. Je savais qu'elle était là." },
+    replique: "La chose des bois. Je savais qu'elle était là.",
+    repliques: [
+      "Elle était floue même de près. Ça veut tout dire.",
+      "Les arbres bougeaient pas. Elle, si.",
+    ] },
   { id: "oeil", svg: DESSINS.oeil, nom: "Œil géant dans le ciel", points: 150,
-    replique: "L'œil m'a vu. Je l'ai vu d'abord." },
+    replique: "L'œil m'a vu. Je l'ai vu d'abord.",
+    repliques: [
+      "Il a cligné. UN ŒIL DE CIEL QUI CLIGNE.",
+      "Je lui ai rendu son regard. Il a pas aimé.",
+    ] },
   { id: "chevre", svg: DESSINS.chevre, nom: "Chèvre suspecte", points: 130,
-    replique: "Cette chèvre me suit depuis mardi. Plus maintenant." },
+    replique: "Cette chèvre me suit depuis mardi. Plus maintenant.",
+    repliques: [
+      "Une chèvre avec des pupilles pareilles, non merci.",
+      "Elle connaissait mon prénom. Une chèvre.",
+    ] },
   { id: "ombre", svg: DESSINS.ombre, nom: "Ombre humanoïde du couloir", points: 110,
-    replique: "L'ombre du couloir. Réglé. Enfin." },
+    replique: "L'ombre du couloir. Réglé. Enfin.",
+    repliques: [
+      "Elle n'avait pas de source lumineuse. AUCUNE.",
+      "Trois semaines qu'elle traînait devant ma porte.",
+    ] },
   { id: "pennywise", svg: DESSINS.clown, nom: "Pennywise", points: 200,
-    replique: "PENNYWISE. Je rentre à pied plus jamais." },
+    replique: "PENNYWISE. Je rentre à pied plus jamais.",
+    repliques: [
+      "Le clown. LE clown. Je vais très mal.",
+      "Il m'a proposé un ballon. J'ai refusé poliment.",
+    ] },
   { id: "slenderman", svg: DESSINS.grandType, nom: "Slenderman", points: 180,
-    replique: "Slenderman. Huit pages, mon œil." },
+    replique: "Slenderman. Huit pages, mon œil.",
+    repliques: [
+      "Pas de visage, costume impeccable. Suspect.",
+      "Il mesure quatre mètres et personne ne dit rien.",
+    ] },
 ];
 
 /* --- À NE PAS taper : ses proches et sa vie quotidienne ----------------- */
 const PIEGES = [
   { id: "toto", svg: DESSINS.toto, nom: "Toto, le perroquet d'Elias",
-    replique: "…c'était Toto. Et il va le répéter à tout le monde." },
+    replique: "…c'était Toto. Et il va le répéter à tout le monde.",
+    repliques: [
+      "Toto ! Il criait « DERRIÈRE TOI », aussi, aide-moi un peu.",
+      "Mon propre perroquet. Il me regarde différemment maintenant.",
+    ] },
   { id: "mamie", svg: persoSVG({
       peau: "#f0c39a", cheveux: "boucle", couleurCheveux: "#d8d2c4",
       haut: "#b3477a", bas: "#6b4a8a", accessoire: "lunettes", bouche: "sourire",
     }), nom: "Sa grand-mère",
-    replique: "Non. Non non non. J'ai tapé mamie." },
+    replique: "Non. Non non non. J'ai tapé mamie.",
+    repliques: [
+      "Elle m'apportait de la soupe. DE LA SOUPE.",
+      "Mamie. Devant témoins. Je démissionne de la famille.",
+    ] },
   { id: "pizza", svg: DESSINS.pizza, nom: "Une pizza",
-    replique: "J'ai tapé une pizza. Elle n'avait rien demandé." },
+    replique: "J'ai tapé une pizza. Elle n'avait rien demandé.",
+    repliques: [
+      "C'était mon dîner. C'était mon seul repas de la journée.",
+      "Une quatre fromages. Je m'en voudrai longtemps.",
+    ] },
   { id: "drew", svg: AMIS.drew, nom: "Drew",
-    replique: "Pardon Drew. Je croyais que c'était ta veste, le monstre." },
+    replique: "Pardon Drew. Je croyais que c'était ta veste, le monstre.",
+    repliques: [
+      "Drew ! Bon, avec cette tenue, l'erreur est compréhensible.",
+      "Désolé Drew. Sincèrement. À 60 %.",
+    ] },
   { id: "eoghan", svg: AMIS.eoghan, nom: "Eoghan",
-    replique: "Eoghan ! Arrête de surgir des trous, aussi." },
+    replique: "Eoghan ! Arrête de surgir des trous, aussi.",
+    repliques: [
+      "Qu'est-ce qu'il fait dans un trou, lui, franchement.",
+      "Eoghan. Encore. Il le fait exprès à ce stade.",
+    ] },
   { id: "glinda", svg: AMIS.glinda, nom: "Glinda",
-    replique: "J'ai tapé Glinda. Je suis un homme mort." },
+    replique: "J'ai tapé Glinda. Je suis un homme mort.",
+    repliques: [
+      "Glinda. Toute l'école le saura avant midi.",
+      "Elle a souri. C'est ça qui me fait peur.",
+    ] },
 ];
 
 /* Phrases de fin — c'est Elias qui raconte sa soirée. */
@@ -187,3 +247,41 @@ const AMBIANCES = [
   "L'écran tremble. Moi aussi.",
   "PLUS RIEN N'EST NORMAL 📡",
 ];
+
+/* Le mot collé au chiffre de la jauge : « 62 % » ne dit rien tout seul. */
+const ETATS_SANITY = ["ça va", "nerveux", "ça déraille", "au bout"];
+
+/* Une créature est repartie sans qu'il la touche. */
+const RATES = [
+  "Elle est repartie. Moi je l'ai bien vue.",
+  "Trop lent. Elle sait où j'habite, maintenant.",
+  "Elle a replongé. Elle est encore là-dessous.",
+  "Manquée. Ça compte comme un aveu de faiblesse.",
+  "Elle m'a regardé partir. Enfin, l'inverse.",
+];
+
+/* Il a tapé dans un trou vide. */
+const VIDES = [
+  "Il n'y avait rien. Je note quand même l'heure.",
+  "Rien. Mais il y avait quelque chose il y a une seconde.",
+  "Un trou vide, ça n'existe pas. Réfléchis deux minutes.",
+  "J'ai tapé par précaution. C'est de la prévention.",
+];
+
+/* Passage de vague, tour à tour. `{n}` est remplacé par le numéro. */
+const MONTEES = [
+  "Vague {n}. Ça s'accélère, je le sens.",
+  "Vague {n}. Ils se relaient, c'est organisé.",
+  "Vague {n}. Quelqu'un leur a donné le signal.",
+  "Vague {n}. Je tiens. Je tiens très bien.",
+];
+
+/* Les vagues qui changent une règle méritent qu'on prévienne le joueur :
+   c'est le seul moment où le jeu annonce un nouveau levier de difficulté. */
+const ALERTES_VAGUE = {
+  6: "Vague 6. L'image commence à sauter. Ce n'est pas ma télé.",
+  9: "Vague 9. Ils sortent à DEUX maintenant.",
+  11: "Vague 11. Je n'ai plus assez d'yeux pour douze trous.",
+  15: "Vague 15. Trois d'un coup. Trois.",
+  20: "Vague 20. Je crois qu'ils font ça pour m'user.",
+};

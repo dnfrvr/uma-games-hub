@@ -49,6 +49,14 @@ const PARTAGEES_VOLONTAIREMENT = new Set([
   "tab-btn",   // les onglets de la garde-robe de Drew
   "active",    // état générique
   "primary",   // variante générique de bouton
+  /* `.game` va dans l'autre sens que les précédents : ce n'est pas le jeu qui
+     réhabille du mobilier commun, c'est la COQUE qui attrape la racine du jeu.
+     Elle en a le droit — `.game` est un point de contrat du squelette de page,
+     documenté dans CLAUDE.md au même titre que `.shell`. Le portail ne s'en
+     sert qu'en plein écran, pour faire grandir la zone de jeu sous le
+     bandeau-titre, et toujours sous un sélecteur qui part de `.lecteur-scene`
+     — donc jamais en concurrence avec la mise en page propre du jeu. */
+  "game",
 ]);
 
 function classes(fichier) {

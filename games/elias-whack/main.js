@@ -10,9 +10,74 @@ const LIGNES = 3;
 const COLONNES = 4;
 const TROUS = LIGNES * COLONNES;
 
-/* Une vague dure un nombre fixe d'apparitions, après quoi la cadence
-   s'accélère et la proportion de pièges augmente un peu. */
-const APPARITIONS_PAR_VAGUE = 14;
+/* =========================================================
+   Courbe de difficulté
+   ---------------------------------------------------------
+   La partie doit devenir de plus en plus dure, sans jamais atteindre de
+   plateau. L'ancienne courbe était une droite bornée : elle touchait son
+   minimum à la vague 11 (~1 min 30 de jeu) et ne bougeait plus jamais —
+   passé ce point, survivre était une question d'endurance, pas de niveau.
+
+   Trois leviers, qui ne saturent volontairement pas au même moment :
+
+     1. la VITESSE — fenêtre de visée et intervalle entre deux salves. Elle
+        chute vite au début puis s'approche d'un plancher : on ne bat pas le
+        temps de réaction humain, inutile d'essayer. Sous ~420 ms de fenêtre
+        le jeu ne serait plus difficile, il serait aléatoire.
+     2. le NOMBRE — à partir de la vague 9, une salve fait sortir plusieurs
+        créatures d'un coup. C'est ce levier qui prend le relais quand la
+        vitesse est bloquée, et lui n'a pas de raison de s'arrêter.
+     3. le TRI — la part de pièges continue de monter vers 42 %. Il faut
+        regarder avant de taper, dans une fenêtre de plus en plus courte.
+
+   Chaque levier suit la même courbe géométrique : à chaque vague on retire
+   la même PROPORTION de ce qui reste entre la valeur courante et sa valeur
+   d'arrivée. Ça descend fort au début, ça continue de descendre toujours,
+   et ça ne franchit jamais la borne.
+
+   Repères mesurés (`node outils/test-serie-elias.js`, jauge au calme) :
+
+     vague   fenêtre   salve     créatures/s   pièges   à partir de
+        1    1750 ms   1150 ms       1,0        18 %       0 s
+        4    1197 ms    750 ms       1,5        28 %      36 s
+        8     800 ms    502 ms       2,3        35 %      84 s
+       12     605 ms    400 ms       4,1        38 %     131 s
+       16     511 ms    359 ms       5,7        40 %     179 s
+       20     464 ms    342 ms       6,8        41 %     227 s
+
+   Les temps supposent la jauge à mi-course ; un joueur qui la garde au
+   plancher joue des vagues ~15 % plus longues (la panique raccourcit la
+   cadence, cf. `delaiApparition`).
+
+   Au-delà de ~4 créatures/s plus personne ne suit : la vague 12 est la
+   frontière haute d'une très bonne partie, et la courbe continue de monter
+   après, pour qu'il n'y ait jamais de « palier confortable ». Parties
+   simulées (25 par profil, `outils/` n'automatise pas ça, c'est un banc
+   jetable) : débutant vague 5, joueur moyen vague 10, bon joueur vague 14,
+   expert vague 19 — et surtout, tous finissent par tomber. Avec l'ancienne
+   courbe, l'expert survivait indéfiniment (vague 190 au bout de 15 min).
+   ========================================================= */
+
+const FENETRE = { depart: 1750, arrivee: 420, taux: 0.836 };  // ms visibles
+const CADENCE = { depart: 1150, arrivee: 330, taux: 0.80 };   // ms entre 2 salves
+const PART_PIEGES = { depart: 0.18, arrivee: 0.42, taux: 0.84 };
+const SALVE = { depart: 1.15, arrivee: 3.2, taux: 0.95 };     // créatures par salve
+
+/* La vague où le nombre prend le relais de la vitesse. */
+const VAGUE_SALVES = 9;
+
+/* Une vague dure une DURÉE, pas un nombre d'apparitions. Avec l'ancien
+   décompte fixe, les vagues rapides défilaient en 3,9 s et le compteur ne
+   voulait plus rien dire ; ici chaque vague pèse le même temps de jeu. */
+const DUREE_VAGUE_MS = 12000;
+
+/* Effet moyen de la panique sur la cadence : elle raccourcit le délai de 0 à
+   35 % selon la jauge. On prend 0,87 pour estimer la longueur d'une vague. */
+const PANIQUE_MOYENNE = 0.87;
+
+function courbe(c, vague) {
+  return c.arrivee + (c.depart - c.arrivee) * Math.pow(c.taux, vague - 1);
+}
 
 const SANITY_MAX = 100;
 const SANITY = {
@@ -22,6 +87,12 @@ const SANITY = {
 };
 
 const PALIERS_SANITY = [0, 35, 65, 88];
+
+/* L'écran se dégrade aussi avec l'heure qu'il est, pas seulement avec la
+   jauge : un joueur excellent la garde au plancher et jouerait sinon quatre
+   minutes sur une image impeccable, alors que le grain VHS est tout le sel
+   du jeu. Ces vagues font passer l'image au cran suivant, quoi qu'il arrive. */
+const PALIERS_VAGUE = [6, 11, 16];
 
 const etat = {
   enCours: false,
@@ -35,6 +106,8 @@ const etat = {
   occupes: new Set(),
   minuteur: null,
   palier: -1,
+  palierEcran: -1,
+  salvesRestantes: 0,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -45,16 +118,82 @@ const elements = {
   score: $("score"),
   vague: $("vague"),
   barre: $("sanity-barre"),
+  sanityEtat: $("sanity-etat"),
   ambiance: $("ambiance"),
   commentaire: $("commentaire"),
+  annonce: $("annonce-vague"),
   ecran: $("ecran"),
   ecranTitre: $("ecran-titre"),
   ecranTexte: $("ecran-texte"),
   jouer: $("btn-jouer"),
+  son: $("btn-son"),
   stats: { ok: $("stat-ok"), rate: $("stat-rate"), bourde: $("stat-bourde"), serie: $("stat-serie") },
 };
 
 const trous = [];
+
+/* =========================================================
+   Son : synthétisé à la volée, aucun fichier audio
+   ---------------------------------------------------------
+   Le contexte n'est créé qu'au premier clic (les navigateurs refusent le son
+   avant un geste de l'utilisateur) et tout est sous garde : les bancs d'essai
+   Node n'ont pas de WebAudio, le jeu doit s'y charger sans broncher.
+   ========================================================= */
+
+let audio = null;
+let sonActif = true;
+
+function contexteAudio() {
+  if (audio) return audio;
+  const Fabrique = typeof window !== "undefined" && (window.AudioContext || window.webkitAudioContext);
+  if (!Fabrique) return null;
+  try {
+    audio = new Fabrique();
+  } catch (e) {
+    audio = null;
+  }
+  return audio;
+}
+
+/* Une note très courte. `forme` change la couleur : carré pour le coup sec,
+   dent de scie pour la fausse note de la bourde. */
+function bip(frequence, duree, forme, volume) {
+  if (!sonActif) return;
+  const ctx = contexteAudio();
+  if (!ctx || !ctx.createOscillator) return;
+  if (ctx.state === "suspended" && ctx.resume) ctx.resume();
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = forme || "square";
+  osc.frequency.value = frequence;
+  gain.gain.setValueAtTime(volume || 0.1, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duree);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + duree);
+}
+
+/* Le coup sec sur une créature : deux notes qui descendent, ça claque. */
+function sonTouche(serie) {
+  const hauteur = 320 + Math.min(8, serie) * 28; // la série monte dans les aigus
+  bip(hauteur, 0.07, "square", 0.09);
+  setTimeout(() => bip(hauteur * 0.55, 0.09, "triangle", 0.07), 45);
+}
+
+function sonBourde() {
+  bip(150, 0.18, "sawtooth", 0.12);
+  setTimeout(() => bip(105, 0.26, "sawtooth", 0.1), 110);
+}
+
+function sonEchappe() {
+  bip(190, 0.14, "sine", 0.07);
+}
+
+function sonVague() {
+  bip(520, 0.09, "square", 0.07);
+  setTimeout(() => bip(690, 0.12, "square", 0.07), 90);
+}
 
 /* =========================================================
    L'avatar d'Elias : il réagit à ce qui se passe
@@ -152,10 +291,12 @@ function demarre() {
   etat.serie = 0;
   etat.meilleureSerie = 0;
   etat.palier = -1;
+  etat.palierEcran = -1;
 
   trous.forEach((_, i) => vide(i, false));
   elements.ecran.classList.remove("visible");
   elements.commentaire.textContent = "";
+  armeVague();
   majTableau();
   majSanity(0);
   planifie();
@@ -181,19 +322,40 @@ function arrete(titre, texte) {
 /* Cadence : elle raccourcit avec la vague, et encore un peu quand la sanity
    grimpe — c'est ce qui rend les paliers hauts réellement plus durs. */
 function delaiApparition() {
-  const base = Math.max(320, 1150 - (etat.vague - 1) * 105);
+  const base = courbe(CADENCE, etat.vague);
   const panique = 1 - (etat.sanity / SANITY_MAX) * 0.35;
   return Math.round(base * panique * (0.7 + Math.random() * 0.6));
 }
 
+/* Le temps pendant lequel une créature reste tapable. */
 function dureeVisible() {
-  return Math.max(520, 1750 - (etat.vague - 1) * 135);
+  return Math.round(courbe(FENETRE, etat.vague));
+}
+
+/* Part de pièges : elle monte vers 42 % sans jamais l'atteindre. Au-delà, le
+   jeu cesserait d'être un jeu d'adresse pour devenir un jeu de retenue. */
+function partPieges() {
+  return courbe(PART_PIEGES, etat.vague);
+}
+
+/* Nombre de créatures qui sortent d'un coup. On tire un entier autour de
+   l'espérance : à 1,15 la salve est simple 85 fois sur 100 et double 15 fois,
+   ce qui fait monter la pression sans marche d'escalier visible. */
+function tailleSalve() {
+  const attendu = etat.vague < VAGUE_SALVES
+    ? 1
+    : courbe(SALVE, etat.vague - VAGUE_SALVES + 1);
+  const entier = Math.floor(attendu);
+  return entier + (Math.random() < attendu - entier ? 1 : 0);
 }
 
 function planifie() {
   if (!etat.enCours) return;
   etat.minuteur = setTimeout(() => {
-    apparait();
+    const salve = tailleSalve();
+    for (let i = 0; i < salve; i++) apparait();
+    etat.salvesRestantes--;
+    if (etat.salvesRestantes <= 0) vagueSuivante();
     planifie();
   }, delaiApparition());
 }
@@ -206,11 +368,7 @@ function apparait() {
 
   const index = libres[Math.floor(Math.random() * libres.length)];
 
-  /* Proportion de pièges : 18 % au départ, jusqu'à 35 % dans les vagues
-     hautes — assez pour rendre le clic réflexe dangereux, pas assez pour
-     que le jeu devienne injuste. */
-  const partPieges = Math.min(0.35, 0.18 + (etat.vague - 1) * 0.03);
-  const estPiege = Math.random() < partPieges;
+  const estPiege = Math.random() < partPieges();
   const source = estPiege ? PIEGES : CIBLES;
   const modele = source[Math.floor(Math.random() * source.length)];
 
@@ -221,7 +379,6 @@ function apparait() {
   trou.el.classList.add("occupe", estPiege ? "piege" : "cible");
 
   etat.apparitions++;
-  if (etat.apparitions % APPARITIONS_PAR_VAGUE === 0) vagueSuivante();
 
   trou.minuteur = setTimeout(() => {
     /* Personne n'a tapé : une vraie créature qui s'échappe fait monter la
@@ -234,8 +391,10 @@ function apparait() {
       etat.stats.rate++;
       etat.serie = 0;
       majSanity(SANITY.rate);
-      commente("Elle est repartie. Moi je l'ai bien vue.");
+      commente(pioche(RATES));
       reagit("panique", 900);
+      clignote(index, "echappee", 420);
+      sonEchappe();
       majTableau();
     }
   }, dureeVisible());
@@ -254,10 +413,31 @@ function vide(index, animer) {
   trou.habitant.removeAttribute("title");
 }
 
+/* Une vague = DUREE_VAGUE_MS de jeu. Comme la cadence change à chaque vague,
+   on recalcule le nombre de salves qui tiennent dedans. */
+function armeVague() {
+  const moyen = courbe(CADENCE, etat.vague) * PANIQUE_MOYENNE;
+  etat.salvesRestantes = Math.max(6, Math.round(DUREE_VAGUE_MS / moyen));
+}
+
 function vagueSuivante() {
   etat.vague++;
-  commente("Vague " + etat.vague + ". Ça s'accélère, je le sens.");
+  armeVague();
+  commente(ALERTES_VAGUE[etat.vague] || pioche(MONTEES).replace("{n}", etat.vague));
+  annonceVague();
+  sonVague();
+  majDecor();
   majTableau();
+}
+
+/* Le carton plein écran : sans lui, la vague n'existe que comme un petit
+   chiffre dans le tableau de bord et l'accélération passe inaperçue. */
+function annonceVague() {
+  if (!elements.annonce) return;
+  elements.annonce.textContent = "VAGUE " + etat.vague;
+  elements.annonce.classList.remove("pop");
+  void elements.annonce.offsetWidth;
+  elements.annonce.classList.add("pop");
 }
 
 /* =========================================================
@@ -271,9 +451,8 @@ function frappe(index) {
   if (!trou.occupant) {
     /* Taper dans le vide : sans conséquence sur la sanity, mais Elias le
        remarque. On évite de punir, le jeu est déjà nerveux. */
-    trou.el.classList.add("frappe");
-    setTimeout(() => trou.el.classList.remove("frappe"), 150);
-    commente("Il n'y avait rien. Je note quand même l'heure.");
+    clignote(index, "frappe", 150);
+    commente(pioche(VIDES));
     return;
   }
 
@@ -284,22 +463,33 @@ function frappe(index) {
     etat.serie = 0;
     etat.score = Math.max(0, etat.score - 80);
     majSanity(SANITY.bourde);
-    commente(occupant.replique);
+    commente(repliqueDe(occupant));
     reagit("honte", 1200);
-    trou.el.classList.add("bourde");
-    setTimeout(() => trou.el.classList.remove("bourde"), 300);
+    clignote(index, "bourde", 300);
+    marque(index, "−80", true);
+    sonBourde();
   } else {
     etat.stats.ok++;
     etat.serie++;
     etat.meilleureSerie = Math.max(etat.meilleureSerie, etat.serie);
-    etat.score += occupant.points * multiplicateur();
+    const gagne = points(occupant);
+    etat.score += gagne;
     majSanity(SANITY.touche);
-    commente(occupant.replique + (multiplicateur() > 1 ? " (série ×" + multiplicateur() + ")" : ""));
+    commente(repliqueDe(occupant) + (multiplicateur() > 1 ? " (série ×" + multiplicateur() + ")" : ""));
     reagit("content", 800);
+    clignote(index, "touchee", 320);
+    marque(index, "+" + gagne, false);
+    sonTouche(etat.serie);
   }
 
   vide(index, true);
   majTableau();
+}
+
+/* Points d'une créature : sa valeur, la série, et une prime de vague — sans
+   elle, mourir vague 14 rapporterait autant que camper vague 3. */
+function points(occupant) {
+  return Math.round(occupant.points * multiplicateur() * (1 + (etat.vague - 1) * 0.05));
 }
 
 /* Série : chaque tranche de 5 bons coups d'affilée double, puis triple les
@@ -310,20 +500,51 @@ function multiplicateur() {
 }
 
 /* =========================================================
+   Retours visuels de la grille
+   ========================================================= */
+
+/* Pose une classe sur un trou et la retire toute seule. */
+function clignote(index, classe, duree) {
+  const el = trous[index].el;
+  el.classList.remove(classe);
+  void el.offsetWidth;
+  el.classList.add(classe);
+  setTimeout(() => el.classList.remove(classe), duree);
+}
+
+/* Le chiffre qui s'envole du trou : c'est le seul retour qui dit COMBIEN on
+   vient de gagner ou de perdre, au moment et à l'endroit du clic. */
+function marque(index, texte, mauvais) {
+  const el = document.createElement("span");
+  el.className = "gain" + (mauvais ? " gain-mauvais" : "");
+  el.textContent = texte;
+  trous[index].el.appendChild(el);
+  setTimeout(() => el.remove(), 700);
+}
+
+/* =========================================================
    Jauge de sanity et habillage
    ========================================================= */
 
 function majSanity(delta) {
+  const avant = etat.sanity;
   etat.sanity = Math.max(0, Math.min(SANITY_MAX, etat.sanity + delta));
   elements.barre.style.width = etat.sanity + "%";
 
   const palier = PALIERS_SANITY.reduce((acc, seuil, i) => (etat.sanity >= seuil ? i : acc), 0);
   if (palier !== etat.palier) {
     etat.palier = palier;
-    document.body.dataset.sanity = String(palier);
-    elements.ambiance.textContent = AMBIANCES[palier];
     humeurDeFond();
   }
+  majDecor();
+
+  /* Le chiffre et le mot : la barre seule ne dit pas à quelle distance on est
+     du cran suivant, ni ce que ça veut dire pour Elias. */
+  if (elements.sanityEtat) {
+    elements.sanityEtat.textContent = Math.round(etat.sanity) + " % · " + ETATS_SANITY[palier];
+    elements.sanityEtat.dataset.palier = String(palier);
+  }
+  if (delta > 0 && etat.sanity > avant) clignoteJauge();
 
   if (etat.sanity >= SANITY_MAX) {
     arrete(
@@ -331,6 +552,29 @@ function majSanity(delta) {
       FINS_PANIQUE[Math.floor(Math.random() * FINS_PANIQUE.length)]
     );
   }
+}
+
+function clignoteJauge() {
+  const cadre = elements.barre.parentElement;
+  if (!cadre || !cadre.classList) return;
+  cadre.classList.remove("monte");
+  void cadre.offsetWidth;
+  cadre.classList.add("monte");
+  setTimeout(() => cadre.classList.remove("monte"), 320);
+}
+
+/* L'état de l'écran suit le PIRE des deux : la jauge d'Elias et l'avancée de
+   la nuit. Son visage, lui, ne suit que la jauge — c'est son état à lui. */
+function palierVague() {
+  return PALIERS_VAGUE.reduce((acc, seuil, i) => (etat.vague >= seuil ? i + 1 : acc), 0);
+}
+
+function majDecor() {
+  const cran = Math.max(0, etat.palier, palierVague());
+  if (cran === etat.palierEcran) return;
+  etat.palierEcran = cran;
+  document.body.dataset.sanity = String(cran);
+  elements.ambiance.textContent = AMBIANCES[cran];
 }
 
 function majTableau() {
@@ -344,7 +588,26 @@ function majTableau() {
   }
 }
 
+/* Deux répliques identiques à la suite cassent l'illusion qu'Elias parle
+   vraiment : on retire la dernière du chapeau. */
+let dernierTexte = "";
+
+function pioche(liste) {
+  let texte = liste[Math.floor(Math.random() * liste.length)];
+  if (texte === dernierTexte && liste.length > 1) {
+    texte = liste[Math.floor(Math.random() * liste.length)];
+  }
+  return texte;
+}
+
+/* Chaque créature a sa réplique canonique, plus quelques variantes. */
+function repliqueDe(occupant) {
+  if (!occupant.repliques || !occupant.repliques.length) return occupant.replique;
+  return pioche([occupant.replique].concat(occupant.repliques));
+}
+
 function commente(texte) {
+  dernierTexte = texte;
   elements.commentaire.textContent = texte;
   elements.commentaire.classList.remove("pop");
   void elements.commentaire.offsetWidth;
@@ -363,6 +626,15 @@ $("btn-stop").addEventListener("click", () => {
     FINS_CALME[Math.floor(Math.random() * FINS_CALME.length)]
   );
 });
+
+if (elements.son) {
+  elements.son.addEventListener("click", () => {
+    sonActif = !sonActif;
+    elements.son.textContent = sonActif ? "🔊 Son" : "🔇 Son";
+    elements.son.classList.toggle("coupe", !sonActif);
+    if (sonActif) bip(440, 0.08, "square", 0.08);
+  });
+}
 
 construitGrille();
 dessineElias("calme");

@@ -47,6 +47,10 @@
           <div class="vhs" aria-hidden="true"></div>
           <div class="scanlines" aria-hidden="true"></div>
 
+          <!-- Carton de passage de vague : c'est ce qui rend l'accélération
+               visible, le chiffre du tableau de bord ne suffit pas -->
+          <div id="annonce-vague" class="annonce-vague" aria-hidden="true"></div>
+
           <div class="terrain">
             <p class="ambiance" id="ambiance">Tout va bien. Enfin, presque.</p>
             <div id="grille" class="grille" aria-label="Terrain de jeu"></div>
@@ -66,7 +70,9 @@
                 Tape les créatures avant qu'elles ne disparaissent —
                 Pennywise et Slenderman rapportent gros.<br />
                 <b>Ne tape jamais</b> Toto le perroquet, la grand-mère, la pizza…
-                ni Drew, Eoghan ou Glinda. Ce sont des amis. Normalement.
+                ni Drew, Eoghan ou Glinda. Ce sont des amis. Normalement.<br />
+                Chaque vague dure une douzaine de secondes et accélère ; à partir de la 9<sup>e</sup>,
+                ils sortent à plusieurs. Ça ne se calme jamais.
               </p>
               <button id="btn-jouer" class="fun-btn primary">Commencer l'enquête</button>
             </div>
@@ -89,7 +95,11 @@
             <span class="dock-etiquette">Complautisme</span>
             <div class="sanity-cadre">
               <div id="sanity-barre" class="sanity-barre"></div>
+              <!-- Les trois crans où l'écran bascule : sans eux, la barre ne
+                   dit pas à quelle distance on est du prochain palier -->
+              <div class="sanity-crans" aria-hidden="true"></div>
             </div>
+            <span id="sanity-etat" class="sanity-etat" data-palier="0">10 % · ça va</span>
           </div>
 
           <div class="dock-bloc dock-stats">
@@ -100,6 +110,7 @@
           </div>
 
           <div class="dock-bloc dock-actions">
+            <button id="btn-son" class="fun-btn">🔊 Son</button>
             <button id="btn-stop" class="fun-btn">⏹ Arrêter</button>
           </div>
         </aside>
