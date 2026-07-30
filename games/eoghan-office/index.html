@@ -62,11 +62,28 @@
 
           <p id="commentaire" class="commentaire" role="status"></p>
 
+          <!-- Commandes au doigt, seulement là où il n'y a pas de clavier.
+               Le tap dans la salle sait déjà marcher et embrasser, mais
+               s'accroupir et changer de rangée n'étaient QUE sur Maj et ↑ ↓ :
+               deux actions centrales (la cachette, et les deux rangées de
+               profondeur) restaient donc hors de portée sur téléphone. -->
+          <div class="tactile" aria-hidden="true">
+            <div class="tactile-rangee">
+              <button type="button" class="tact" id="tact-gauche">◀</button>
+              <button type="button" class="tact" id="tact-droite">▶</button>
+              <button type="button" class="tact tact-plan" id="tact-plan">⇅ RANGÉE</button>
+            </div>
+            <div class="tactile-rangee">
+              <button type="button" class="tact tact-accroupi" id="tact-accroupi">ACCROUPI</button>
+              <button type="button" class="tact tact-bisou" id="tact-bisou">💗 BISOU</button>
+            </div>
+          </div>
+
           <p class="aide">
             ← → ou Q/D pour marcher · ↑ ↓ pour changer de rangée ·
             <b>Espace</b> maintenu pour embrasser · <b>Maj</b> pour s'accroupir
-            derrière un meuble · au doigt : maintiens à gauche/à droite pour
-            marcher, sur un garçon proche pour l'embrasser<br />
+            derrière un meuble · au doigt : les pavés sous la salle, ou
+            maintiens à gauche/à droite pour marcher<br />
             Un téléphone ne cadre que <b>sa rangée</b> et s'arrête au premier
             meuble haut. Le meuble entouré de pointillés est à portée de
             cachette : accroupis-toi et le 👁 au-dessus d'Eoghan passe au vert.

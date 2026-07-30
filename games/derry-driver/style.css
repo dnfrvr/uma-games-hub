@@ -338,6 +338,9 @@
 
 .dd-tact {
   flex: 1 1 0;
+  /* Le seul pavé qui tombait sous la barre : 15 px de padding + 0,8 rem de
+     texte faisaient 43 px. */
+  min-height: 46px;
   padding: 15px 0;
   font-family: var(--font-ui);
   font-size: 0.8rem;

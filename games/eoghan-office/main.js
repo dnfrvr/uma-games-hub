@@ -913,6 +913,60 @@ document.addEventListener("pointerup", () => {
   annuleBisou();
 });
 
+/* Les pavés du bas. Marcher et embrasser étaient déjà atteignables en tapant
+   dans la salle ; s'accroupir et changer de rangée ne l'étaient pas du tout,
+   et ce sont deux mécaniques centrales — d'où ce pavé plutôt qu'un geste de
+   plus dans la salle, où un appui long veut déjà dire « embrasse ».
+
+   `maintien` distingue les deux natures de commande : marcher, s'accroupir et
+   embrasser sont des MAINTIENS (comme leurs touches : ←, Maj, Espace), alors
+   que changer de rangée est un COUP (comme ↑ ↓, qui ne se répètent pas). */
+function paveTactile(id, maintien, debut, fin) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const on = (ev) => {
+    /* Sans ça, le navigateur enchaîne un événement souris synthétique et
+       déclenche l'action une seconde fois. */
+    ev.preventDefault();
+    if (!etat.enCours) return;
+    el.classList.add("appuye");
+    debut();
+  };
+  const off = () => {
+    el.classList.remove("appuye");
+    if (maintien && fin) fin();
+  };
+
+  el.addEventListener("pointerdown", on);
+  el.addEventListener("pointerup", off);
+  el.addEventListener("pointerleave", off);
+  el.addEventListener("pointercancel", off);
+  /* Le menu d'appui long d'Android vole le doigt en pleine partie. */
+  el.addEventListener("contextmenu", (ev) => ev.preventDefault());
+}
+
+paveTactile("tact-gauche", true,
+  () => etat.touches.add("gauche"),
+  () => etat.touches.delete("gauche"));
+
+paveTactile("tact-droite", true,
+  () => etat.touches.add("droite"),
+  () => etat.touches.delete("droite"));
+
+/* Il n'y a que deux rangées (changePlan borne à 0–1) : un seul bouton qui
+   bascule vaut mieux que deux flèches dont une sur trois ne fait rien. */
+paveTactile("tact-plan", false,
+  () => changePlan(etat.eoghan.plan === 0 ? 1 : -1));
+
+paveTactile("tact-accroupi", true,
+  () => accroupi(true),
+  () => accroupi(false));
+
+paveTactile("tact-bisou", true,
+  () => { if (!etat.bisou) tenteBisou(); },
+  () => annuleBisou());
+
 /* =========================================================
    Tableau de bord et écrans
    ========================================================= */

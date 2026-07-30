@@ -111,7 +111,11 @@
     sep.className = "service-sep";
     sep.textContent = "·";
 
+    /* Classé pour que la coque puisse le retirer en écran étroit : à 360 px,
+       « ★ Mes favoris (0) · Visiteur anonyme » ne tient pas à côté du champ de
+       recherche (voir portail.css §9). */
     const compte = document.createElement("span");
+    compte.className = "service-compte";
     compte.textContent = "Visiteur anonyme";
 
     liensService.append(sep, compte);

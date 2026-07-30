@@ -59,6 +59,11 @@ body {
   width: 100%;
   aspect-ratio: 1000 / 420;
   overflow: hidden;
+  /* Taper dans la salle veut dire « marche par là », et un appui maintenu sur
+     un garçon veut dire « embrasse ». Sans ça, le moindre tremblement du doigt
+     est interprété comme un défilement : la page glisse et Eoghan reste
+     planté. */
+  touch-action: none;
   border: 2px solid var(--text-color);
   border-radius: 12px;
   background: var(--fond, linear-gradient(180deg, #8fd8f0, #d9f2c9));
@@ -711,6 +716,80 @@ body.bisou-en-cours .jauge-bisou { display: block; }
 .dock-actions .fun-btn { width: 100%; font-size: 0.72rem; }
 
 /* =========================================================
+   Commandes au doigt
+   ---------------------------------------------------------
+   Le tap dans la salle savait déjà marcher et embrasser. Restaient
+   S'ACCROUPIR (Maj) et CHANGER DE RANGÉE (↑ ↓), qui n'existaient qu'au
+   clavier — or la cachette derrière un meuble et les deux rangées de
+   profondeur sont deux mécaniques centrales du jeu. Sans ces deux pavés,
+   Kiss & Cache est amputé sur téléphone, et le bal de promo (dont la seule
+   parade contre le projecteur est de s'accroupir) devient infaisable.
+
+   Deux rangées plutôt qu'une seule de cinq boutons : à 360 px, cinq pavés
+   font 66 px chacun et « ACCROUPI » n'y tient pas.
+   ========================================================= */
+
+.tactile {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 520px;
+  margin: 2px auto 0;
+}
+
+.tactile-rangee { display: flex; gap: 6px; }
+
+.tact {
+  flex: 1 1 0;
+  /* 46 px de haut : au-dessus des 44 px sous lesquels un doigt vise mal. */
+  min-height: 46px;
+  padding: 6px 4px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #10331b;
+  background: linear-gradient(180deg, #ffffff, #c9f4d6);
+  border: 3px solid #10331b;
+  border-radius: var(--radius-controle);
+  box-shadow: 0 2px 0 rgba(16, 51, 27, 0.55);
+  /* Sans ça, maintenir le doigt sur un pavé fait défiler la page au lieu de
+     faire marcher Eoghan. */
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.tact.appuye {
+  background: linear-gradient(180deg, #7cf0a0, #35c96a);
+  box-shadow: none;
+  transform: translateY(2px);
+}
+
+/* Le bisou est l'action principale : c'est le seul pavé en rose. */
+.tact-bisou {
+  flex: 1.4 1 0;
+  color: #4a0f2c;
+  background: linear-gradient(180deg, #ffe3f0, #ff9ec8);
+  border-color: #4a0f2c;
+  box-shadow: 0 2px 0 rgba(74, 15, 44, 0.55);
+}
+
+.tact-bisou.appuye { background: linear-gradient(180deg, #ff8dbe, #ff4d95); }
+
+/* Accroupi est un maintien, pas une bascule : le pavé reste allumé tant que
+   le doigt est dessus, comme la touche Maj. */
+.tact-accroupi.appuye { background: linear-gradient(180deg, #ffe9a8, #ffcc33); }
+
+/* Le doigt vise mal une flèche de 30 px : les pavés n'apparaissent que là où
+   il n'y a pas de clavier, ou quand l'écran est trop étroit pour en avoir un. */
+@media (pointer: coarse) {
+  .tactile { display: flex; }
+}
+
+/* =========================================================
    Écrans étroits
    ========================================================= */
 
@@ -718,6 +797,11 @@ body.bisou-en-cours .jauge-bisou { display: block; }
   .game { flex-direction: column; min-height: 0; }
   .stage { min-height: 0; }
   .acteur { width: 11%; }
+  .tactile { display: flex; }
+
+  /* Le pavé tactile prend la place de la notice : sur téléphone on apprend en
+     appuyant, et ces onze lignes poussaient le jeu hors de l'écran. */
+  .aide { display: none; }
 
   .dock {
     flex: 0 0 auto;

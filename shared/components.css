@@ -230,6 +230,10 @@ header,
   font-weight: var(--btn-graisse, bold);
   text-transform: var(--btn-casse, none);
   letter-spacing: var(--btn-espacement, normal);
+  /* Sur téléphone, un navigateur attend ~300 ms après un tap pour voir si un
+     double-tap arrive (auquel cas il zoome). Sur un bouton de jeu, ces 300 ms
+     se sentent comme une commande qui ne répond pas. */
+  touch-action: manipulation;
   padding: 8px 14px;
   border: var(--btn-cadre, var(--trait));
   border-radius: var(--btn-rayon, var(--radius-button));
@@ -368,6 +372,18 @@ header,
   .shell { border-radius: 18px; border-width: 4px; }
   header,
   .banner { padding-top: 10px; }
+}
+
+/* Sur un vrai téléphone, le bandeau-titre du jeu coûtait 101 px : 36 de
+   WordArt, 32 d'accroche, le reste en marges. Le titre reste — c'est lui qui
+   dit sur quel jeu on est, et chaque jeu a le sien. L'accroche part : on vient
+   de la lire sur la vignette du hub, et elle prenait presque autant de place
+   que le titre pour la répéter. Elle revient dès 641 px, où la hauteur ne
+   manque plus. */
+@media (max-width: 640px) {
+  .banner { padding: 8px 12px 7px; }
+  .banner .tagline { display: none; }
+  .wordart { margin-bottom: 0; }
 }
 
 @media (max-width: 460px) {

@@ -353,6 +353,10 @@
 
 .tact {
   flex: 1 1 0;
+  /* Plancher explicite : la hauteur ne venait que du padding et de la taille
+     de police, donc elle passait sous les 44 px du doigt dès que la police
+     tardait à charger. */
+  min-height: 46px;
   padding: 14px 0;
   font-size: 1.3rem;
   font-family: inherit;

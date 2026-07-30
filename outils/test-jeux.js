@@ -9,6 +9,13 @@ const vm = require("vm");
 
 function fakeEl() {
   const set = new Set();
+  /* Le bouchon MÉMORISE ses écouteurs au lieu de les jeter. Sans ça, aucune
+     commande ne peut être éprouvée ici, et les commandes au doigt ne sont
+     éprouvables nulle part : dans une iframe de test, Chrome gèle
+     requestAnimationFrame, donc la boucle de jeu ne tourne pas et rien ne
+     bouge quand on simule un appui. C'est le même raisonnement que pour le
+     reste du fichier — le banc d'essai va là où la capture d'écran ne va pas. */
+  const ecouteurs = {};
   return {
     children: [], className: "", textContent: "", innerHTML: "", title: "", type: "",
     offsetWidth: 0, hidden: false,
@@ -22,7 +29,14 @@ function fakeEl() {
     },
     appendChild(c) { this.children.push(c); return c; },
     append(...c) { this.children.push(...c); },
-    addEventListener() {}, removeAttribute() {}, setAttribute() {}, remove() {},
+    addEventListener(type, fn) { (ecouteurs[type] = ecouteurs[type] || []).push(fn); },
+    /* Simule un événement sur cet élément : `declenche("pointerdown")`. */
+    declenche(type, ev) {
+      (ecouteurs[type] || []).forEach((fn) =>
+        fn(Object.assign({ preventDefault() {}, stopPropagation() {} }, ev)));
+      return (ecouteurs[type] || []).length;
+    },
+    removeAttribute() {}, setAttribute() {}, remove() {},
     getBoundingClientRect() { return { left: 0, top: 0, width: 800, height: 320 }; },
   };
 }
@@ -223,6 +237,63 @@ const verifie = (nom, cond, detail) => (cond ? ok : ko).push(nom + (detail ? " �
   changePlan(1);
   verifie("il n'y a que deux rangées", etat.eoghan.plan === 1);
   changePlan(-1);
+
+  /* --- Les commandes au doigt ------------------------------------------
+     Taper dans la salle savait déjà marcher et embrasser, mais S'ACCROUPIR
+     et CHANGER DE RANGÉE n'existaient qu'au clavier (Maj, ↑ ↓) : la
+     cachette derrière un meuble et les deux rangées de profondeur, deux
+     mécaniques centrales, étaient donc hors de portée sur téléphone. Le bal
+     de promo en particulier, dont la seule parade contre le projecteur est
+     de s'accroupir, y était infaisable.
+
+     Ces vérifications passent par les écouteurs réellement posés par
+     `paveTactile` : c'est le seul endroit où le pavé est éprouvable. Au
+     navigateur, la partie ne tourne pas dans l'iframe de test (rAF gelé),
+     donc un appui simulé ne déplace rien et ne prouve rien. */
+  const pave = (id) => lit("document.getElementById(" + JSON.stringify(id) + ")");
+  const appuie = (id) => pave(id).declenche("pointerdown");
+  const relache = (id) => pave(id).declenche("pointerup");
+
+  verifie("les cinq pavés au doigt sont câblés",
+    ["tact-gauche", "tact-droite", "tact-plan", "tact-accroupi", "tact-bisou"]
+      .every((id) => pave(id).declenche("pointerdown") > 0));
+
+  etat.eoghan.x = 200;
+  etat.eoghan.plan = 0;
+  etat.eoghan.accroupi = false;
+  etat.touches.clear();
+
+  appuie("tact-droite");
+  verifie("au doigt : le pavé droite déclenche la marche", etat.touches.has("droite"));
+  bougeEoghan(0.4);
+  verifie("au doigt : Eoghan avance pour de bon", etat.eoghan.x > 200,
+    "x = " + Math.round(etat.eoghan.x));
+  relache("tact-droite");
+  verifie("au doigt : relâcher arrête la marche", !etat.touches.has("droite"));
+
+  /* Un COUP, pas un maintien : la rangée ne doit pas rebasculer au relâché,
+     sinon un appui ne changerait jamais de rangée. */
+  appuie("tact-plan");
+  const planApresAppui = etat.eoghan.plan;
+  relache("tact-plan");
+  verifie("au doigt : le pavé rangée change de rangée", planApresAppui === 1);
+  verifie("au doigt : relâcher ne rebascule pas la rangée", etat.eoghan.plan === 1);
+  appuie("tact-plan");
+  relache("tact-plan");
+  verifie("au doigt : le pavé rangée revient en avant", etat.eoghan.plan === 0);
+
+  /* Un MAINTIEN, comme la touche Maj : accroupi tant que le doigt est posé. */
+  appuie("tact-accroupi");
+  verifie("au doigt : le pavé accroupi baisse Eoghan", etat.eoghan.accroupi === true);
+  relache("tact-accroupi");
+  verifie("au doigt : relâcher le relève", etat.eoghan.accroupi === false);
+
+  /* Rien ne doit répondre hors partie, sinon on bouge sur l'écran de menu. */
+  etat.enCours = false;
+  etat.touches.clear();
+  appuie("tact-droite");
+  verifie("au doigt : les pavés sont inertes hors partie", !etat.touches.has("droite"));
+  etat.enCours = true;
 
   /* Ligne de vue : un meuble haut (arbre, casier, canapé) coupe la vue, un
      meuble bas (banc) ne la coupe pas — il sert seulement de cachette. */

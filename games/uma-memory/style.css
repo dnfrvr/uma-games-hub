@@ -72,6 +72,9 @@
   border: 0;
   background: none;
   cursor: pointer;
+  /* Retourner deux cartes vite enchaîne deux taps rapprochés, que le
+     navigateur prend pour un double-tap et traduit par un zoom. */
+  touch-action: manipulation;
   perspective: 800px;
   /* Le halo bleu du tap mobile, sur trente cartes, fait une guirlande. */
   -webkit-tap-highlight-color: transparent;

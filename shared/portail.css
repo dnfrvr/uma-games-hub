@@ -807,18 +807,41 @@ body:has(.page) .pied-portail { max-width: 1330px; }
    9. Écrans étroits
    ========================================================= */
 
+/* Mesuré au navigateur à 390 × 844 (iPhone 14) sur les dix jeux : la coque
+   mangeait 471 à 524 px AVANT le terrain de jeu, soit 56 à 62 % de la hauteur
+   de l'écran. Autrement dit le jeu commençait sous la ligne de flottaison et
+   il fallait scroller à chaque partie pour voir ce qu'on jouait. Le détail du
+   gâchis, sur Kiss & Cache : barre de service 74, navigation 100, annonces 23,
+   fil d'Ariane 13, bannière de pub 104, jauge de chargement 23, bandeau-titre
+   101. Tout ce qui suit récupère cette hauteur, et RIEN d'autre — la coque
+   garde sa tête, ses trois bandes et ses couleurs. */
 @media (max-width: 860px) {
-  /* La barre de service passe sur deux lignes : recherche en pleine largeur
-     dessous, salutation et liens de compte au-dessus. */
-  .barre-service { flex-wrap: wrap; gap: 6px 10px; }
-  .service-recherche { order: 3; flex: 1 0 100%; justify-content: stretch; }
-  .service-champ { flex: 1 1 auto; }
-  .service-liens { margin-left: auto; }
+  /* La barre de service tient sur UNE ligne au lieu de deux ou trois. La
+     salutation (« 10 jeux en ligne · N parties jouées ») est un ornement
+     d'accueil : elle ne dit rien à qui vient jouer, et elle se payait une
+     rangée entière. Le compte anonyme et son séparateur partent avec, sinon
+     « ★ Mes favoris (0) · Visiteur anonyme » ne rentre pas à côté du champ de
+     recherche à 360 px. Restent la recherche et les favoris, qui sont de la
+     navigation, pas de la décoration. */
+  .barre-service { flex-wrap: nowrap; gap: 8px; }
+  .service-salut,
+  .service-sep,
+  .service-compte { display: none; }
+  .service-recherche { flex: 1 1 auto; min-width: 0; justify-content: stretch; }
+  .service-champ { flex: 1 1 auto; min-width: 0; }
+  .service-liens { flex: 0 0 auto; margin-left: 0; white-space: nowrap; }
 
-  .pub-banniere .pub-cadre { height: 70px; }
-  .pub-banniere .pub-vignette { width: 62px; height: 47px; }
-  .pub-accroche { font-size: 13px; }
-  .pub-accroche strong { font-size: 16px; }
+  /* Le plus gros poste, et le plus facile à trancher : une bannière 728 × 90
+     ne tient pas sous 860 px. Elle était déjà écrasée à 70 px de haut, ce qui
+     n'est plus le format, et coûtait 104 px avec ses marges. Un portail de
+     l'époque ne servait pas ce pavé à un téléphone. Le pavé 300 × 250 de la
+     colonne reste en place : la régie tourne toujours, elle tourne ailleurs. */
+  .pub-banniere { display: none; }
+
+  /* La jauge de chargement est un décor assumé (voir shared/lecteur.js : « la
+     page est déjà jouable quand elle finit »). 23 px de décoration au moment
+     où chaque ligne compte, non. */
+  #lecteur-chargement { display: none; }
 
   .lecteur-scene { padding: 5px; }
   .lecteur-outils { font-size: 10px; padding: 6px 8px; }
@@ -826,7 +849,5 @@ body:has(.page) .pied-portail { max-width: 1330px; }
 }
 
 @media (max-width: 460px) {
-  .service-salut { flex: 1 0 100%; }
-  .service-liens { margin-left: 0; }
   .pied-liens { font-size: 10px; }
 }

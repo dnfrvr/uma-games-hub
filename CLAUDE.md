@@ -412,6 +412,43 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       hub** — livre d'or fautes comprises, anecdotes, bandeau d'annonces,
       slogans de pubs — qui n'a pas été touché, sur décision explicite.
 
+- [x] **Passe mobile sur les dix jeux (2026-07-30).** Deux problèmes, mesurés au
+      navigateur à 390 × 844 avant de toucher à quoi que ce soit.
+      1. **La coque mangeait l'écran.** Le terrain de jeu commençait entre 471 et
+         524 px sur 840 de haut, soit à 56–62 % de la hauteur : il fallait
+         scroller à chaque partie pour voir ce qu'on jouait. Récupéré ~210 px en
+         écran étroit (`portail.css` §9, `components.css`) — la bannière 728 × 90
+         est masquée sous 860 px (elle n'a jamais tenu à cette largeur, et le
+         pavé 300 × 250 de la colonne reste, donc la régie tourne toujours), la
+         barre de service passe sur UNE ligne (la salutation et le compte
+         anonyme sont des ornements d'accueil), la jauge de chargement est
+         masquée (c'est un décor, cf. `lecteur.js`), et l'accroche du
+         bandeau-titre part sous 640 px (on vient de la lire sur la vignette).
+         Résultat : le jeu commence à 264–309 px et **9 jeux sur 10 tiennent
+         entièrement dans l'écran**. Drew a fallu descendre `.doll-fit` à
+         `min(42vh, 360px)` — il finissait à 914 px.
+      2. **Kiss & Cache était amputé au doigt.** Taper dans la salle savait
+         marcher et embrasser, mais **s'accroupir (Maj) et changer de rangée
+         (↑ ↓) n'existaient qu'au clavier** — deux mécaniques centrales, et le
+         bal de promo (dont la seule parade contre le projecteur est de
+         s'accroupir) était infaisable sur téléphone. Ajout d'un pavé
+         `.tactile`/`.tact` à deux rangées (◀ ▶ ⇅ RANGÉE / ACCROUPI 💗 BISOU),
+         au même motif que les quatre jeux qui en avaient déjà un.
+      Au passage : plancher `min-height: 46px` sur les quatre pavés existants
+      (celui de Derry Driver tombait à 43), `touch-action: none` sur la salle
+      d'Eoghan (un tremblement du doigt faisait défiler la page au lieu de
+      jouer), `touch-action: manipulation` sur `.fun-btn` et les cartes de
+      Memory (les ~300 ms d'attente de double-tap se sentent comme une commande
+      morte), et la notice de Drew dit enfin qu'on **touche** une pièce pour
+      l'enfiler — c'était déjà vrai (`toggleItem`), mais elle ne parlait que de
+      glisser, le geste le plus dur au doigt.
+
+      **Le banc d'essai sait maintenant tester une commande.** `fakeEl()` dans
+      `outils/test-jeux.js` mémorise ses écouteurs et expose
+      `declenche("pointerdown")` : 10 vérifications tiennent le pavé d'Eoghan
+      (49 → 59 au total). C'était nécessaire, pas décoratif — voir la limite
+      ci-dessous.
+
 ### PROCHAINE ÉTAPE : remplacer tous les SVG par de vraies illustrations
 C'est la priorité annoncée. Aujourd'hui **tout est dessiné en code** (SVG généré par
 `shared/perso.js` et par les fichiers de données de chaque jeu) : c'était fait pour
@@ -487,6 +524,18 @@ solution de repli et de référence de cadrage.
   (860 et 460 px), `style-hub.css` (900 et 460 px), `navbar.css` (720 et 380 px)
   — mais n'ont pas été vues à l'œil : la fenêtre de test était maximisée et
   refusait de se redimensionner. À reprendre en priorité au prochain passage.
+- **Une commande qui dépend de la boucle de jeu ne se vérifie PAS au
+  navigateur, dans aucun montage** (constaté le 2026-07-30, plusieurs essais).
+  Ni dans une iframe de test, ni dans l'onglet de premier plan : dès que l'outil
+  JS de l'extension reprend la main, `requestAnimationFrame` s'arrête net — le
+  chrono se figeait sur 1,2 s d'attente, et un `rAF` posé à la main dans la page
+  n'est jamais revenu (le renderer a fini par être déclaré gelé). Conséquence
+  pratique : tout ce qui est **synchrone** se vérifie très bien à l'écran
+  (changement de rangée, accroupissement, mise en page, tailles de cibles), tout
+  ce qui passe **par la boucle** ne se vérifie que dans `outils/test-jeux.js`.
+  C'est pour ça que `fakeEl()` mémorise ses écouteurs : la marche au doigt
+  d'Eoghan est prouvée là (x 200 → 284) et nulle part ailleurs. Ne pas perdre de
+  temps à retenter au navigateur.
 - **La rotation des pubs n'a pas été observée en direct**, pour la même raison :
   elle se met volontairement en pause quand l'onglet est masqué, et l'onglet de
   test l'était. Le rendu des deux créations de départ, lui, est vérifié.

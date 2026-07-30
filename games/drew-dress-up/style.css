@@ -835,7 +835,12 @@ body {
   .game { flex-direction: column; min-height: 0; }
 
   .stage { padding: 8px; }
-  .doll-fit { min-height: min(56vh, 460px); }
+  /* Mesuré à 390 × 844 : à 56vh, la scène finissait à 914 px sur 840 — Drew
+     était le seul jeu à dépasser l'écran, et la garde-robe tombait entièrement
+     sous la ligne de flottaison. Or on habille en TOUCHANT une pièce dans la
+     garde-robe (voir toggleItem) : il faut donc voir les deux à la fois, la
+     pièce qu'on choisit et le résultat sur Drew. */
+  .doll-fit { min-height: min(42vh, 360px); }
   .stage-tools { top: 10px; flex-direction: row; }
   .stage-tools-gauche { left: 10px; }
   .stage-tools-droite { right: 10px; }
