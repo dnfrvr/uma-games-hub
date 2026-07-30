@@ -47,6 +47,7 @@ const PERSOS = [
     saut: 1,
     vitesse: 1.08,
     look: {
+      id: "drew",
       peau: "#f8dcc0", cheveux: "long", couleurCheveux: "#8a5a2b",
       haut: "#aa6caa", bas: "#3a2b4e", bouche: "sourire", regard: "face",
     },
@@ -60,6 +61,7 @@ const PERSOS = [
     saut: 1.12,
     vitesse: 1,
     look: {
+      id: "glinda",
       peau: "#f8dcc0", cheveux: "queue", couleurCheveux: "#e8b84b",
       haut: "#16255c", bas: "#16255c", jupe: "#ffffff", pompons: "#ffffff",
       accessoire: "noeud", couleurAccessoire: "#16255c", bouche: "sourire-large",
@@ -74,6 +76,7 @@ const PERSOS = [
     saut: 1.06,
     vitesse: 0.96,
     look: {
+      id: "elias",
       peau: "#f0c39a", cheveux: "court", couleurCheveux: "#2b1a2e",
       haut: "#6672d0", bas: "#2f3550", accessoire: "lunettes",
       bouche: "neutre", regard: "face",
@@ -88,6 +91,7 @@ const PERSOS = [
     saut: 0.98,
     vitesse: 1.16,
     look: {
+      id: "eoghan",
       peau: "#f0c39a", cheveux: "boucle", couleurCheveux: "#c98a3a",
       haut: "#00b32d", bas: "#2f3550", bouche: "sourire-large", regard: "face",
     },

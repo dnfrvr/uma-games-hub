@@ -1,4 +1,4 @@
-# Décors de Dress my Drew
+# Fonds de salle de Kiss & Cache
 
 Dépose ici tes images, **nommées exactement** comme la liste plus bas,
 puis lance :
@@ -12,7 +12,7 @@ s'affiche. Rien ne casse à moitié converti.
 
 ## Format
 
-- Taille attendue : **800 × 1200 px** (le cadre de référence est 400 × 600, export 2×).
+- Taille attendue : **2000 × 840 px** (le cadre de référence est 1000 × 420, export 2×).
 - Le **ratio** est vérifié, la taille exacte non : un export en 1× ou 3×
   passe aussi, l'échelle est détectée et l'image s'affiche à la bonne
   taille. Un ratio faux est refusé, avec le détail à l'écran.
@@ -20,15 +20,14 @@ s'affiche. Rien ne casse à moitié converti.
 
 ## À savoir
 
-Cadre de la poupée. L'image est cadrée en « cover » et centrée, donc les bords qui dépassent sont rognés. Garde la zone centrale lisible : Drew se tient au milieu. Sert aussi dans l'export PNG.
+Vue de CÔTÉ, deux rangées de profondeur. Le haut de l'image est le fond de la salle, le bas le sol de la rangée avant. Aujourd'hui c'est un dégradé CSS en trois bandes (fond, sol arrière, sol avant).
 
 ## Les fichiers attendus
 
-- `augusta.png` — L'université d'Augusta  _(décor)_
-- `dortoir.png` — Le dortoir  _(décor)_
-- `starbucks.png` — Le Starbucks du campus  _(décor)_
-- `derry.png` — Derry sous la pluie  _(décor)_
-- `nature.png` — En pleine nature  _(décor)_
+- `campus.png` — Le campus, plein jour  _(décor 1)_
+- `soiree.png` — La soirée, lumière tamisée  _(décor 2)_
+- `vestiaire.png` — Le vestiaire de sport  _(décor 3)_
+- `bal.png` — Le bal de promo  _(décor 4)_
 
 ---
 

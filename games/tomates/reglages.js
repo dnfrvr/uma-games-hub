@@ -75,6 +75,7 @@ const MADS = {
   accroupi: 10,
   tete: 6, // la zone du haut : c'est la « pleine poire »
   look: {
+    id: "mads",
     peau: "#f3ddcb",
     cheveux: "crete",
     couleurCheveux: "#e8b84b",
@@ -90,6 +91,7 @@ const MADS = {
    raconte rien, on lance des tomates. */
 const LANCEUR = {
   look: {
+    id: "lanceur",
     peau: "#f0c39a",
     cheveux: "boucle",
     couleurCheveux: "#4a2c17",

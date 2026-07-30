@@ -377,7 +377,13 @@ function dessineGrille() {
     const dessin = document.createElement("span");
     dessin.className = "mem-dessin";
     dessin.setAttribute("aria-hidden", "true");
-    dessin.innerHTML = c.motif.svg;
+    /* `dossier` dit dans quelle famille d'images chercher (personnages,
+       créatures, objets) — voir cartes.js. Sans image déposée, `umaDessin`
+       rend le SVG d'origine, donc rien ne change. */
+    dessin.innerHTML =
+      c.motif.dossier && typeof umaDessin === "function"
+        ? umaDessin(c.motif.dossier, c.motif.id, c.motif.svg)
+        : c.motif.svg;
 
     const nom = document.createElement("span");
     nom.className = "mem-nom";

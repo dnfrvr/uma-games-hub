@@ -1,4 +1,4 @@
-# Décors de Dress my Drew
+# Décor du stade de Pep Rally Rhythm
 
 Dépose ici tes images, **nommées exactement** comme la liste plus bas,
 puis lance :
@@ -12,7 +12,7 @@ s'affiche. Rien ne casse à moitié converti.
 
 ## Format
 
-- Taille attendue : **800 × 1200 px** (le cadre de référence est 400 × 600, export 2×).
+- Taille attendue : **2400 × 800 px** (le cadre de référence est 1200 × 400, export 2×).
 - Le **ratio** est vérifié, la taille exacte non : un export en 1× ou 3×
   passe aussi, l'échelle est détectée et l'image s'affiche à la bonne
   taille. Un ratio faux est refusé, avec le détail à l'écran.
@@ -20,15 +20,15 @@ s'affiche. Rien ne casse à moitié converti.
 
 ## À savoir
 
-Cadre de la poupée. L'image est cadrée en « cover » et centrée, donc les bords qui dépassent sont rognés. Garde la zone centrale lisible : Drew se tient au milieu. Sert aussi dans l'export PNG.
+Stade de foot US en plein jour, aux couleurs d'Augusta (marine et blanc).
 
 ## Les fichiers attendus
 
-- `augusta.png` — L'université d'Augusta  _(décor)_
-- `dortoir.png` — Le dortoir  _(décor)_
-- `starbucks.png` — Le Starbucks du campus  _(décor)_
-- `derry.png` — Derry sous la pluie  _(décor)_
-- `nature.png` — En pleine nature  _(décor)_
+- `ciel.png` — Le ciel  _(fond)_
+- `tribune.png` — La tribune (5 rangs)  _(fond)_
+- `pelouse.png` — La pelouse  _(sol)_
+- `poteaux.png` — Les poteaux  _(décor)_
+- `panneau.png` — Le panneau de score  _(décor)_
 
 ---
 

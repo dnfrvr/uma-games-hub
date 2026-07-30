@@ -320,8 +320,10 @@ recalculent tous depuis ce fichier.
 ## Comment tester en local
 ```bash
 python3 -m http.server 8000       # puis ouvrir http://localhost:8000
-node outils/test-jeux.js          # 49 vérifications de règles, sans navigateur
+node outils/test-jeux.js          # 59 vérifications de règles, sans navigateur
 node outils/test-collisions.js    # aucun nom de classe partagé coque ↔ jeux
+node outils/test-assets.js        # 61 vérifications de la chaîne d'images
+node outils/scan-assets.js        # indexe les illustrations déposées
 ```
 Note : `http.server` est **mono-thread**. Il suffit pour jouer, mais il se bloque
 dès qu'on charge plusieurs pages en parallèle (banc d'essai qui ouvre des iframes
@@ -449,47 +451,73 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       (49 → 59 au total). C'était nécessaire, pas décoratif — voir la limite
       ci-dessous.
 
-### PROCHAINE ÉTAPE : remplacer tous les SVG par de vraies illustrations
-C'est la priorité annoncée. Aujourd'hui **tout est dessiné en code** (SVG généré par
-`shared/perso.js` et par les fichiers de données de chaque jeu) : c'était fait pour
-tenir sans art, pas pour rester.
+### EN COURS : remplacer les SVG par de vraies illustrations
 
-**Méthode à suivre** — la même que pour la garde-robe de Drew : le code ne doit jamais
-connaître le contenu artistique. Pour chaque famille de dessins, on ajoute un champ
-`image` à côté du champ `svg` existant, et le moteur affiche l'image **si elle
-existe**, sinon il retombe sur le SVG. Ça permet de remplacer les dessins **un par
-un**, sans jamais casser un jeu à moitié converti.
+**La plomberie est posée et éprouvée ; il ne manque que les dessins.** Déposer
+un fichier au bon nom suffit à le voir en jeu — aucun code à toucher.
 
-**Inventaire de ce qu'il y a à produire** (état au 2026-07-28) :
+```bash
+node outils/scan-assets.js --liste    # tout ce qu'il y a à produire
+node outils/scan-assets.js --manque   # ce qui reste
+node outils/scan-assets.js            # indexe ce qui est déposé
+node outils/scan-assets.js --init     # (re)crée les dossiers et leurs notices
+```
 
-| Jeu | À dessiner | Nombre | Où le brancher |
-|-----|-----------|--------|----------------|
-| Kiss & Cache | mobilier (bureau, plante, casier, canapé, arbre, banc, enceinte, buvette) | 8 | `games/eoghan-office/decors.js` → `PROPS` |
-| Kiss & Cache | garçons à embrasser | 10 (3 décors) | `decors.js` → `garcons[].look` |
-| Kiss & Cache | PNJ avec téléphone | 11 | `decors.js` → `pnj[].look` |
-| Kiss & Cache | Eoghan : debout, marche, accroupi, bisou | 4 états | `main.js` → `chargeDecor` / `tenteBisou` |
-| Kiss & Cache | fonds de salle (ciel + 2 sols) | 3 décors | `style.css` → `.salle`, `.fond` |
-| Sanity Whack | cibles (petit gris, ovni, silhouette, œil, chèvre, ombre, Pennywise, Slenderman) | 8 | `games/elias-whack/roster.js` → `CIBLES` |
-| Sanity Whack | pièges (Toto, mamie, pizza, Drew, Eoghan, Glinda) | 6 | `roster.js` → `PIEGES` |
-| Sanity Whack | avatar d'Elias | 6 expressions | `main.js` → `HUMEURS` |
-| Pep Rally | Glinda et sa camarade | 5 poses chacune | `games/glinda-cheer/main.js` → `POSES_GLINDA` |
-| Pep Rally | supporters de tribune | 3 variantes × 6 maillots | `shared/perso.js` → `spectateurSVG` |
-| Pep Rally | décor du stade (ciel, tribune, pelouse, poteaux, panneau) | 5 morceaux | `style.css` + `index.html` |
-| Hub | vignettes des 4 jeux | 4 | `games-manifest.json` → `vignette` (déjà prêt) |
-| Hub | favicons | 4 | `<link rel="icon">` de chaque page |
+**La liste ne vit PAS dans ce fichier.** Elle vit dans
+`outils/assets-familles.js`, d'où le scanner l'imprime. C'est délibéré :
+l'inventaire qui était ici avait été écrit quand le portail avait quatre jeux,
+et il était faux dès le sixième. Une liste recopiée dérive toujours.
 
-**Conventions à fixer avant de dessiner** :
-- **Personnages** : même cadrage et même hauteur d'un dessin à l'autre (le SVG actuel
-  fait 48 × 72, pieds posés en bas du cadre). Fond transparent, PNG ou WebP.
-- **Mobilier de Kiss & Cache** : chaque meuble a déjà une `largeur`/`hauteur` en unités
-  de salle dans `PROPS` — l'image doit respecter ce ratio, posée au sol.
-- **Créatures de Sanity Whack** : cadre carré (le SVG fait 64 × 64), le personnage
-  sortant par le bas du trou.
-- **Vignettes du hub** : 4/3, ~320 × 240, c'est le seul endroit déjà 100 % piloté par
-  le manifest (changer le chemin suffit).
+**128 fichiers**, en 14 familles, export **2×** (un personnage se livre en
+96 × 144 et s'affiche dans 48 × 72). Le scanner vérifie le **ratio** de chaque
+fichier, détecte l'échelle réelle (1×, 2× ou 3× passent), rejette ce qui est
+déformé en disant pourquoi, et signale les noms inconnus — presque toujours une
+faute de frappe.
 
-Tant que les images n'existent pas, **ne pas supprimer les SVG** : ils servent de
-solution de repli et de référence de cadrage.
+**Comment ça marche.** `shared/images.js` expose `umaDessin(famille, id, svg)` :
+il rend l'image si elle est indexée, le SVG d'origine sinon. Rien n'est jamais
+cassé à moitié converti. L'index est `assets/index.js`, un fichier **généré** —
+en `.js` et non en `.json` parce que les jeux dessinent au chargement : un
+`fetch` arriverait trop tard, et plusieurs jeux mesurent leur scène au démarrage.
+Les deux `<script>` passent donc avant ceux du jeu, dans les 11 pages.
+
+**Le point de plus fort levier**, c'est `persoSVG` : elle dessine TOUS les
+personnages du portail, donc elle seule branche les 39 dessins de personnages
+partout à la fois. Deux champs sur le `look` :
+
+  - `id` — le personnage (« drew »), suffit pour le voir partout ;
+  - `asset` — la variante voulue (« eoghan-accroupi »), facultative.
+
+`asset` existe parce que `pose` ne pouvait pas servir de clé : son vocabulaire
+est celui du dessin (« bras-leves ») et il est réutilisé pour des choses
+différentes d'un jeu à l'autre — la même pose sert au saut de Glinda et à la
+fanfaronnade de Mads. En déduire un nom de fichier revenait à deviner. Une
+**cascade** fait qu'un seul `eoghan.png` répond déjà à « eoghan-accroupi » :
+on livre un dessin par personnage, on affine les poses ensuite.
+
+**Deux familles restent en SVG, et ce n'est pas un oubli** (détaillé dans
+`RESTE_EN_SVG` d'`assets-familles.js`) : les visages que le Love Tester
+fabrique pour un prénom **inconnu** sont tirés d'un hachage, donc aucun jeu de
+PNG fini ne peut couvrir un ensemble infini de prénoms ; et les silhouettes de
+foule de Pep Rally sont 3 formes × 6 maillots vues à 20 px de haut.
+
+`node outils/test-assets.js` tient l'ensemble (61 vérifications) : il fabrique
+de vrais PNG, les fait passer par le scanner, et exige que chaque jeu rende une
+balise `img` quand l'image existe. Sans ça, on ne saurait qu'en regardant
+l'écran — et seulement pour le jeu regardé.
+
+**Ce qui est routé à ce jour** : la fabrique de personnages (donc les 39
+personnages, partout), les 34 cartes d'UMA Memory, les 14 cibles et pièges de
+Sanity Whack, et l'avatar d'Elias. **Ce qui ne l'est pas encore** : les décors
+et fonds (7 familles), le mobilier de Kiss & Cache, les obstacles de Run Glinda
+Run et de Derry Driver, et les vignettes du hub. Les fichiers peuvent déjà être
+déposés et sont déjà validés par le scanner ; c'est l'affichage qui reste à
+brancher, jeu par jeu.
+
+**Conventions de dessin** : fond transparent (sauf décors), personnage aux pieds
+posés sur le bord bas du cadre, créature occupant le bas d'un cadre carré. Le
+détail par famille est dans le `LISEZMOI.md` de chaque dossier, lui aussi
+généré.
 
 ### Le reste, ensuite (par ordre d'intérêt)
 - [ ] **Musique** pour Pep Rally Rhythm. Aujourd'hui : métronome + blips synthétisés

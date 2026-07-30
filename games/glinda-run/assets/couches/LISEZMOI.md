@@ -1,4 +1,4 @@
-# Décors de Dress my Drew
+# Couches de parallaxe de Run, Glinda, Run
 
 Dépose ici tes images, **nommées exactement** comme la liste plus bas,
 puis lance :
@@ -12,7 +12,7 @@ s'affiche. Rien ne casse à moitié converti.
 
 ## Format
 
-- Taille attendue : **800 × 1200 px** (le cadre de référence est 400 × 600, export 2×).
+- Taille attendue : **2400 × 800 px** (le cadre de référence est 1200 × 400, export 2×).
 - Le **ratio** est vérifié, la taille exacte non : un export en 1× ou 3×
   passe aussi, l'échelle est détectée et l'image s'affiche à la bonne
   taille. Un ratio faux est refusé, avec le détail à l'écran.
@@ -20,15 +20,14 @@ s'affiche. Rien ne casse à moitié converti.
 
 ## À savoir
 
-Cadre de la poupée. L'image est cadrée en « cover » et centrée, donc les bords qui dépassent sont rognés. Garde la zone centrale lisible : Drew se tient au milieu. Sert aussi dans l'export PNG.
+Quatre couches qui défilent à des vitesses différentes. Chacune doit se RACCORDER à elle-même horizontalement (le bord droit colle au bord gauche), sinon la boucle se voit.
 
 ## Les fichiers attendus
 
-- `augusta.png` — L'université d'Augusta  _(décor)_
-- `dortoir.png` — Le dortoir  _(décor)_
-- `starbucks.png` — Le Starbucks du campus  _(décor)_
-- `derry.png` — Derry sous la pluie  _(décor)_
-- `nature.png` — En pleine nature  _(décor)_
+- `ciel.png` — Le ciel  _(couche la plus lente)_
+- `campus.png` — Les bâtiments du campus  _(couche 2)_
+- `arbres.png` — Les arbres  _(couche 3)_
+- `bordure.png` — La bordure de trottoir  _(couche la plus rapide)_
 
 ---
 

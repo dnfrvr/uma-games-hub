@@ -323,20 +323,24 @@ const MOTIFS = [
   /* --- Les têtes d'affiche du portail --------------------------------- */
   {
     id: "drew",
+    dossier: "personnages",
     nom: "Drew",
     famille: "Le casting",
     fond: "#f3e2f7",
     svg: persoSVG({
+      id: "drew",
       peau: "#f8dcc0", cheveux: "long", couleurCheveux: "#8a5a2b",
       haut: "#aa6caa", bas: "#3a2b4e", bouche: "sourire", regard: "face",
     }),
   },
   {
     id: "glinda",
+    dossier: "personnages",
     nom: "Glinda",
     famille: "Le casting",
     fond: "#ffe0ef",
     svg: persoSVG({
+      id: "glinda",
       peau: "#f8dcc0", cheveux: "queue", couleurCheveux: "#e8b84b",
       haut: "#16255c", bas: "#16255c", jupe: "#ffffff", pompons: "#ffffff",
       accessoire: "noeud", couleurAccessoire: "#16255c", bouche: "sourire-large",
@@ -344,10 +348,12 @@ const MOTIFS = [
   },
   {
     id: "elias",
+    dossier: "personnages",
     nom: "Elias",
     famille: "Le casting",
     fond: "#e2e6f8",
     svg: persoSVG({
+      id: "elias",
       peau: "#f0c39a", cheveux: "court", couleurCheveux: "#2b1a2e",
       haut: "#6672d0", bas: "#2f3550", accessoire: "lunettes",
       bouche: "neutre", regard: "face",
@@ -355,20 +361,24 @@ const MOTIFS = [
   },
   {
     id: "eoghan",
+    dossier: "personnages",
     nom: "Eoghan",
     famille: "Le casting",
     fond: "#ddf6e2",
     svg: persoSVG({
+      id: "eoghan",
       peau: "#f0c39a", cheveux: "boucle", couleurCheveux: "#c98a3a",
       haut: "#00b32d", bas: "#2f3550", bouche: "sourire-large", regard: "face",
     }),
   },
   {
     id: "boq",
+    dossier: "personnages",
     nom: "Boq",
     famille: "Le casting",
     fond: "#fff3d6",
     svg: persoSVG({
+      id: "boq",
       peau: "#f8dcc0", cheveux: "frange", couleurCheveux: "#4a2c17",
       haut: "#ffd84d", bas: "#6b4a8a", bouche: "o", regard: "droite",
       pose: "bras-leves",
@@ -376,10 +386,12 @@ const MOTIFS = [
   },
   {
     id: "mads",
+    dossier: "personnages",
     nom: "Mads Prout",
     famille: "Le casting",
     fond: "#ffe1de",
     svg: persoSVG({
+      id: "mads",
       peau: "#d99a6c", cheveux: "crete", couleurCheveux: "#b03a3a",
       haut: "#e03131", bas: "#1b1b22", accessoire: "lunettes",
       bouche: "sourire-large", regard: "face",
@@ -387,30 +399,36 @@ const MOTIFS = [
   },
   {
     id: "mamie",
+    dossier: "personnages",
     nom: "Mamie",
     famille: "Le casting",
     fond: "#f6e4ef",
     svg: persoSVG({
+      id: "mamie",
       peau: "#f0c39a", cheveux: "boucle", couleurCheveux: "#d8d2c4",
       haut: "#b3477a", bas: "#6b4a8a", accessoire: "lunettes", bouche: "sourire",
     }),
   },
   {
     id: "nils",
+    dossier: "personnages",
     nom: "Nils",
     famille: "Ceux qui te courent après",
     fond: "#e6e6ee",
     svg: persoSVG({
+      id: "nils",
       peau: "#f3ddcb", cheveux: "frange", couleurCheveux: "#e8b84b",
       haut: "#22222a", bas: "#15151b", bouche: "neutre", regard: "gauche",
     }),
   },
   {
     id: "elphie",
+    dossier: "personnages",
     nom: "Elphie",
     famille: "Ceux qui te courent après",
     fond: "#dceee6",
     svg: persoSVG({
+      id: "elphie",
       peau: "#7a4a2b", cheveux: "long", couleurCheveux: "#1e1218",
       haut: "#2e7d5b", bas: "#1f2b3a", accessoire: "serretete",
       couleurAccessoire: "#e8b84b", bouche: "neutre", regard: "face",
@@ -420,6 +438,7 @@ const MOTIFS = [
   /* --- Le bestiaire : tout ce qui sert d'ennemi ailleurs sur le site --- */
   {
     id: "gris",
+    dossier: "creatures",
     nom: "Petit gris",
     famille: "Ce qui rôde",
     fond: "#e6f5d6",
@@ -427,6 +446,7 @@ const MOTIFS = [
   },
   {
     id: "ovni",
+    dossier: "creatures",
     nom: "Un ovni",
     famille: "Ce qui rôde",
     fond: "#e2effb",
@@ -434,6 +454,7 @@ const MOTIFS = [
   },
   {
     id: "silhouette",
+    dossier: "creatures",
     nom: "La chose des bois",
     famille: "Ce qui rôde",
     fond: "#dfeade",
@@ -441,6 +462,7 @@ const MOTIFS = [
   },
   {
     id: "oeil",
+    dossier: "creatures",
     nom: "L'œil du ciel",
     famille: "Ce qui rôde",
     fond: "#e0f0f8",
@@ -448,6 +470,7 @@ const MOTIFS = [
   },
   {
     id: "chevre",
+    dossier: "creatures",
     nom: "La chèvre suspecte",
     famille: "Ce qui rôde",
     fond: "#f2efe4",
@@ -455,6 +478,7 @@ const MOTIFS = [
   },
   {
     id: "ombre",
+    dossier: "creatures",
     nom: "L'ombre du couloir",
     famille: "Ce qui rôde",
     fond: "#e4e0ec",
@@ -462,6 +486,7 @@ const MOTIFS = [
   },
   {
     id: "pennywise",
+    dossier: "creatures",
     nom: "Pennywise",
     famille: "Ce qui rôde",
     fond: "#ffe6dc",
@@ -469,6 +494,7 @@ const MOTIFS = [
   },
   {
     id: "slenderman",
+    dossier: "creatures",
     nom: "Slenderman",
     famille: "Ce qui rôde",
     fond: "#e8e8ec",
@@ -476,6 +502,7 @@ const MOTIFS = [
   },
   {
     id: "cafard",
+    dossier: "creatures",
     nom: "Cafard du campus",
     famille: "Ceux qui te courent après",
     fond: "#efe4d6",
@@ -483,6 +510,7 @@ const MOTIFS = [
   },
   {
     id: "oiseau",
+    dossier: "creatures",
     nom: "Oiseau mal intentionné",
     famille: "Ceux qui te courent après",
     fond: "#e4ecf2",
@@ -490,6 +518,7 @@ const MOTIFS = [
   },
   {
     id: "lutin",
+    dossier: "creatures",
     nom: "Lutin de la fac",
     famille: "Ceux qui te courent après",
     fond: "#e4f2dd",
@@ -497,6 +526,7 @@ const MOTIFS = [
   },
   {
     id: "ange",
+    dossier: "creatures",
     nom: "L'ange exact",
     famille: "Ce qui rôde",
     fond: "#fdf3d8",
@@ -504,6 +534,7 @@ const MOTIFS = [
   },
   {
     id: "toto",
+    dossier: "creatures",
     nom: "Toto",
     famille: "Ce qui rôde",
     fond: "#e2f5e6",
@@ -513,6 +544,7 @@ const MOTIFS = [
   /* --- Les objets qui traînent d'un jeu à l'autre ---------------------- */
   {
     id: "camion",
+    dossier: "objets",
     nom: "Le camion vert",
     famille: "Pièces à conviction",
     fond: "#dff0e2",
@@ -520,6 +552,7 @@ const MOTIFS = [
   },
   {
     id: "pompon",
+    dossier: "objets",
     nom: "Un pompon",
     famille: "Pièces à conviction",
     fond: "#e6f0ff",
@@ -527,6 +560,7 @@ const MOTIFS = [
   },
   {
     id: "carnet",
+    dossier: "objets",
     nom: "Le carnet à complots",
     famille: "Pièces à conviction",
     fond: "#f7f0dd",
@@ -534,6 +568,7 @@ const MOTIFS = [
   },
   {
     id: "telephone",
+    dossier: "objets",
     nom: "Un téléphone",
     famille: "Pièces à conviction",
     fond: "#e3f2ff",
@@ -541,6 +576,7 @@ const MOTIFS = [
   },
   {
     id: "tomate",
+    dossier: "objets",
     nom: "Une tomate",
     famille: "Pièces à conviction",
     fond: "#ffe3e0",
@@ -548,6 +584,7 @@ const MOTIFS = [
   },
   {
     id: "pizza",
+    dossier: "objets",
     nom: "Une part de pizza",
     famille: "Pièces à conviction",
     fond: "#fdeed2",
@@ -555,6 +592,7 @@ const MOTIFS = [
   },
   {
     id: "ballon",
+    dossier: "objets",
     nom: "Un ballon rouge",
     famille: "Pièces à conviction",
     fond: "#ffe0e4",
@@ -562,6 +600,7 @@ const MOTIFS = [
   },
   {
     id: "vhs",
+    dossier: "objets",
     nom: "Une cassette",
     famille: "Pièces à conviction",
     fond: "#e4e2ec",
@@ -569,6 +608,7 @@ const MOTIFS = [
   },
   {
     id: "coeur",
+    dossier: "objets",
     nom: "Un cœur",
     famille: "Pièces à conviction",
     fond: "#ffe2f0",
@@ -576,6 +616,7 @@ const MOTIFS = [
   },
   {
     id: "champignon",
+    dossier: "objets",
     nom: "Un champignon",
     famille: "Pièces à conviction",
     fond: "#ffe6e0",
@@ -583,6 +624,7 @@ const MOTIFS = [
   },
   {
     id: "trophee",
+    dossier: "objets",
     nom: "Le trophée",
     famille: "Pièces à conviction",
     fond: "#fff2cf",
@@ -590,6 +632,7 @@ const MOTIFS = [
   },
   {
     id: "gobelet",
+    dossier: "objets",
     nom: "Un gobelet",
     famille: "Pièces à conviction",
     fond: "#e6f6ea",

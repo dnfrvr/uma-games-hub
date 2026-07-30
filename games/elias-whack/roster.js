@@ -134,49 +134,49 @@ const AMIS = {
 
 /* --- À taper : tout ce qui est (peut-être) une vraie menace ------------- */
 const CIBLES = [
-  { id: "gris", svg: DESSINS.gris, nom: "Petit gris générique", points: 100,
+  { id: "gris", dossier: "creatures", svg: DESSINS.gris, nom: "Petit gris générique", points: 100,
     replique: "Un petit gris. J'AI DES PREUVES maintenant.",
     repliques: [
       "Encore un gris.",
       "Celui-là avait mon adresse.",
     ] },
-  { id: "ovni", svg: DESSINS.ovni, nom: "Ovni de tourisme", points: 120,
+  { id: "ovni", dossier: "creatures", svg: DESSINS.ovni, nom: "Ovni de tourisme", points: 120,
     replique: "L'ovni est reparti.",
     repliques: [
       "Une soucoupe. En 2026. Ils ne se cachent même plus.",
       "Il clignotait en morse.",
     ] },
-  { id: "silhouette", svg: DESSINS.silhouette, nom: "Silhouette floue dans les bois", points: 100,
+  { id: "silhouette", dossier: "creatures", svg: DESSINS.silhouette, nom: "Silhouette floue dans les bois", points: 100,
     replique: "La chose des bois.",
     repliques: [
       "Elle était floue même de près.",
       "Les arbres bougeaient pas. Elle, si.",
     ] },
-  { id: "oeil", svg: DESSINS.oeil, nom: "Œil géant dans le ciel", points: 150,
+  { id: "oeil", dossier: "creatures", svg: DESSINS.oeil, nom: "Œil géant dans le ciel", points: 150,
     replique: "L'œil m'a vu.",
     repliques: [
       "Il a cligné. UN ŒIL DE CIEL QUI CLIGNE.",
       "Je lui ai rendu son regard.",
     ] },
-  { id: "chevre", svg: DESSINS.chevre, nom: "Chèvre suspecte", points: 130,
+  { id: "chevre", dossier: "creatures", svg: DESSINS.chevre, nom: "Chèvre suspecte", points: 130,
     replique: "Cette chèvre me suit depuis mardi.",
     repliques: [
       "Une chèvre avec des pupilles pareilles, non merci.",
       "Elle connaissait mon prénom. Une chèvre.",
     ] },
-  { id: "ombre", svg: DESSINS.ombre, nom: "Ombre humanoïde du couloir", points: 110,
+  { id: "ombre", dossier: "creatures", svg: DESSINS.ombre, nom: "Ombre humanoïde du couloir", points: 110,
     replique: "L'ombre du couloir. Réglé.",
     repliques: [
       "Elle n'avait pas de source lumineuse. AUCUNE.",
       "Trois semaines qu'elle traînait devant ma porte.",
     ] },
-  { id: "pennywise", svg: DESSINS.clown, nom: "Pennywise", points: 200,
+  { id: "pennywise", dossier: "creatures", svg: DESSINS.clown, nom: "Pennywise", points: 200,
     replique: "PENNYWISE. Je rentre plus à pied.",
     repliques: [
       "Le clown. LE clown.",
       "Il m'a proposé un ballon.",
     ] },
-  { id: "slenderman", svg: DESSINS.grandType, nom: "Slenderman", points: 180,
+  { id: "slenderman", dossier: "creatures", svg: DESSINS.grandType, nom: "Slenderman", points: 180,
     replique: "Slenderman. Huit pages, mon œil.",
     repliques: [
       "Pas de visage, costume impeccable.",
@@ -186,13 +186,13 @@ const CIBLES = [
 
 /* --- À NE PAS taper : ses proches et sa vie quotidienne ----------------- */
 const PIEGES = [
-  { id: "toto", svg: DESSINS.toto, nom: "Toto, le perroquet d'Elias",
+  { id: "toto", dossier: "creatures", svg: DESSINS.toto, nom: "Toto, le perroquet d'Elias",
     replique: "…c'était Toto. Et il va le répéter à tout le monde.",
     repliques: [
       "Toto ! Il criait « DERRIÈRE TOI », aussi.",
       "Mon propre perroquet.",
     ] },
-  { id: "mamie", svg: persoSVG({
+  { id: "mamie", dossier: "personnages", svg: persoSVG({
       peau: "#f0c39a", cheveux: "boucle", couleurCheveux: "#d8d2c4",
       haut: "#b3477a", bas: "#6b4a8a", accessoire: "lunettes", bouche: "sourire",
     }), nom: "Sa grand-mère",
@@ -201,25 +201,25 @@ const PIEGES = [
       "Elle m'apportait de la soupe. DE LA SOUPE.",
       "Mamie. Devant témoins.",
     ] },
-  { id: "pizza", svg: DESSINS.pizza, nom: "Une pizza",
+  { id: "pizza", dossier: "objets", svg: DESSINS.pizza, nom: "Une pizza",
     replique: "J'ai tapé une pizza.",
     repliques: [
       "C'était mon dîner.",
       "Une quatre fromages. Je m'en voudrai longtemps.",
     ] },
-  { id: "drew", svg: AMIS.drew, nom: "Drew",
+  { id: "drew", dossier: "personnages", svg: AMIS.drew, nom: "Drew",
     replique: "Pardon Drew. Je croyais que c'était ta veste, le monstre.",
     repliques: [
       "Drew ! Bon, avec cette tenue…",
       "Désolé Drew.",
     ] },
-  { id: "eoghan", svg: AMIS.eoghan, nom: "Eoghan",
+  { id: "eoghan", dossier: "personnages", svg: AMIS.eoghan, nom: "Eoghan",
     replique: "Eoghan ! Arrête de surgir des trous, aussi.",
     repliques: [
       "Qu'est-ce qu'il fait dans un trou, lui, franchement.",
       "Eoghan. Encore.",
     ] },
-  { id: "glinda", svg: AMIS.glinda, nom: "Glinda",
+  { id: "glinda", dossier: "personnages", svg: AMIS.glinda, nom: "Glinda",
     replique: "J'ai tapé Glinda. Je suis un homme mort.",
     repliques: [
       "Toute l'école le saura avant midi.",

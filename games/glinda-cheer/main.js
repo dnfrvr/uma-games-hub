@@ -265,6 +265,7 @@ function construitFoule() {
 const MARINE = "#16255c";
 
 const GLINDA = {
+  id: "glinda",
   peau: "#f8dcc0",
   cheveux: "queue",
   couleurCheveux: "#e8b84b",
@@ -289,6 +290,7 @@ const POSES_GLINDA = {
    d'Augusta. Il suit la même pose que Glinda avec un temps de retard, ce qui
    suffit à faire une chorégraphie à deux. */
 const COPINE = {
+  id: "camarade",
   peau: "#f6dcc4",
   cheveux: "long",
   couleurCheveux: "#f0d68a",

@@ -229,7 +229,11 @@ const HUMEUR_PALIER = ["calme", "inquiet", "tendu", "panique"];
 let reactionEnCours = null;
 
 function dessineElias(humeur) {
-  elements.avatar.innerHTML = persoSVG({ ...ELIAS, ...HUMEURS[humeur] });
+  /* `asset` demande le visage correspondant à l'humeur ; sans fichier déposé
+     la cascade retombe sur « elias », puis sur le dessin. */
+  elements.avatar.innerHTML = persoSVG({
+    ...ELIAS, ...HUMEURS[humeur], id: "elias", asset: "elias-" + humeur,
+  });
   elements.avatar.dataset.humeur = humeur;
 }
 
@@ -374,7 +378,12 @@ function apparait() {
 
   const trou = trous[index];
   trou.occupant = { ...modele, piege: estPiege };
-  trou.habitant.innerHTML = modele.svg;
+  /* `dossier` vient de roster.js et dit dans quelle famille d'images chercher.
+     Sans image déposée, umaDessin rend le SVG d'origine. */
+  trou.habitant.innerHTML =
+    modele.dossier && typeof umaDessin === "function"
+      ? umaDessin(modele.dossier, modele.id, modele.svg)
+      : modele.svg;
   trou.habitant.title = modele.nom;
   trou.el.classList.add("occupe", estPiege ? "piege" : "cible");
 

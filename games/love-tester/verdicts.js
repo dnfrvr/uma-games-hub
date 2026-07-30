@@ -26,6 +26,7 @@ const DONNEES_LOVE = {
       nom: "Drew",
       mention: "Dress my Drew",
       look: {
+        id: "drew",
         peau: "#f8dcc0", cheveux: "long", couleurCheveux: "#8a5a2b",
         haut: "#aa6caa", bas: "#3a2b4e", bouche: "sourire", regard: "face",
       },
@@ -34,6 +35,7 @@ const DONNEES_LOVE = {
       nom: "Glinda",
       mention: "Pep Rally Rhythm",
       look: {
+        id: "glinda",
         peau: "#f8dcc0", cheveux: "queue", couleurCheveux: "#e8b84b",
         haut: "#16255c", bas: "#16255c", jupe: "#ffffff", pompons: "#ffffff",
         accessoire: "noeud", couleurAccessoire: "#16255c", bouche: "sourire-large",
@@ -43,6 +45,7 @@ const DONNEES_LOVE = {
       nom: "Elias",
       mention: "Sanity Whack",
       look: {
+        id: "elias",
         peau: "#f0c39a", cheveux: "court", couleurCheveux: "#2b1a2e",
         haut: "#6672d0", bas: "#2f3550", accessoire: "lunettes",
         bouche: "neutre", regard: "face",
@@ -52,6 +55,7 @@ const DONNEES_LOVE = {
       nom: "Eoghan",
       mention: "Kiss & Cache",
       look: {
+        id: "eoghan",
         peau: "#f0c39a", cheveux: "boucle", couleurCheveux: "#c98a3a",
         haut: "#00b32d", bas: "#2f3550", bouche: "sourire-large", regard: "face",
       },
@@ -60,6 +64,7 @@ const DONNEES_LOVE = {
       nom: "Nils",
       mention: "UMA Bros",
       look: {
+        id: "nils",
         peau: "#f3ddcb", cheveux: "frange", couleurCheveux: "#e8b84b",
         haut: "#22222a", bas: "#15151b", bouche: "neutre", regard: "gauche",
       },
@@ -68,6 +73,7 @@ const DONNEES_LOVE = {
       nom: "Elphie",
       mention: "UMA Bros",
       look: {
+        id: "elphie",
         peau: "#7a4a2b", cheveux: "long", couleurCheveux: "#1e1218",
         haut: "#2e7d5b", bas: "#1f2b3a", accessoire: "serretete",
         couleurAccessoire: "#e8b84b", bouche: "neutre", regard: "face",
@@ -80,6 +86,7 @@ const DONNEES_LOVE = {
       nom: "Boq",
       mention: "il attend toujours",
       look: {
+        id: "boq",
         peau: "#f3ddcb", cheveux: "frange", couleurCheveux: "#8a5a2b",
         haut: "#3f7d3f", bas: "#6b4a2b", bouche: "o", regard: "droite",
       },
@@ -88,6 +95,7 @@ const DONNEES_LOVE = {
       nom: "Mads Prout",
       mention: "l'ennemi",
       look: {
+        id: "mads",
         peau: "#f0c39a", cheveux: "chauve", couleurCheveux: "#7a4a2b",
         haut: "#8b1e3f", bas: "#2b1a2e", accessoire: "lunettes",
         bouche: "sourire-large", regard: "face",

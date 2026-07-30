@@ -60,6 +60,37 @@ const COIFFURE_EXTRAS = {
 
 function persoSVG(options) {
   const o = options || {};
+
+  /* --- La charnière vers les vraies illustrations ----------------------
+     `id` est optionnel et ne change RIEN quand aucune image n'est déposée :
+     `umaDessin` rend alors le SVG calculé plus bas. Mais quand
+     `assets/personnages/<id>.png` existe, c'est lui qui s'affiche.
+
+     C'est ici que ça se branche, et pas dans chaque jeu, parce que cette
+     fabrique dessine TOUS les personnages du portail : un seul point de
+     passage suffit donc à convertir Drew partout à la fois — dans son jeu
+     d'habillage, dans UMA Bros, dans Memory, dans Sanity Whack et dans le
+     Love Tester.
+
+     Deux champs, et pas un seul, parce que `pose` ne peut PAS servir de clé :
+     son vocabulaire est celui du dessin (« pompons-gauche », « bras-leves »)
+     et il est réutilisé pour des choses différentes d'un jeu à l'autre — la
+     pose « bras-leves » sert au saut de Glinda ET à la fanfaronnade de Mads.
+     En déduire un nom de fichier reviendrait à deviner, et le fichier déposé
+     ne serait jamais trouvé.
+
+       id    : le personnage      → « eoghan »
+       asset : la variante voulue → « eoghan-accroupi »
+
+     `asset` est facultatif : sans lui c'est le dessin de base. Et la cascade
+     de shared/images.js fait qu'un `eoghan.png` seul répond déjà à
+     « eoghan-accroupi ». Un fichier par personnage donne donc un résultat
+     visible partout, les variantes ne font qu'affiner ensuite. */
+  if ((o.asset || o.id) && typeof umaDessin === "function") {
+    const image = umaDessin("personnages", o.asset || o.id, "", { classe: "perso-img" });
+    if (image) return image;
+  }
+
   const peau = o.peau || PEAUX[0];
   const couleurCheveux = o.couleurCheveux || CHEVEUX_COULEURS[0];
   const haut = o.haut || "#ff6b9d";

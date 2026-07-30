@@ -90,6 +90,7 @@ const PHYSIQUE = {
    changent que ce qui bouge. */
 const GLINDA = {
   base: {
+    id: "glinda",
     peau: "#f8dcc0",
     cheveux: "queue",
     couleurCheveux: "#e8b84b",
@@ -111,6 +112,7 @@ const GLINDA = {
 /* Boq court derrière, téléphone brandi. Il ne veut pas de mal — c'est bien
    le problème : il veut PARLER. */
 const BOQ = {
+  id: "boq",
   peau: "#f0c39a",
   cheveux: "frange",
   couleurCheveux: "#8a5a2b",

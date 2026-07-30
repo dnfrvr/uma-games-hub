@@ -114,6 +114,12 @@
     <div id="pied"></div>
   </div>
 
+  <!-- Les vraies illustrations si elles existent, les SVG sinon.
+       `assets/index.js` est écrit par `node outils/scan-assets.js` ;
+       absent ou vide, tout retombe sur les dessins. Ces deux lignes
+       passent AVANT les scripts du jeu, qui dessinent au chargement. -->
+  <script src="assets/index.js"></script>
+  <script src="shared/images.js"></script>
   <script src="shared/favoris.js"></script>
   <script src="shared/sparkle.js"></script>
   <script src="shared/navbar.js"></script>
