@@ -13,14 +13,33 @@ images, il fait le reste.
 
 ## 1. La façon paresseuse : l'atelier
 
+### Y accéder
+
 ```bash
+cd C:/Users/Proprietaire/Documents/Projets/Misc/uma-games-hub
 node outils/atelier.js
 ```
 
-Ouvre l'adresse affichée, **jette tes images dans la grande zone**, c'est fini.
-L'atelier les reconnaît par leur nom, vérifie le ratio, les renomme, les range
-dans le bon dossier et régénère l'index. Aucune commande ensuite, aucun fichier
-à renommer à la main.
+Puis ouvrir dans Chrome :
+
+**http://127.0.0.1:8770/outils/atelier.html**
+
+Le serveur affiche l'adresse au démarrage, il n'y a qu'à la copier.
+`http://127.0.0.1:8770/` tout court redirige aussi vers l'atelier.
+
+| | |
+|---|---|
+| **Laisser le terminal ouvert** | c'est lui qui écrit sur le disque. `Ctrl+C` pour arrêter. |
+| **Le site est servi par le même serveur** | `http://127.0.0.1:8770/index.html` donne le hub — pratique pour aller voir un dessin en jeu juste après l'avoir déposé, sans lancer un second serveur. |
+| **Port déjà pris ?** | le message le dit et propose `PORT=8771 node outils/atelier.js`. |
+| **Ne marche pas en `file://`** | c'est le serveur qui range les fichiers, pas la page. Il faut passer par l'adresse ci-dessus. |
+| **Aucune installation** | du Node pur, aucune dépendance. |
+
+### S'en servir
+
+**Jette tes images dans la grande zone**, c'est fini. L'atelier les reconnaît
+par leur nom, vérifie le ratio, les renomme, les range dans le bon dossier et
+régénère l'index. Aucune commande ensuite, aucun fichier à renommer à la main.
 
 Ce qu'il fait pour toi :
 

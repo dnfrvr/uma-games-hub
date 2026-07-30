@@ -325,6 +325,9 @@ node outils/test-jeux.js          # 59 vérifications de règles, sans navigateu
 node outils/test-collisions.js    # aucun nom de classe partagé coque ↔ jeux
 node outils/test-assets.js        # 79 vérifications de la chaîne d'images
 node outils/scan-assets.js        # indexe les illustrations déposées
+node outils/atelier.js            # l'atelier des illustrations, puis ouvrir
+                                  #   http://127.0.0.1:8770/outils/atelier.html
+                                  #   (il sert aussi le site : / donne le hub)
 ```
 Note : `http.server` est **mono-thread**. Il suffit pour jouer, mais il se bloque
 dès qu'on charge plusieurs pages en parallèle (banc d'essai qui ouvre des iframes
@@ -458,7 +461,10 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
 un fichier au bon nom suffit à le voir en jeu — aucun code à toucher.
 
 ```bash
-node outils/atelier.js                # L'ATELIER : jeter les images, c'est tout
+node outils/atelier.js                # L'ATELIER, puis ouvrir l'adresse ci-dessous
+#   → http://127.0.0.1:8770/outils/atelier.html
+#   (le serveur l'affiche au démarrage ; laisser le terminal ouvert, c'est lui
+#    qui écrit sur le disque. Ne marche pas en file://. PORT=8771 si port pris.)
 node outils/scan-assets.js --liste    # à la main : ce qu'il y a à produire
 node outils/scan-assets.js --manque   # ce qui reste
 node outils/scan-assets.js            # indexe ce qui est déposé
