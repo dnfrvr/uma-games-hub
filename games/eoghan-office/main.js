@@ -233,7 +233,7 @@ function demarre(decor) {
   etat.prochainGimmick = etat.dernierTemps + (decor.gimmick === "flash" ? 10000 : 20000);
 
   elements.ecran.classList.remove("visible");
-  commente("Vas-y. Discrètement. Enfin, essaie.");
+  commente("Vas-y. Discrètement.");
   majTableau();
 
   cancelAnimationFrame(etat.boucle);
@@ -348,7 +348,7 @@ function boucle(maintenant) {
   const restant = Math.max(0, (etat.finChrono - maintenant) / 1000);
   elements.chrono.textContent = restant.toFixed(1) + " s";
   if (restant <= 0) {
-    termine("Temps écoulé", "La soirée continue sans toi. Eoghan aussi, mais plus lentement.", false);
+    termine("Temps écoulé", "La soirée continue sans toi.", false);
     return;
   }
 
@@ -837,7 +837,7 @@ function avanceDouche(dt) {
     poseActeur(etat.eoghan.el, etat.eoghan.x, etat.eoghan.plan, etat.eoghan.dir);
     if (etat.bisou) {
       annuleBisou();
-      commente("Poussé par le groupe. Eoghan garde sa dignité. À peu près.");
+      commente("Poussé par le groupe.");
     }
   }
 
@@ -974,7 +974,7 @@ function construitMenu() {
 }
 
 $("btn-stop").addEventListener("click", () => {
-  termine("Partie abandonnée", "Eoghan rentre se coucher. Il repassera.", false);
+  termine("Partie abandonnée", "Eoghan rentre se coucher.", false);
 });
 
 construitMenu();

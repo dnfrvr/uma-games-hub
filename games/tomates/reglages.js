@@ -134,8 +134,8 @@ const MANCHES = [
     id: "tréteau",
     nom: "Le petit tréteau",
     boniment:
-      "Il monte sur scène, il salue, il ne bouge pas d'un pouce. " +
-      "Prends tes repères, champion.",
+      "Il monte sur scène, il salue et il ne bouge plus. " +
+      "Prends tes repères.",
     centre: 118,
     amplitude: 0,
     periode: 6,
@@ -154,7 +154,7 @@ const MANCHES = [
     id: "gigote",
     nom: "Il commence à gigoter",
     boniment:
-      "Un tonneau, et Monsieur se met à faire les cent pas. " +
+      "Un tonneau, et il se met à faire les cent pas. " +
       "Vise où il SERA, pas où il est.",
     centre: 118,
     amplitude: 10,
@@ -175,7 +175,7 @@ const MANCHES = [
     nom: "Derrière les fûts",
     boniment:
       "Il a repéré le tonneau et il compte s'en servir. " +
-      "Le vent se lève, aussi.",
+      "Le vent se lève.",
     centre: 120,
     amplitude: 14,
     periode: 5.1,
@@ -197,8 +197,8 @@ const MANCHES = [
     id: "esquive",
     nom: "La grande esquive",
     boniment:
-      "Trois planques, un vent de travers et un aperçu qui ne dit plus " +
-      "grand-chose. Bon courage.",
+      "Trois planques, un vent de travers, et un aperçu de trajectoire " +
+      "très court.",
     centre: 120,
     amplitude: 18,
     periode: 4.8,
@@ -221,8 +221,8 @@ const MANCHES = [
     id: "final",
     nom: "Le clou du spectacle",
     boniment:
-      "Dernière manche. Il court, il se planque, il fanfaronne à peine " +
-      "une seconde. C'est là qu'il faut le prendre.",
+      "Dernière manche. Il court, il se planque, et il ne fanfaronne " +
+      "qu'une seconde.",
     centre: 120,
     amplitude: 22,
     periode: 4.6,
@@ -273,58 +273,58 @@ const BAREME = {
 const REPLIQUES = {
   nargue: [
     "Vous visez comme vous chantez.",
-    "Je suis là. Depuis tout à l'heure. Immobile.",
+    "Je suis là, immobile, depuis tout à l'heure.",
     "Mon costume est neuf, faites attention.",
     "On m'a promis un public, pas des amateurs.",
-    "Allez-y, je vous attends. J'ai tout mon temps.",
-    "Personne ne m'a jamais touché. Personne.",
+    "Allez-y, je vous attends.",
+    "Personne ne m'a jamais touché.",
   ],
   planque: [
     "Ce tonneau et moi, c'est une longue histoire.",
-    "Ce n'est pas se cacher, c'est de la mise en scène.",
+    "J'appelle ça de la mise en scène.",
     "Je me repoudre, deux secondes.",
-    "Tactique. Ça s'appelle de la tactique.",
+    "C'est de la tactique.",
   ],
   touche: [
     "MON COSTUME !",
     "C'était du bio, au moins ?",
     "Non mais ça va pas la tête ?!",
     "J'ai des avocats, moi, monsieur.",
-    "Je sens la ratatouille, c'est atroce.",
-    "Bon. Une. Une seule. Ça ne compte pas.",
+    "Je sens la ratatouille.",
+    "Une seule. Ça ne compte pas.",
   ],
   tete: [
     "EN PLEINE POIRE !",
     "Mes lunettes ! MES LUNETTES !",
     "J'ai vu ma vie défiler, et elle était rouge.",
-    "Là, franchement, c'était bien joué. Je le reconnais.",
+    "Là, c'était bien joué.",
   ],
   abri: [
     "Le tonneau vous remercie.",
-    "Vous avez tué un fût. Bravo.",
-    "Il faudra viser plus haut. Beaucoup plus haut.",
+    "Vous avez tué un fût.",
+    "Il faudra viser plus haut.",
     "La caisse n'avait rien demandé.",
   ],
   rate: [
-    "L'herbe non plus n'avait rien demandé.",
-    "Trop court. Encore trop court.",
+    "L'herbe n'avait rien demandé.",
+    "Trop court.",
     "Vous l'avez envoyée au Canada, celle-là.",
     "J'ai à peine eu à bouger.",
-    "Le vent, sûrement. Toujours le vent.",
+    "Le vent, sûrement.",
   ],
   mancheGagnee: [
     "C'est un coup de chance. Un long coup de chance.",
-    "Bon. La suivante sera plus difficile, croyez-moi.",
-    "Je vous laisse gagner. C'est de la générosité.",
+    "La suivante sera plus difficile.",
+    "Je vous laisse gagner.",
   ],
   mancheRatee: [
-    "Voilà. Le cageot est vide et moi je suis impeccable.",
-    "On se calme, on rentre chez soi, on s'entraîne.",
-    "Merci d'être venus. Vraiment. C'était touchant.",
+    "Le cageot est vide et moi je suis impeccable.",
+    "Rentrez chez vous et entraînez-vous.",
+    "Merci d'être venus.",
   ],
   victoire: [
     "Je démissionne. Je pars. J'ouvre une jardinerie.",
-    "Très bien. VOUS AVEZ GAGNÉ. Vous êtes contents ?",
+    "Très bien. VOUS AVEZ GAGNÉ.",
     "Je vous en veux, mais avec beaucoup d'élégance.",
   ],
 };

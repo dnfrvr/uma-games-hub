@@ -119,8 +119,8 @@ const DONNEES_LOVE = {
       titre: "La machine a fait un bruit inquiétant",
       textes: [
         "J'ai recommencé trois fois. La troisième, l'aiguille est partie dans l'autre sens.",
-        "Ces deux prénoms ne devraient pas être saisis dans la même machine. Je préviens la direction.",
-        "Le résultat est négatif. Ce n'est même pas censé exister sur mon cadran.",
+        "Ces deux prénoms ne devraient pas être saisis dans la même machine.",
+        "Le résultat est négatif.",
       ],
     },
     {
@@ -128,18 +128,18 @@ const DONNEES_LOVE = {
       cran: "Non",
       titre: "Non.",
       textes: [
-        "Vous pouvez rester dans la même pièce. Pas trop longtemps.",
+        "Vous pouvez rester dans la même pièce.",
         "Il y a une étincelle. C'est un court-circuit, mais c'est une étincelle.",
-        "Techniquement possible. Techniquement, sauter du toit aussi.",
+        "Ça peut marcher.",
       ],
     },
     {
       min: 25,
       cran: "Amis",
-      titre: "Amis. Vraiment amis.",
+      titre: "Amis, et rien de plus",
       textes: [
-        "Amitié solide, romance nulle. C'est déjà beaucoup, ne gâchez pas tout.",
-        "Vous vous prêtez vos notes de cours. N'allez pas plus loin.",
+        "Amitié solide, romance nulle.",
+        "Vous vous prêtez vos notes de cours.",
         "Le genre de duo qui se raconte tout, y compris ses rendez-vous ratés avec d'autres.",
       ],
     },
@@ -148,9 +148,9 @@ const DONNEES_LOVE = {
       cran: "Peut-être",
       titre: "Ça dépend des jours",
       textes: [
-        "Pile au milieu. Une machine a le droit d'hésiter, elle aussi.",
-        "Ça marche les jours pairs. Vérifiez le calendrier avant de vous déclarer.",
-        "Cinquante-cinquante : exactement le suspense qu'il faut pour un mauvais film.",
+        "Pile au milieu.",
+        "Ça marche les jours pairs.",
+        "Cinquante-cinquante.",
       ],
     },
     {
@@ -159,8 +159,8 @@ const DONNEES_LOVE = {
       titre: "Il se passe quelque chose",
       textes: [
         "Il se passe un truc. Tout le monde l'a remarqué sauf vous deux.",
-        "Bonne nouvelle : ça tient. Mauvaise nouvelle : le campus a déjà parié dessus.",
-        "L'aiguille a tremblé vers le haut. Elle ne tremble pas pour rien.",
+        "Ça tient. Le campus a déjà parié dessus.",
+        "L'aiguille a tremblé vers le haut.",
       ],
     },
     {
@@ -169,7 +169,7 @@ const DONNEES_LOVE = {
       titre: "C'est très sérieux",
       textes: [
         "Prévoyez un anniversaire commun et une playlist partagée.",
-        "À ce niveau-là on ne parle plus de coup de cœur, mais de dossier administratif.",
+        "C'est plus qu'un coup de cœur.",
         "Je recommande d'y aller. Je ne recommande jamais rien, alors profitez-en.",
       ],
     },
@@ -179,7 +179,7 @@ const DONNEES_LOVE = {
       titre: "Alerte rouge : c'est le destin",
       textes: [
         "J'ai grillé deux voyants et je ne regrette rien.",
-        "C'est écrit. C'est écrit en grand, en rose, et ça clignote.",
+        "C'est écrit en grand, en rose, et ça clignote.",
         "Mariez-vous. Je serai témoin, j'ai déjà le nœud papillon.",
       ],
     },
@@ -213,7 +213,7 @@ const DONNEES_LOVE = {
       commentaires: [
         "vous ne riez jamais aux mêmes blagues",
         "un fou rire par trimestre",
-        "vous finissez les phrases de l'autre, c'en est agaçant",
+        "vous finissez les phrases de l'autre",
       ],
     },
     {
@@ -247,19 +247,19 @@ const DONNEES_LOVE = {
   /* Tout le monde tape deux fois le même prénom au bout de trois essais.
      Autant que la machine ait quelque chose à en dire. */
   AUTO_TEST:
-    "Tu as saisi deux fois le même prénom. Je note ça dans le dossier, et je " +
-    "confirme le résultat : personne ne se connaît mieux que soi-même.",
+    "Tu as saisi deux fois le même prénom. Le résultat est de 100 %, " +
+    "forcément.",
 
   /* La petite ligne sous le cadran, celle qui décrédibilise tout le reste. */
   MENTIONS: [
     "La machine ne se trompe jamais. Elle a été vérifiée en 2009.",
-    "Résultat garanti identique à chaque essai. Inutile d'insister.",
+    "Résultat identique à chaque essai.",
     "Aucun prénom n'a été blessé pendant l'analyse.",
     "Les réclamations se font auprès du club d'échecs de la fac.",
-    "Ce verdict n'a aucune valeur juridique. Aucune.",
-    "Testé sur 4 000 lycéens parfaitement consentants.",
+    "Ce verdict n'a aucune valeur juridique.",
+    "Testé sur 4 000 lycéens.",
     "En cas de désaccord avec le résultat, c'est vous qui avez tort.",
-    "Inverser les deux prénoms ne change rien. Essayez, pour voir.",
+    "Inverser les deux prénoms ne change rien.",
   ],
 
   /* =========================================================

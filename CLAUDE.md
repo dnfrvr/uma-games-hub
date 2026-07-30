@@ -393,6 +393,24 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
       de @glindatheverygood, le SoundCloud de @eoghanmasuda, l'appel à témoins
       sur les disparitions) mélangés aux réclames maison, en rotation toutes les
       7 s. Les deux emplacements d'une page ne montrent jamais la même chose.
+- [x] **Passe d'écriture sur tous les textes des jeux (2026-07-30).** Le défaut
+      était de rythme, pas de vocabulaire : presque chaque réplique du projet
+      était bâtie sur le même moule — une phrase de mise en place, puis une
+      chute pince-sans-rire. Enchaînées par centaines, elles donnaient au site
+      un ton de stand-up épuisant, parce qu'aucune ligne n'avait le droit
+      d'être plate. **La règle désormais : une vanne sur trois ou quatre
+      lignes, les autres constatent.** Une bonne chute isolée porte ; la même
+      cadence répétée vingt fois ne porte plus rien.
+      À proscrire quand tu ajoutes du texte : le doublet « X. Y. » systématique,
+      la formule « ce n'est pas X, c'est Y », les triades (« Il salue, il rentre,
+      il recommencera demain »), la reprise en écho (« Toutes. », « Personne. »,
+      « Techniquement. ») et le mot seul en fin de phrase pour appuyer
+      (« Vraiment. », « Franchement. », « Bravo. »).
+      Ce qui a été **gardé volontairement** : les vannes qui tiennent en une
+      seule phrase (« Une tenue de soirée. Il est quatorze heures. »), la voix
+      paniquée d'Elias, le cabotinage de Mads, et **tout le pastiche 2012 du
+      hub** — livre d'or fautes comprises, anecdotes, bandeau d'annonces,
+      slogans de pubs — qui n'a pas été touché, sur décision explicite.
 
 ### PROCHAINE ÉTAPE : remplacer tous les SVG par de vraies illustrations
 C'est la priorité annoncée. Aujourd'hui **tout est dessiné en code** (SVG généré par

@@ -397,7 +397,7 @@
       "<li><b>↓</b> maintenu — glisser sous les banderoles</li>" +
       "<li>Un pompon attrapé en l'air, et Boq perd du terrain</li>" +
       "</ul>" +
-      '<p class="run-ligne run-petit">Ça va de plus en plus vite. C\'est le principe.</p>' +
+      '<p class="run-ligne run-petit">Ça va de plus en plus vite.</p>' +
       '<button type="button" class="fun-btn primary" id="run-partir">Cours !</button>' +
       "</div>";
     const b = $("#run-partir");

@@ -245,7 +245,7 @@
     const res = analyse(champs.a.value, champs.b.value);
     if (!res) {
       const vide = H.normalise(champs.a.value) ? champs.b : champs.a;
-      dis("Il me faut DEUX prénoms. Je ne travaille pas dans le vide.");
+      dis("Il me faut DEUX prénoms.");
       secoue(vide);
       vide.focus();
       return;
@@ -414,7 +414,7 @@
       if (!lignes.length) {
         const vide = document.createElement("li");
         vide.className = "lt-carnet-vide";
-        vide.textContent = "Rien encore. La machine attend.";
+        vide.textContent = "Rien encore.";
         hote.appendChild(vide);
         return;
       }
@@ -537,15 +537,15 @@
     /* Le gag ET la démonstration : la clé d'un couple est rangée par ordre
        alphabétique avant d'être hachée, donc inverser ne peut rien changer. */
     if (memeCouple && memeCouple === cleAffichee) {
-      dis("Inversés. Le verdict n'a pas bougé d'un pouce : c'est le même couple.");
+      dis("Inversés. C'est le même couple, donc le même verdict.");
     } else {
-      dis("Prénoms inversés. Ça ne changera rien, mais vas-y.");
+      dis("Prénoms inversés.");
     }
   });
 
   $("lt-vider").addEventListener("click", () => {
     carnet.vide();
-    dis("Carnet effacé. Les verdicts, eux, ne changeront pas.");
+    dis("Carnet effacé.");
   });
 
   const boutonSon = $("lt-son");

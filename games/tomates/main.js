@@ -405,7 +405,7 @@
         (victoire
           ? "Cinq manches, et il n'a plus un centimètre de costume propre."
           : "Il te fallait " + partie.manche.objectif + " touches, tu en as fait " +
-            partie.touches + ". Il salue, il rentre, il recommencera demain.") +
+            partie.touches + ". Il salue et il rentre.") +
         "<br />Score final : <b>" + partie.score + "</b>" +
         (record
           ? ' — <b class="tom-record">nouveau record !</b>'

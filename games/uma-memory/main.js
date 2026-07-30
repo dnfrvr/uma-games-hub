@@ -488,10 +488,9 @@ function montreAccueil() {
 
   paragraphe(
     b,
-    "Retourne deux cartes à la fois. Ici, aucune carte n'est là deux fois : " +
-      "on ne cherche pas la même, on cherche celle qui VA AVEC. Drew et son " +
-      "camion, le clown et son ballon. Plus tu joues, plus tu connais le monde " +
-      "— et plus tu vas vite."
+    "Retourne deux cartes à la fois. Aucune carte n'est là deux fois : il " +
+      "faut retrouver celle qui VA AVEC. Drew et son camion, le clown et son " +
+      "ballon."
   );
 
   const choix = document.createElement("div");

@@ -622,35 +622,35 @@ const DUOS = [
   { a: "drew", b: "camion",
     replique: "Drew et son camion vert. On entend arriver l'un avant de voir l'autre." },
   { a: "glinda", b: "pompon",
-    replique: "Glinda et son pompon. Elle dort probablement avec." },
+    replique: "Glinda et son pompon." },
   { a: "elias", b: "carnet",
     replique: "Elias et son carnet à complots. Tout y est noté, à l'heure près." },
   { a: "eoghan", b: "telephone",
-    replique: "Eoghan et un téléphone braqué sur lui. L'histoire de sa vie." },
+    replique: "Eoghan et un téléphone braqué sur lui." },
   { a: "boq", b: "coeur",
-    replique: "Boq et son cœur. Il le porte un peu trop en avant, ce cœur." },
+    replique: "Boq et son cœur." },
   { a: "mads", b: "tomate",
     replique: "Mads Prout et la tomate. Le public a ses habitudes." },
   { a: "mamie", b: "toto",
-    replique: "Mamie et Toto. Ils regardent la télé ensemble, et ils commentent." },
+    replique: "Mamie et Toto. Ils regardent la télé ensemble." },
   { a: "pennywise", b: "ballon",
     replique: "Le clown et son ballon rouge. Ne le prends pas." },
   { a: "slenderman", b: "silhouette",
-    replique: "Le grand type et la silhouette des bois. Personne n'a jamais vu les deux en même temps." },
+    replique: "Le grand type et la silhouette des bois." },
   { a: "gris", b: "ovni",
     replique: "Le petit gris et sa soucoupe. Il est garé en double file." },
   { a: "oeil", b: "ange",
-    replique: "L'œil du ciel et l'ange exact. Deux choses qui te regardent sans cligner." },
+    replique: "L'œil du ciel et l'ange exact." },
   { a: "nils", b: "elphie",
-    replique: "Nils et Elphie. Ils courent après la même personne, chacun son couloir." },
+    replique: "Nils et Elphie. Ils courent après la même personne." },
   { a: "cafard", b: "pizza",
     replique: "Le cafard du campus et la part de pizza. Il était là avant toi." },
   { a: "lutin", b: "champignon",
-    replique: "Le lutin de la fac et son champignon. Il prétend que ça pousse tout seul." },
+    replique: "Le lutin de la fac et son champignon." },
   { a: "oiseau", b: "gobelet",
-    replique: "L'oiseau mal intentionné et le gobelet renversé. Il l'a fait exprès." },
+    replique: "L'oiseau mal intentionné et le gobelet renversé." },
   { a: "chevre", b: "ombre",
-    replique: "La chèvre suspecte et l'ombre du couloir. Deux choses qu'Elias est seul à avoir vues." },
+    replique: "La chèvre suspecte et l'ombre du couloir. Elias est seul à les avoir vues." },
   { a: "vhs", b: "trophee",
     replique: "La cassette et le trophée. Augusta a gagné une fois, et c'est filmé." },
 ];
@@ -716,16 +716,16 @@ const REGLAGES = {
 /* --- Ce que le carnet raconte pendant la partie ------------------------- */
 
 const PHRASES_DEPART = [
-  "Retourne deux cartes. Attention : on ne cherche pas deux fois la même.",
+  "Retourne deux cartes. On ne cherche pas deux fois la même.",
   "Chaque carte va avec une autre. À toi de trouver laquelle.",
   "Ici, les paires ne se ressemblent pas. Elles se connaissent.",
 ];
 
 const PHRASES_RATE = [
-  "Ces deux-là n'ont rien à voir. On retourne.",
+  "Ces deux-là n'ont rien à voir.",
   "Pas ensemble. Retiens quand même les places.",
-  "Non. Mais tu sais deux choses de plus.",
-  "Raté. C'est ça, apprendre le tapis.",
+  "Non.",
+  "Raté.",
   "Ils ne se connaissent même pas.",
 ];
 
@@ -733,9 +733,9 @@ const PHRASES_RATE = [
    Choisi d'après le nombre de coups rapporté au nombre de duos : un joueur
    qui connaîtrait déjà le tapis ET les duos finirait en `duos` coups. */
 const MENTIONS = [
-  { max: 1.6, titre: "Mémoire d'éléphant", mot: "Tu connais le monde par cœur, visiblement." },
-  { max: 2.2, titre: "Très bonne pioche", mot: "Propre. Tu savais qui allait avec qui." },
+  { max: 1.6, titre: "Mémoire d'éléphant", mot: "Tu connais le monde par cœur." },
+  { max: 2.2, titre: "Très bonne pioche", mot: "Tu savais qui allait avec qui." },
   { max: 3.0, titre: "Ça revient", mot: "Quelques allers-retours, mais tu as tenu le tapis." },
   { max: 4.2, titre: "Au flair", mot: "Beaucoup de cartes retournées pour arriver là." },
-  { max: Infinity, titre: "Tu as tout retourné, littéralement", mot: "Au moins, la table est propre." },
+  { max: Infinity, titre: "Tu as tout retourné", mot: "Au moins, la table est propre." },
 ];

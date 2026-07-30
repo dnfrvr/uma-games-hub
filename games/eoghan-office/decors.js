@@ -158,9 +158,9 @@ const DECORS = [
     garcons: [
       { x: 430, plan: 0, nom: "Le type du club d'échecs", replique: "Échec et… enfin bref. C'était sympa.",
         look: { peau: "#f0c39a", cheveux: "frange", couleurCheveux: "#4a2c17", haut: "#5b7fd4", bas: "#3a4a7a", accessoire: "lunettes" } },
-      { x: 760, plan: 1, nom: "Le gars à la guitare", replique: "J'écrirai une chanson là-dessus. Désolé d'avance.",
+      { x: 760, plan: 1, nom: "Le gars à la guitare", replique: "J'écrirai une chanson là-dessus.",
         look: { peau: "#d99a6c", cheveux: "boucle", couleurCheveux: "#2b1a2e", haut: "#e8a33a", bas: "#6b4a8a" } },
-      { x: 930, plan: 0, nom: "Le poète du fond de la salle", replique: "Je note ça. Pour plus tard. Pour un poème.",
+      { x: 930, plan: 0, nom: "Le poète du fond de la salle", replique: "Je note ça, pour un poème.",
         look: { peau: "#f8dcc0", cheveux: "long", couleurCheveux: "#8a5a2b", haut: "#7a6bd4", bas: "#2f3550" } },
     ],
     pnj: [
@@ -212,7 +212,7 @@ const DECORS = [
         look: { peau: "#d99a6c", cheveux: "crete", couleurCheveux: "#b03a3a", haut: "#3faa5a", bas: "#4a2c17" } },
       { x: 780, plan: 0, nom: "Le nageur", replique: "J'ai chlore-ment apprécié. …Pardon.",
         look: { peau: "#f0c39a", cheveux: "chauve", couleurCheveux: "#2b1a2e", haut: "#4de0ff", bas: "#2f6f8f" } },
-      { x: 940, plan: 1, nom: "Le gars à la guitare", replique: "Deuxième chanson de la soirée. Tu inspires.",
+      { x: 940, plan: 1, nom: "Le gars à la guitare", replique: "Deuxième chanson de la soirée.",
         look: { peau: "#a9683f", cheveux: "boucle", couleurCheveux: "#2b1a2e", haut: "#e8a33a", bas: "#6b4a8a" } },
     ],
     pnj: [
@@ -324,7 +324,7 @@ const DECORS = [
       { type: "banc", x: 850, plan: 0 },
     ],
     garcons: [
-      { x: 250, plan: 0, nom: "Le cavalier de quelqu'un d'autre", replique: "Techniquement, j'accompagnais quelqu'un. Techniquement.",
+      { x: 250, plan: 0, nom: "Le cavalier de quelqu'un d'autre", replique: "Techniquement, j'accompagnais quelqu'un.",
         look: { peau: "#f8dcc0", cheveux: "court", couleurCheveux: "#2b1a2e", haut: "#2f3550", bas: "#2f3550", accessoire: "noeud", couleurAccessoire: "#ff3d9a" } },
       /* Planté en plein dans le champ de la reine : la seule façon de
          l'embrasser tranquille est de s'accroupir derrière le banc. */

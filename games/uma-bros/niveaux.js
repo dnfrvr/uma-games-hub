@@ -84,7 +84,7 @@ const PERSOS = [
     nom: "Eoghan",
     couleur: "#00d435",
     talent: "Sprint",
-    detail: "Il court le plus vite. Il a beaucoup d'entraînement.",
+    detail: "Il court le plus vite.",
     saut: 0.98,
     vitesse: 1.16,
     look: {
