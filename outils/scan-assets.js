@@ -21,7 +21,9 @@
 
 const fs = require("fs");
 const path = require("path");
-const { ECHELLE, FAMILLES, RESTE_EN_SVG } = require("./assets-familles");
+const {
+  ECHELLE, FAMILLES, RESTE_EN_SVG, controleDimensions, jeuxOrdonnes,
+} = require("./assets-familles");
 
 const RACINE = path.resolve(__dirname, "..");
 const EXTENSIONS = [".png", ".webp", ".jpg", ".jpeg"];
@@ -91,6 +93,10 @@ function dimensionsWebP(buf) {
   return null;
 }
 
+/* On reconnaît le format à ses OCTETS, pas à son extension. Deux raisons :
+   l'atelier mesure un fichier temporaire qui n'a pas encore son extension
+   finale, et un JPEG renommé en `.png` — ça arrive tout le temps quand on
+   exporte à la main — serait déclaré illisible au lieu d'être simplement lu. */
 function dimensions(chemin) {
   let buf;
   try {
@@ -98,10 +104,16 @@ function dimensions(chemin) {
   } catch (e) {
     return null;
   }
-  const ext = path.extname(chemin).toLowerCase();
-  if (ext === ".png") return dimensionsPNG(buf);
-  if (ext === ".webp") return dimensionsWebP(buf);
-  if (ext === ".jpg" || ext === ".jpeg") return dimensionsJPEG(buf);
+  if (buf.length < 4) return null;
+
+  const estPNG = buf[0] === 0x89 && buf.toString("ascii", 1, 4) === "PNG";
+  const estJPEG = buf[0] === 0xff && buf[1] === 0xd8;
+  const estWebP = buf.length > 12 &&
+    buf.toString("ascii", 0, 4) === "RIFF" && buf.toString("ascii", 8, 12) === "WEBP";
+
+  if (estPNG) return dimensionsPNG(buf);
+  if (estWebP) return dimensionsWebP(buf);
+  if (estJPEG) return dimensionsJPEG(buf);
   return null;
 }
 
@@ -109,44 +121,12 @@ function dimensions(chemin) {
    Contrôle d'un fichier contre son cadre de référence
    ========================================================= */
 
+/* Les règles de jugement vivent dans assets-familles.js, partagées avec
+   l'atelier : ici on ne fait que lire le fichier et transmettre. */
 function controle(famille, entree, chemin) {
-  const dim = dimensions(chemin);
-  if (!dim || !dim.largeur || !dim.hauteur) {
-    return { ok: false, raison: "illisible (format non reconnu ou fichier corrompu)" };
-  }
-
-  const cadre = famille.cadre;
-  const echelleLargeur = dim.largeur / cadre.largeur;
-
-  if (famille.ratioLibre) {
-    /* Le ratio vient de la donnée du jeu, pas d'ici : on prend l'échelle sur
-       la largeur et on ne juge pas la hauteur. */
-    return { ok: true, dim, echelle: arrondiEchelle(echelleLargeur), ratioLibre: true };
-  }
-
-  const ratioAttendu = cadre.largeur / cadre.hauteur;
-  const ratioReel = dim.largeur / dim.hauteur;
-  /* 2 % de tolérance : de quoi absorber un arrondi d'export, pas une erreur
-     de cadrage. À 48 × 72 ça laisse passer un pixel, pas trois. */
-  if (Math.abs(ratioReel - ratioAttendu) / ratioAttendu > 0.02) {
-    return {
-      ok: false,
-      raison:
-        "mauvais ratio — " + dim.largeur + "×" + dim.hauteur + " au lieu d'un " +
-        "multiple de " + cadre.largeur + "×" + cadre.hauteur +
-        " (attendu " + (cadre.largeur * ECHELLE) + "×" + (cadre.hauteur * ECHELLE) + ")",
-    };
-  }
-
-  return { ok: true, dim, echelle: arrondiEchelle(echelleLargeur) };
-}
-
-/* Une échelle très proche d'un entier est prise pour cet entier : un export à
-   96 × 144 donne pile 2, mais 97 × 145 donnerait 2,02 et afficherait l'image
-   à une taille légèrement fausse. */
-function arrondiEchelle(e) {
-  const proche = Math.round(e);
-  return proche > 0 && Math.abs(e - proche) < 0.02 ? proche : e;
+  const dim = dimensions(chemin) || {};
+  const res = controleDimensions(famille, dim.largeur, dim.hauteur);
+  return res.ok ? { ...res, dim } : res;
 }
 
 /* =========================================================
@@ -274,8 +254,22 @@ function imprimeListe(seulementManquants, rapport) {
     }
   }
 
+  /* Groupé par JEU, comme l'atelier : on travaille un jeu à la fois, et
+     « Commun » d'abord puisque ces dessins servent à plusieurs jeux. */
   let total = 0;
-  for (const [nomFamille, famille] of Object.entries(FAMILLES)) {
+  for (const jeu of jeuxOrdonnes()) {
+    const familles = jeu.familles.filter(([nomFamille, famille]) => {
+      const manquants = manquantsPar.get(nomFamille);
+      return (seulementManquants
+        ? famille.ids.filter((e) => manquants && manquants.has(e.id))
+        : famille.ids).length > 0;
+    });
+    if (!familles.length) continue;
+
+    console.log("");
+    console.log(gras("███ " + jeu.nom.toUpperCase()) + (jeu.detail ? gris("  " + jeu.detail) : ""));
+
+  for (const [nomFamille, famille] of familles) {
     const manquants = manquantsPar.get(nomFamille);
     const ids = seulementManquants
       ? famille.ids.filter((e) => manquants && manquants.has(e.id))
@@ -295,6 +289,7 @@ function imprimeListe(seulementManquants, rapport) {
       const nomFichier = (e.id + ".png").padEnd(26);
       console.log("   " + nomFichier + e.nom + gris(e.ou ? "  [" + e.ou + "]" : ""));
     }
+  }
   }
   return total;
 }
@@ -441,4 +436,4 @@ function principal() {
 
 if (require.main === module) principal();
 
-module.exports = { scanne, dimensions, controle };
+module.exports = { scanne, dimensions, controle, ecritIndex, RACINE, EXTENSIONS };

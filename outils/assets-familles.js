@@ -60,6 +60,7 @@ const FAMILLES = {
      donc par les neuf dessins « base », le reste est du confort.
      ========================================================= */
   personnages: {
+    jeu: "Commun",
     titre: "Personnages",
     dossier: "assets/personnages",
     cadre: CADRES.perso,
@@ -129,6 +130,7 @@ const FAMILLES = {
      (ennemis). Cadre carré, la créature sortant par le bas.
      ========================================================= */
   creatures: {
+    jeu: "Commun",
     titre: "Créatures",
     dossier: "assets/creatures",
     cadre: CADRES.creature,
@@ -162,6 +164,7 @@ const FAMILLES = {
      qu'une carte ressemble à une carte.
      ========================================================= */
   objets: {
+    jeu: "Commun",
     titre: "Objets",
     dossier: "assets/objets",
     cadre: CADRES.objet,
@@ -190,6 +193,7 @@ const FAMILLES = {
      `PROPS` : l'image doit respecter CE ratio, et se poser au sol.
      ========================================================= */
   "eoghan-mobilier": {
+    jeu: "Kiss & Cache",
     titre: "Mobilier de Kiss & Cache",
     dossier: "games/eoghan-office/assets/mobilier",
     cadre: { largeur: 120, hauteur: 120 },
@@ -217,6 +221,7 @@ const FAMILLES = {
      `vignette` de games-manifest.json. Changer le chemin suffit.
      ========================================================= */
   vignettes: {
+    jeu: "Commun",
     titre: "Vignettes du hub",
     dossier: "assets/vignettes",
     cadre: CADRES.vignette,
@@ -245,6 +250,7 @@ const FAMILLES = {
      personnages, donc pas de transparence nécessaire.
      ========================================================= */
   "decors-drew": {
+    jeu: "Dress my Drew",
     titre: "Décors de Dress my Drew",
     dossier: "games/drew-dress-up/assets/decors",
     cadre: CADRES.decorDrew,
@@ -262,6 +268,7 @@ const FAMILLES = {
   },
 
   "decors-eoghan": {
+    jeu: "Kiss & Cache",
     titre: "Fonds de salle de Kiss & Cache",
     dossier: "games/eoghan-office/assets/fonds",
     cadre: CADRES.fond,
@@ -278,6 +285,7 @@ const FAMILLES = {
   },
 
   "decors-uma-bros": {
+    jeu: "UMA Bros",
     titre: "Décors d'UMA Bros",
     dossier: "games/uma-bros/assets/decors",
     cadre: CADRES.bandeau,
@@ -290,6 +298,7 @@ const FAMILLES = {
   },
 
   "decors-derry": {
+    jeu: "Derry Driver",
     titre: "Décors de Derry Driver",
     dossier: "games/derry-driver/assets/decors",
     cadre: CADRES.bandeau,
@@ -302,6 +311,7 @@ const FAMILLES = {
   },
 
   "decors-glinda-run": {
+    jeu: "Run, Glinda, Run",
     titre: "Couches de parallaxe de Run, Glinda, Run",
     dossier: "games/glinda-run/assets/couches",
     cadre: CADRES.bandeau,
@@ -318,6 +328,7 @@ const FAMILLES = {
   },
 
   "decors-glinda-cheer": {
+    jeu: "Pep Rally Rhythm",
     titre: "Décor du stade de Pep Rally Rhythm",
     dossier: "games/glinda-cheer/assets/decor",
     cadre: CADRES.bandeau,
@@ -332,6 +343,7 @@ const FAMILLES = {
   },
 
   "decors-tomates": {
+    jeu: "Balance ta tomate",
     titre: "Décor de Balance ta tomate",
     dossier: "games/tomates/assets/decor",
     cadre: { largeur: 160, hauteur: 100 },
@@ -351,6 +363,7 @@ const FAMILLES = {
      Les obstacles
      ========================================================= */
   "obstacles-glinda-run": {
+    jeu: "Run, Glinda, Run",
     titre: "Obstacles de Run, Glinda, Run",
     dossier: "games/glinda-run/assets/obstacles",
     cadre: CADRES.objet,
@@ -370,6 +383,7 @@ const FAMILLES = {
   },
 
   "obstacles-derry": {
+    jeu: "Derry Driver",
     titre: "Véhicules et obstacles de Derry Driver",
     dossier: "games/derry-driver/assets/obstacles",
     cadre: CADRES.objet,
@@ -420,4 +434,194 @@ const RESTE_EN_SVG = [
   },
 ];
 
-module.exports = { ECHELLE, CADRES, FAMILLES, RESTE_EN_SVG };
+/* =========================================================
+   Le contrôle d'un fichier — partagé par le scanner ET l'atelier
+   ---------------------------------------------------------
+   `outils/scan-assets.js` (Node) et `outils/atelier.html` (navigateur) doivent
+   juger EXACTEMENT pareil : sinon l'atelier accepterait un fichier que le
+   scanner refuse, et le dossier se remplirait d'images qui ne s'afficheront
+   jamais. D'où cette fonction ici, et pas dans l'un des deux.
+   ========================================================= */
+
+/* Une échelle très proche d'un entier est prise pour cet entier : un export à
+   96 × 144 donne pile 2, mais 97 × 145 donnerait 2,02 et afficherait l'image à
+   une taille légèrement fausse. */
+function arrondiEchelle(e) {
+  const proche = Math.round(e);
+  return proche > 0 && Math.abs(e - proche) < 0.02 ? proche : e;
+}
+
+/**
+ * @returns {{ok: true, echelle: number}|{ok: false, raison: string}}
+ */
+function controleDimensions(famille, largeur, hauteur) {
+  if (!largeur || !hauteur) {
+    return { ok: false, raison: "illisible (format non reconnu ou fichier corrompu)" };
+  }
+
+  const cadre = famille.cadre;
+  const echelle = arrondiEchelle(largeur / cadre.largeur);
+
+  /* Ratio libre : la forme vient de la donnée du jeu (largeur/hauteur d'un
+     meuble, d'un obstacle), pas de la famille. On ne juge que la largeur. */
+  if (famille.ratioLibre) return { ok: true, echelle: echelle, ratioLibre: true };
+
+  const ratioAttendu = cadre.largeur / cadre.hauteur;
+  const ratioReel = largeur / hauteur;
+  /* 2 % de tolérance : de quoi absorber un arrondi d'export, pas une erreur de
+     cadrage. À 48 × 72 ça laisse passer un pixel, pas trois. */
+  if (Math.abs(ratioReel - ratioAttendu) / ratioAttendu > 0.02) {
+    return {
+      ok: false,
+      raison:
+        "mauvais ratio — " + largeur + "×" + hauteur + " au lieu d'un multiple de " +
+        cadre.largeur + "×" + cadre.hauteur + " (attendu " +
+        cadre.largeur * ECHELLE + "×" + cadre.hauteur * ECHELLE + ")",
+    };
+  }
+
+  return { ok: true, echelle: echelle };
+}
+
+/* =========================================================
+   RECONNAÎTRE UN NOM DE FICHIER
+   ---------------------------------------------------------
+   L'atelier accepte qu'on lui jette des images en vrac : il doit deviner à
+   quelle entrée chacune appartient. Les règles vivent ici, et pas dans la page,
+   pour deux raisons : elles font partie du contrat de nommage (au même titre
+   que les cadres), et elles sont ainsi éprouvables en Node —
+   `outils/test-assets.js` les tient.
+   ========================================================= */
+
+/** « Drew FINAL v2.png » → « drew-final-v2 ». */
+function normaliseNom(nom) {
+  return String(nom)
+    .replace(/\.[^.]+$/, "")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    /* TOUT ce qui n'est pas alphanumérique devient un tiret, et pas seulement
+       les espaces : « drew-court@2x » donnait « drew-court2x », où le « 2x »
+       collé empêchait de reconnaître « drew-court ». */
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/* id normalisé → [{nomFamille, famille, entree}], et les ids du plus long au
+   plus court (c'est ce qui fait que « drew-court-final » trouve `drew-court`
+   et pas `drew`). Construits une fois, à partir des familles. */
+const PAR_NOM = {};
+const IDS_TRIES = [];
+function indexeNoms() {
+  Object.keys(PAR_NOM).forEach((k) => delete PAR_NOM[k]);
+  IDS_TRIES.length = 0;
+  Object.keys(FAMILLES).forEach((nomFamille) => {
+    const famille = FAMILLES[nomFamille];
+    famille.ids.forEach((entree) => {
+      const cle = normaliseNom(entree.id);
+      (PAR_NOM[cle] = PAR_NOM[cle] || []).push({ nomFamille, famille, entree });
+    });
+  });
+  IDS_TRIES.push(...Object.keys(PAR_NOM).sort((a, b) => b.length - a.length));
+}
+
+/**
+ * À qui appartient ce fichier ?
+ *
+ * Deux difficultés, une réponse pour chacune.
+ *
+ * 1. Personne n'exporte `drew.png` du premier coup : ça sort de l'éditeur en
+ *    « Drew FINAL v2.png », « drew@2x.png », « drew (1).png ». Exiger le nom
+ *    exact renverrait tout au bac à ranger à la main, et l'outil ne servirait
+ *    plus à rien. On accepte donc qu'un nom COMMENCE par un identifiant connu,
+ *    en prenant le plus long qui colle.
+ *
+ * 2. Le même identifiant existe dans DEUX familles : `drew` est à la fois un
+ *    personnage et la vignette du hub — et c'est vrai des dix vignettes. Le nom
+ *    seul ne peut pas trancher ; les DIMENSIONS, si. Un 96 × 144 ne peut pas
+ *    être une vignette 4/3. On ne garde donc que les candidats dont le ratio
+ *    accepte le fichier. S'il en reste plusieurs, on demande plutôt que parier.
+ *
+ * @param {string} nom  le nom du fichier déposé
+ * @param {{largeur:number,hauteur:number}|null} dim  ses dimensions, si connues
+ * @returns {{nomFamille,famille,entree}|null|"ambigu"}
+ */
+function devineEntree(nom, dim) {
+  if (!IDS_TRIES.length) indexeNoms();
+  const n = normaliseNom(nom);
+
+  let candidats = PAR_NOM[n];
+  if (!candidats) {
+    for (const id of IDS_TRIES) {
+      if (n === id || n.indexOf(id + "-") === 0) { candidats = PAR_NOM[id]; break; }
+    }
+  }
+  if (!candidats) return null;
+  if (candidats.length === 1) return candidats[0];
+
+  if (dim && dim.largeur && dim.hauteur) {
+    const compatibles = candidats.filter(
+      (c) => controleDimensions(c.famille, dim.largeur, dim.hauteur).ok
+    );
+    if (compatibles.length === 1) return compatibles[0];
+  }
+  return "ambigu";
+}
+
+/* =========================================================
+   L'ORDRE DES JEUX
+   ---------------------------------------------------------
+   On travaille un jeu à la fois : c'est comme ça qu'on avance, et c'est comme
+   ça qu'on sait où on en est. La liste ci-dessous fixe donc l'ordre des
+   sections, dans l'atelier comme à la console.
+
+   « Commun » vient en tête, et pas par politesse : ces quatre familles sont
+   partagées par plusieurs jeux (un seul dessin de Drew sert dans quatre jeux).
+   Les faire d'abord, c'est avancer partout à la fois ; les laisser pour la fin,
+   c'est n'avoir aucun jeu complet.
+
+   Un jeu absent d'ici mais présent sur une famille s'afficherait quand même,
+   en queue de liste. Les jeux dont tous les dessins sont communs (Sanity Whack,
+   UMA Memory, Love Tester) n'ont pas de section propre : ils n'ont aucun décor
+   ni objet qui leur soit particulier.
+   ========================================================= */
+const JEUX = [
+  { nom: "Commun", detail: "partagé par plusieurs jeux — à faire en premier" },
+  { nom: "Kiss & Cache", detail: "mobilier et fonds de salle" },
+  { nom: "Dress my Drew", detail: "décors de la poupée" },
+  { nom: "Pep Rally Rhythm", detail: "le stade" },
+  { nom: "UMA Bros", detail: "les trois niveaux" },
+  { nom: "Run, Glinda, Run", detail: "parallaxe et obstacles" },
+  { nom: "Derry Driver", detail: "parcours, véhicules, obstacles" },
+  { nom: "Balance ta tomate", detail: "l'estrade et ses abris" },
+];
+
+/** Les familles d'un jeu, dans l'ordre où elles sont déclarées. */
+function famillesDuJeu(nomJeu) {
+  return Object.entries(FAMILLES).filter(([, f]) => f.jeu === nomJeu);
+}
+
+/** Les jeux réellement présents, dans l'ordre de JEUX puis les intrus. */
+function jeuxOrdonnes() {
+  const connus = JEUX.map((j) => j.nom);
+  const presents = [...new Set(Object.values(FAMILLES).map((f) => f.jeu || "Sans jeu"))];
+  const ordonnes = connus.filter((n) => presents.indexOf(n) !== -1);
+  presents.forEach((n) => { if (ordonnes.indexOf(n) === -1) ordonnes.push(n); });
+  return ordonnes.map((nom) => {
+    const meta = JEUX.filter((j) => j.nom === nom)[0];
+    return { nom: nom, detail: meta ? meta.detail : "", familles: famillesDuJeu(nom) };
+  });
+}
+
+/* Lisible par Node (le scanner et les bancs d'essai) ET par le navigateur
+   (l'atelier, chargé par un simple <script>). Une seule liste, deux lecteurs. */
+const UMA_ASSETS_SPEC = {
+  ECHELLE, CADRES, FAMILLES, JEUX, RESTE_EN_SVG,
+  controleDimensions, arrondiEchelle, famillesDuJeu, jeuxOrdonnes,
+  normaliseNom, devineEntree,
+};
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = UMA_ASSETS_SPEC;
+} else if (typeof window !== "undefined") {
+  window.UMA_ASSETS_SPEC = UMA_ASSETS_SPEC;
+}

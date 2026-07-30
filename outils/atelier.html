@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Atelier des illustrations — UMA Games</title>
+<!--
+  =========================================================
+  ATELIER — outil local, PAS une page du site
+  ---------------------------------------------------------
+  Il n'est lié depuis aucune page du portail. Il se sert lui-même :
+
+      node outils/atelier.js
+
+  Ce qu'il fait : on jette les images en vrac, il les reconnaît par leur nom,
+  vérifie le ratio, les renomme, les range dans le bon dossier et régénère
+  `assets/index.js`. Aucune commande à lancer ensuite.
+
+  Pourquoi un serveur plutôt que la File System Access API : voir l'en-tête de
+  outils/atelier.js. En résumé, `showDirectoryPicker` s'est révélée absente du
+  Chrome de cette machine, et un outil dont l'unique voie peut ne pas exister
+  n'est pas un outil.
+
+  CE QUI FAIT AUTORITÉ, C'EST `outils/assets-familles.js`. Cette page n'écrit
+  aucune liste en dur : elle affiche ce que la liste déclare. Ajouter un dessin
+  à un jeu = ajouter son entrée là-bas, et il apparaît ici au rechargement.
+  Retirer une entrée l'y fait disparaître, et le fichier resté sur le disque
+  remonte dans « fichiers orphelins », avec de quoi le supprimer.
+  =========================================================
+-->
+<style>
+  :root {
+    --fond: #17111c;
+    --carte: #211829;
+    --carte-clair: #2b2033;
+    --bord: #3b2d47;
+    --encre: #f2e9f7;
+    --encre-faible: #a596b0;
+    --or: #ffd84d;
+    --bonbon: #ff3d9a;
+    --vert: #4ad66d;
+    --rouge: #ff5c5c;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 0 60px;
+    font-family: Tahoma, Verdana, sans-serif;
+    font-size: 13px;
+    color: var(--encre);
+    background: var(--fond);
+  }
+  code {
+    padding: 1px 4px;
+    font-family: Consolas, monospace;
+    font-size: 12px;
+    background: #0f0b13;
+    border-radius: 3px;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 12px 18px;
+    background: linear-gradient(180deg, #241a2c, #1b1421);
+    border-bottom: 1px solid var(--bord);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  }
+  h1 { margin: 0 0 8px; font-size: 17px; }
+  h1 span { color: var(--bonbon); }
+  .barre { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  button {
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: bold;
+    color: #2a1030;
+    background: linear-gradient(180deg, #fff3a8, var(--or));
+    border: 1px solid #8a6d00;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  button:hover { filter: brightness(1.08); }
+  button.discret {
+    color: var(--encre);
+    background: var(--carte-clair);
+    border-color: var(--bord);
+  }
+  button.mini {
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: normal;
+  }
+
+  .jauge {
+    flex: 1 1 200px;
+    min-width: 140px;
+    height: 12px;
+    overflow: hidden;
+    background: #0f0b13;
+    border: 1px solid var(--bord);
+    border-radius: 6px;
+  }
+  .jauge i {
+    display: block;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--bonbon), var(--or));
+    transition: width 0.3s;
+  }
+  .compte { font-variant-numeric: tabular-nums; color: var(--encre-faible); }
+  .compte b { color: var(--or); }
+
+  /* --- Le sommaire des jeux --- */
+  #sommaire {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 9px;
+  }
+  .onglet {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    padding: 4px 9px;
+    font-size: 11px;
+    color: var(--encre);
+    text-decoration: none;
+    background: var(--carte);
+    border: 1px solid var(--bord);
+    border-radius: 4px;
+  }
+  .onglet:hover { background: var(--carte-clair); border-color: var(--bonbon); }
+  .onglet b { font-variant-numeric: tabular-nums; font-size: 10px; color: var(--encre-faible); }
+  .onglet.complet { border-color: #2f6b3f; }
+  .onglet.complet b { color: var(--vert); }
+
+  /* --- Un jeu --- */
+  .jeu {
+    margin: 22px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--bord);
+  }
+  .jeu:first-child { margin-top: 8px; border-top: none; }
+  .titre-jeu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: baseline;
+    margin: 0 18px 12px;
+    font-size: 19px;
+    /* Le nom du jeu doit se voir de loin : c'est le repère quand on descend. */
+    color: var(--bonbon);
+  }
+  .titre-jeu .petit { font-size: 11px; font-weight: normal; color: var(--encre-faible); }
+  .titre-jeu .fait {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: normal;
+    color: var(--encre-faible);
+  }
+
+  #etat {
+    margin: 10px 18px 0;
+    padding: 10px 12px;
+    line-height: 1.5;
+    background: var(--carte);
+    border: 1px solid var(--bord);
+    border-left: 3px solid var(--or);
+    border-radius: 4px;
+  }
+  #etat.erreur { border-left-color: var(--rouge); }
+  #etat.ok { border-left-color: var(--vert); }
+
+  #vrac {
+    margin: 14px 18px;
+    padding: 22px;
+    text-align: center;
+    color: var(--encre-faible);
+    background: var(--carte);
+    border: 2px dashed var(--bord);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  #vrac.survol { color: var(--encre); background: #33203d; border-color: var(--bonbon); }
+  #vrac b { display: block; margin-bottom: 4px; font-size: 15px; color: var(--encre); }
+
+  .bloc { margin: 0 18px 14px; }
+  .bloc ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 0; padding: 0; list-style: none; }
+  .bloc li {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 6px 8px;
+    background: var(--carte-clair);
+    border: 1px solid var(--bord);
+    border-radius: 4px;
+  }
+  .bloc img { width: 34px; height: 34px; object-fit: contain; background: #0f0b13; border-radius: 3px; }
+  .bloc select { max-width: 250px; font-family: inherit; font-size: 11px; }
+  .bloc .chemin { font-family: Consolas, monospace; font-size: 11px; color: var(--encre-faible); }
+
+  section { margin: 0 18px 18px; }
+  h2 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: baseline;
+    margin: 0 0 4px;
+    padding-bottom: 6px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--bord);
+  }
+  h2 .petit { font-size: 11px; font-weight: normal; color: var(--encre-faible); }
+  h2 .fait { margin-left: auto; font-size: 11px; font-weight: normal; color: var(--encre-faible); }
+  .note { margin: 6px 0 10px; font-size: 11px; line-height: 1.5; color: var(--encre-faible); }
+
+  .grille {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+    gap: 8px;
+  }
+
+  .case {
+    position: relative;
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    background: var(--carte);
+    border: 1px solid var(--bord);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.12s, border-color 0.12s;
+  }
+  .case:hover { background: var(--carte-clair); border-color: #58426a; }
+  .case.survol { background: #33203d; border-color: var(--bonbon); }
+  .case.pleine { border-color: #2f6b3f; }
+  .case.rate { border-color: var(--rouge); }
+  .case.occupe { opacity: 0.5; }
+
+  .vue {
+    flex: 0 0 46px;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    overflow: hidden;
+    font-size: 18px;
+    color: #52425e;
+    background: repeating-conic-gradient(#1c151f 0% 25%, #241c28 0% 50%) 0 0 / 12px 12px;
+    border-radius: 3px;
+  }
+  .vue img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+  /* Les libellés s'empilent : en `inline` par défaut, le nom de fichier et la
+     description se collaient bout à bout. */
+  .texte { min-width: 0; flex: 1 1 auto; }
+  .texte > span { display: block; }
+  .fichier {
+    overflow: hidden;
+    font-family: Consolas, monospace;
+    font-size: 11px;
+    color: var(--or);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .case.pleine .fichier { color: var(--vert); }
+  .quoi { margin-top: 3px; font-size: 11px; line-height: 1.35; }
+  .ou { margin-top: 2px; font-size: 10px; color: var(--encre-faible); }
+  .pourquoi { margin-top: 3px; font-size: 10px; line-height: 1.35; color: var(--rouge); }
+  .pourquoi:empty { display: none; }
+
+  .jeter {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    display: none;
+  }
+  .case.pleine .jeter, .case.rate .jeter { display: block; }
+
+  .replis {
+    margin: 14px 18px;
+    padding: 10px 12px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--encre-faible);
+    background: var(--carte);
+    border: 1px solid var(--bord);
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Atelier des illustrations <span>—</span> UMA Games</h1>
+  <div class="barre">
+    <button id="btn-relire" class="discret">Relire le dossier</button>
+    <button id="btn-index" class="discret">Régénérer l'index</button>
+    <span class="jauge"><i id="jauge"></i></span>
+    <span class="compte" id="compte"><b>0</b> / 0</span>
+  </div>
+  <!-- Un jeu à la fois : le sommaire dit où on en est et permet d'y sauter. -->
+  <nav id="sommaire"></nav>
+</header>
+
+<p id="etat">Connexion à l'atelier…</p>
+
+<div id="vrac">
+  <b>Jette tes images ici, en vrac</b>
+  Autant que tu veux, dans n'importe quel ordre. Celles dont le nom correspond
+  sont rangées toutes seules ; les autres t'attendent juste en dessous.
+</div>
+
+<div class="bloc" id="bac" hidden>
+  <h2>À ranger à la main <span class="petit">nom non reconnu — choisis la destination</span></h2>
+  <ul id="bac-liste"></ul>
+</div>
+
+<div class="bloc" id="orphelins" hidden>
+  <h2>Fichiers orphelins
+    <span class="petit">présents sur le disque, mais plus attendus par la liste —
+    une entrée retirée d'<code>assets-familles.js</code>, ou une faute de frappe</span>
+  </h2>
+  <ul id="orphelins-liste"></ul>
+</div>
+
+<div id="familles"></div>
+
+<p class="replis">
+  <b>Rien n'est irréversible.</b> Déposer écrase le fichier précédent du même
+  nom, et <b>jeter</b> une image la supprime du dossier : le jeu revient
+  aussitôt à son dessin SVG. Les SVG ne sont jamais touchés, ils sont le repli
+  permanent.<br />
+  <b>La liste fait autorité.</b> Ce que tu vois ici est ce que déclare
+  <code>outils/assets-familles.js</code>. Un dessin ajouté à un jeu doit y être
+  ajouté aussi — <code>node outils/test-assets.js</code> refuse une famille que
+  personne n'affiche.
+</p>
+
+<script src="assets-familles.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* Les règles de nommage et de jugement viennent de la liste partagée : la
+     page n'en redéfinit aucune. Un juge dans la page et un autre dans le
+     scanner finiraient par diverger, et le dossier se remplirait d'images qui
+     ne s'afficheront jamais. */
+  const {
+    ECHELLE, FAMILLES, controleDimensions, jeuxOrdonnes,
+    normaliseNom: normalise, devineEntree,
+  } = window.UMA_ASSETS_SPEC;
+  const EXTENSIONS = ["png", "webp", "jpg", "jpeg"];
+
+  const etatEl = document.getElementById("etat");
+  const bacListe = document.getElementById("bac-liste");
+  const cases = {};
+  let enAttente = [];
+
+  /* =========================================================
+     Reconnaître un nom de fichier
+     ========================================================= */
+
+  function normalise(nom) {
+    return String(nom)
+      .replace(/\.[^.]+$/, "")
+      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      /* TOUT ce qui n'est pas alphanumérique devient un tiret, et pas
+         seulement les espaces : « drew-court@2x » donnait « drew-court2x », où
+         le « 2x » collé empêchait de reconnaître « drew-court ». */
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  }
+
+  /* Construit à partir de la liste, jamais écrit en dur : si une entrée est
+     ajoutée ou retirée là-bas, ce tableau suit au rechargement. */
+  const PAR_NOM = {};
+  Object.entries(FAMILLES).forEach(([nomFamille, famille]) => {
+    famille.ids.forEach((entree) => {
+      const cle = normalise(entree.id);
+      (PAR_NOM[cle] = PAR_NOM[cle] || []).push({ nomFamille, famille, entree });
+    });
+  });
+
+  /* Les identifiants du plus long au plus court : c'est ce qui fait que
+     « drew-court-final » trouve `drew-court` et pas `drew`. */
+  const IDS_TRIES = Object.keys(PAR_NOM).sort((a, b) => b.length - a.length);
+
+  /** Les dimensions d'un fichier, lues dans le navigateur. */
+  function mesure(blob) {
+    return new Promise((res) => {
+      const url = URL.createObjectURL(blob);
+      const img = new Image();
+      /* Un délai maximum, sinon un fichier illisible ne déclenche NI `onload`
+         ni `onerror` et le rangement reste bloqué sur « Rangement de… » sans
+         aucun moyen d'en sortir. La mesure n'est de toute façon qu'une aide au
+         classement : c'est le serveur qui juge et qui refuse. */
+      const fini = (v) => { clearTimeout(minuteur); URL.revokeObjectURL(url); res(v); };
+      const minuteur = setTimeout(() => fini(null), 4000);
+      img.onload = () => fini({ largeur: img.naturalWidth, hauteur: img.naturalHeight });
+      img.onerror = () => fini(null);
+      img.src = url;
+    });
+  }
+
+  /* =========================================================
+     Le rendu de la liste
+     ========================================================= */
+
+  function taille(famille) {
+    const c = famille.cadre;
+    return famille.ratioLibre
+      ? "largeur " + c.largeur * ECHELLE + " px, hauteur libre"
+      : c.largeur * ECHELLE + " × " + c.hauteur * ECHELLE + " px";
+  }
+
+  /* On affiche JEU PAR JEU, et pas type de dessin par type de dessin : c'est
+     comme ça qu'on travaille, et c'est la seule façon de savoir qu'un jeu est
+     fini. « Commun » vient en tête — ces familles servent à plusieurs jeux, les
+     faire d'abord fait avancer partout à la fois. */
+  function construit() {
+    const hote = document.getElementById("familles");
+    hote.innerHTML = "";
+
+    const sommaire = document.getElementById("sommaire");
+    sommaire.innerHTML = "";
+
+    jeuxOrdonnes().forEach((jeu) => {
+      const ancre = "jeu-" + normalise(jeu.nom);
+
+      /* Le raccourci dans le sommaire, avec son compte : d'un coup d'œil on
+         voit sur quoi il reste à travailler. */
+      const lien = document.createElement("a");
+      lien.className = "onglet";
+      lien.href = "#" + ancre;
+      lien.dataset.jeu = jeu.nom;
+      lien.innerHTML = '<span>' + jeu.nom + '</span><b data-compte-jeu></b>';
+      sommaire.appendChild(lien);
+
+      const bloc = document.createElement("div");
+      bloc.className = "jeu";
+      bloc.id = ancre;
+      bloc.dataset.jeu = jeu.nom;
+
+      const titre = document.createElement("h1");
+      titre.className = "titre-jeu";
+      titre.innerHTML =
+        "<span>" + jeu.nom + "</span>" +
+        (jeu.detail ? '<span class="petit">' + jeu.detail + "</span>" : "") +
+        '<span class="fait" data-fait-jeu></span>';
+      bloc.appendChild(titre);
+      hote.appendChild(bloc);
+
+      jeu.familles.forEach(([nomFamille, famille]) => construitFamille(bloc, nomFamille, famille));
+    });
+  }
+
+  function construitFamille(bloc, nomFamille, famille) {
+    {
+      const sec = document.createElement("section");
+      sec.dataset.famille = nomFamille;
+
+      const h2 = document.createElement("h2");
+      h2.innerHTML =
+        "<span>" + famille.titre + "</span>" +
+        '<span class="petit">' + famille.ids.length + " fichiers · " + taille(famille) +
+        " · <code>" + famille.dossier + "/</code></span>" +
+        '<span class="fait" data-fait></span>';
+      sec.appendChild(h2);
+
+      if (famille.note) {
+        const p = document.createElement("p");
+        p.className = "note";
+        p.textContent = famille.note;
+        sec.appendChild(p);
+      }
+
+      const grille = document.createElement("div");
+      grille.className = "grille";
+
+      famille.ids.forEach((entree) => {
+        const el = document.createElement("div");
+        el.className = "case";
+        el.tabIndex = 0;
+        el.innerHTML =
+          '<span class="vue">+</span>' +
+          '<span class="texte">' +
+          '<span class="fichier"></span>' +
+          '<span class="quoi"></span>' +
+          '<span class="ou"></span>' +
+          '<span class="pourquoi"></span>' +
+          "</span>" +
+          '<button type="button" class="mini discret jeter" title="Supprimer cette image">jeter</button>';
+
+        el.querySelector(".fichier").textContent = entree.id + ".png";
+        el.querySelector(".quoi").textContent = entree.nom;
+        el.querySelector(".ou").textContent = entree.ou || "";
+
+        const choisir = (ev) => {
+          if (ev && ev.target.classList.contains("jeter")) return;
+          const inp = document.createElement("input");
+          inp.type = "file";
+          inp.accept = EXTENSIONS.map((e) => "." + e).join(",");
+          inp.addEventListener("change", async () => {
+            if (inp.files[0]) {
+              await envoie(nomFamille, entree.id, inp.files[0]);
+              await majIndex(true);
+            }
+          });
+          inp.click();
+        };
+        el.addEventListener("click", choisir);
+        el.addEventListener("keydown", (ev) => {
+          if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); choisir(); }
+        });
+
+        el.querySelector(".jeter").addEventListener("click", async (ev) => {
+          ev.stopPropagation();
+          await jette(nomFamille, entree.id);
+        });
+
+        /* Déposer sur une case précise ignore le nom du fichier : c'est toi qui
+           décides, l'atelier ne discute pas. */
+        el.addEventListener("dragover", (ev) => {
+          ev.preventDefault(); ev.stopPropagation(); el.classList.add("survol");
+        });
+        el.addEventListener("dragleave", () => el.classList.remove("survol"));
+        el.addEventListener("drop", async (ev) => {
+          ev.preventDefault(); ev.stopPropagation();
+          el.classList.remove("survol");
+          const f = ev.dataTransfer.files[0];
+          if (f) { await envoie(nomFamille, entree.id, f); await majIndex(true); }
+        });
+
+        cases[nomFamille + "/" + entree.id] = { el: el, entree: entree };
+        grille.appendChild(el);
+      });
+
+      sec.appendChild(grille);
+      bloc.appendChild(sec);
+    }
+  }
+
+  /* =========================================================
+     Parler au serveur
+     ========================================================= */
+
+  async function envoie(nomFamille, id, fichier) {
+    const cle = nomFamille + "/" + id;
+    const c = cases[cle];
+    if (c) c.el.classList.add("occupe");
+
+    try {
+      const url = "/_atelier/depose?famille=" + encodeURIComponent(nomFamille) +
+        "&id=" + encodeURIComponent(id) + "&nom=" + encodeURIComponent(fichier.name);
+      const r = await fetch(url, { method: "POST", body: fichier });
+      const rep = await r.json();
+      if (c) c.el.classList.remove("occupe");
+
+      if (!rep.ok) { pose(cle, null, rep.raison); return false; }
+      pose(cle, rep, "");
+      return true;
+    } catch (e) {
+      if (c) c.el.classList.remove("occupe");
+      pose(cle, null, "envoi impossible : " + e.message);
+      return false;
+    }
+  }
+
+  async function jette(nomFamille, id) {
+    const url = "/_atelier/retire?famille=" + encodeURIComponent(nomFamille) +
+      "&id=" + encodeURIComponent(id);
+    try {
+      await fetch(url, { method: "POST" });
+      pose(nomFamille + "/" + id, null, "");
+      await majIndex(true);
+      dis("Image supprimée — le jeu est revenu à son dessin SVG.", "ok");
+    } catch (e) {
+      dis("Suppression impossible : " + e.message, "erreur");
+    }
+  }
+
+  async function majIndex(silencieux) {
+    try {
+      const r = await fetch("/_atelier/index", { method: "POST" });
+      const rep = await r.json();
+      if (!silencieux && rep.ok) {
+        dis("<code>assets/index.js</code> réécrit — " + rep.indexees +
+          " image(s) en ligne. Recharge le jeu avec Ctrl+Maj+R.", "ok");
+      }
+      return rep.indexees;
+    } catch (e) {
+      dis("Les fichiers sont rangés, mais l'index n'a pas pu être écrit : " +
+        e.message + " — lance <code>node outils/scan-assets.js</code>.", "erreur");
+      return null;
+    }
+  }
+
+  /* Relit le disque. À appeler aussi au retour sur l'onglet : les fichiers
+     peuvent avoir changé en dehors de l'atelier (un dessin remplacé à la main,
+     un git pull, une entrée retirée de la liste). */
+  async function relit(motDeFin) {
+    let rep;
+    try {
+      rep = await (await fetch("/_atelier/etat", { cache: "no-store" })).json();
+    } catch (e) {
+      dis("L'atelier n'est pas joignable. Il se sert lui-même : lance " +
+        "<code>node outils/atelier.js</code> puis ouvre l'adresse affichée.", "erreur");
+      return;
+    }
+
+    Object.keys(cases).forEach((cle) => {
+      if (rep.place[cle]) pose(cle, rep.place[cle], "");
+      else if (rep.rejets[cle]) pose(cle, null, rep.rejets[cle].raison);
+      else pose(cle, null, "");
+    });
+
+    afficheOrphelins(rep.inattendus || []);
+    if (motDeFin) {
+      const n = Object.keys(rep.place).length;
+      dis(n + " image(s) en place." +
+        (rep.inattendus && rep.inattendus.length
+          ? " " + rep.inattendus.length + " fichier(s) orphelin(s) — voir plus bas."
+          : ""), "ok");
+    }
+  }
+
+  /* =========================================================
+     Affichage d'une case
+     ========================================================= */
+
+  function pose(cle, info, pourquoi) {
+    const c = cases[cle];
+    if (!c) return;
+    const el = c.el;
+    const vue = el.querySelector(".vue");
+
+    el.classList.toggle("pleine", !!info);
+    el.classList.toggle("rate", !info && !!pourquoi);
+    el.querySelector(".pourquoi").textContent = info ? "" : (pourquoi || "");
+
+    if (info) {
+      vue.innerHTML = "";
+      const img = document.createElement("img");
+      /* L'horodatage force le navigateur à relire une image qu'on vient de
+         remplacer : sans lui, on verrait encore l'ancienne. */
+      img.src = "/" + info.src + "?t=" + Date.now();
+      vue.appendChild(img);
+      el.querySelector(".fichier").textContent = info.src.split("/").pop();
+      el.querySelector(".ou").textContent =
+        info.largeur + "×" + info.hauteur +
+        (info.echelle && info.echelle !== 1
+          ? " · " + (Math.round(info.echelle * 100) / 100) + "×" : "");
+    } else {
+      vue.innerHTML = "+";
+      el.querySelector(".fichier").textContent = c.entree.id + ".png";
+      el.querySelector(".ou").textContent = c.entree.ou || "";
+    }
+    majCompte();
+  }
+
+  function majCompte() {
+    let total = 0, faits = 0;
+
+    jeuxOrdonnes().forEach((jeu) => {
+      let faitsJeu = 0, totalJeu = 0;
+
+      jeu.familles.forEach(([nomFamille, famille]) => {
+        let f = 0;
+        famille.ids.forEach((e) => {
+          totalJeu++;
+          if (cases[nomFamille + "/" + e.id].el.classList.contains("pleine")) f++;
+        });
+        faitsJeu += f;
+        const sec = document.querySelector('section[data-famille="' + nomFamille + '"]');
+        if (sec) {
+          const m = sec.querySelector("[data-fait]");
+          m.textContent = f + " / " + famille.ids.length;
+          m.style.color = f === famille.ids.length ? "var(--vert)" : "var(--encre-faible)";
+        }
+      });
+
+      total += totalJeu;
+      faits += faitsJeu;
+      const complet = totalJeu > 0 && faitsJeu === totalJeu;
+
+      const bloc = document.querySelector('.jeu[data-jeu="' + jeu.nom + '"]');
+      if (bloc) {
+        const m = bloc.querySelector("[data-fait-jeu]");
+        m.textContent = faitsJeu + " / " + totalJeu + (complet ? " — terminé" : "");
+        m.style.color = complet ? "var(--vert)" : "var(--encre-faible)";
+      }
+      const onglet = document.querySelector('.onglet[data-jeu="' + jeu.nom + '"]');
+      if (onglet) {
+        onglet.querySelector("[data-compte-jeu]").textContent = faitsJeu + "/" + totalJeu;
+        onglet.classList.toggle("complet", complet);
+      }
+    });
+
+    document.getElementById("compte").innerHTML = "<b>" + faits + "</b> / " + total;
+    document.getElementById("jauge").style.width = total ? (faits / total) * 100 + "%" : "0";
+  }
+
+  /* =========================================================
+     Les orphelins
+     ---------------------------------------------------------
+     Un fichier présent que la liste n'attend plus. Deux causes : une entrée
+     retirée d'assets-familles.js (le dessin ne sert plus à rien), ou une faute
+     de frappe dans le nom (le dessin sert, mais personne ne le trouve). Dans
+     les deux cas il faut le voir, sinon il dort là sans que rien ne le dise.
+     ========================================================= */
+
+  function afficheOrphelins(liste) {
+    const boite = document.getElementById("orphelins");
+    const ul = document.getElementById("orphelins-liste");
+    ul.innerHTML = "";
+    boite.hidden = liste.length === 0;
+
+    liste.forEach((chemin) => {
+      const li = document.createElement("li");
+      const img = document.createElement("img");
+      img.src = "/" + chemin + "?t=" + Date.now();
+      const nom = document.createElement("span");
+      nom.className = "chemin";
+      nom.textContent = chemin;
+
+      /* On propose de le renommer vers une entrée attendue : c'est le cas de la
+         faute de frappe, et de loin le plus fréquent. */
+      const sel = document.createElement("select");
+      sel.appendChild(new Option("— renommer vers… —", ""));
+      Object.entries(FAMILLES).forEach(([nomFamille, famille]) => {
+        const grp = document.createElement("optgroup");
+        grp.label = famille.titre;
+        famille.ids.forEach((e) => {
+          grp.appendChild(new Option(e.id + " — " + e.nom, nomFamille + "|" + e.id));
+        });
+        sel.appendChild(grp);
+      });
+      sel.addEventListener("change", async () => {
+        if (!sel.value) return;
+        const [nomFamille, id] = sel.value.split("|");
+        try {
+          const blob = await (await fetch("/" + chemin)).blob();
+          const f = new File([blob], chemin.split("/").pop(), { type: blob.type });
+          if (await envoie(nomFamille, id, f)) {
+            dis("Renommé. L'ancien fichier est toujours là : jette-le si tu n'en veux plus.", "ok");
+            await majIndex(true);
+            await relit(false);
+          }
+        } catch (e) {
+          dis("Renommage impossible : " + e.message, "erreur");
+        }
+      });
+
+      li.append(img, nom, sel);
+      ul.appendChild(li);
+    });
+  }
+
+  /* =========================================================
+     Le dépôt en vrac
+     ========================================================= */
+
+  const vrac = document.getElementById("vrac");
+  ["dragenter", "dragover"].forEach((t) =>
+    vrac.addEventListener(t, (ev) => { ev.preventDefault(); vrac.classList.add("survol"); }));
+  ["dragleave", "drop"].forEach((t) =>
+    vrac.addEventListener(t, () => vrac.classList.remove("survol")));
+
+  vrac.addEventListener("drop", async (ev) => {
+    ev.preventDefault();
+    await avale([...ev.dataTransfer.files]);
+  });
+  vrac.addEventListener("click", () => {
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.multiple = true;
+    inp.accept = EXTENSIONS.map((e) => "." + e).join(",");
+    inp.addEventListener("change", () => avale([...inp.files]));
+    inp.click();
+  });
+
+  async function avale(fichiers) {
+    if (!fichiers.length) return;
+    dis("Rangement de " + fichiers.length + " fichier(s)…", "");
+    let ranges = 0, rates = 0;
+    enAttente = [];
+
+    for (const f of fichiers) {
+      /* On mesure AVANT de deviner : les dimensions servent à séparer deux
+         familles qui portent le même identifiant. */
+      const c = devineEntree(f.name, await mesure(f));
+      /* Rien trouvé, ou toujours plusieurs candidats : on ne parie pas. */
+      if (!c || c === "ambigu") { enAttente.push(f); continue; }
+      (await envoie(c.nomFamille, c.entree.id, f)) ? ranges++ : rates++;
+    }
+
+    afficheBac();
+    if (ranges) await majIndex(true);
+
+    const bouts = [];
+    if (ranges) bouts.push("<b>" + ranges + "</b> rangée(s)");
+    if (rates) bouts.push("<b>" + rates + "</b> refusée(s), motif en rouge sur la case");
+    if (enAttente.length) bouts.push("<b>" + enAttente.length + "</b> à ranger à la main");
+    dis(bouts.length ? bouts.join(" · ") : "Aucun fichier reconnu.",
+      rates || enAttente.length ? "" : "ok");
+  }
+
+  function afficheBac() {
+    const boite = document.getElementById("bac");
+    bacListe.innerHTML = "";
+    boite.hidden = enAttente.length === 0;
+
+    enAttente.forEach((f) => {
+      const li = document.createElement("li");
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(f);
+      const nom = document.createElement("span");
+      nom.className = "chemin";
+      nom.textContent = f.name;
+
+      const sel = document.createElement("select");
+      sel.appendChild(new Option("— destination —", ""));
+      Object.entries(FAMILLES).forEach(([nomFamille, famille]) => {
+        const grp = document.createElement("optgroup");
+        grp.label = famille.titre;
+        famille.ids.forEach((e) => {
+          grp.appendChild(new Option(e.id + " — " + e.nom, nomFamille + "|" + e.id));
+        });
+        sel.appendChild(grp);
+      });
+      sel.addEventListener("change", async () => {
+        if (!sel.value) return;
+        const [nomFamille, id] = sel.value.split("|");
+        if (await envoie(nomFamille, id, f)) {
+          enAttente = enAttente.filter((x) => x !== f);
+          afficheBac();
+          await majIndex(true);
+        }
+      });
+
+      li.append(img, nom, sel);
+      bacListe.appendChild(li);
+    });
+  }
+
+  function dis(html, classe) {
+    etatEl.className = classe || "";
+    etatEl.innerHTML = html;
+  }
+
+  /* =========================================================
+     Branchement
+     ========================================================= */
+
+  document.getElementById("btn-relire").addEventListener("click", () => relit(true));
+  document.getElementById("btn-index").addEventListener("click", () => majIndex(false));
+
+  /* Rater la zone de dépôt ne doit pas ouvrir l'image dans l'onglet : on
+     perdrait le fichier ET la page. */
+  ["dragover", "drop"].forEach((t) =>
+    document.addEventListener(t, (ev) => ev.preventDefault()));
+
+  /* Le disque peut bouger sans l'atelier : on relit en revenant sur l'onglet. */
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) relit(false);
+  });
+
+  construit();
+  majCompte();
+  relit(true);
+})();
+</script>
+</body>
+</html>

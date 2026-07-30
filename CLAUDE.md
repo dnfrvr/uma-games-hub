@@ -323,7 +323,7 @@ recalculent tous depuis ce fichier.
 python3 -m http.server 8000       # puis ouvrir http://localhost:8000
 node outils/test-jeux.js          # 59 vérifications de règles, sans navigateur
 node outils/test-collisions.js    # aucun nom de classe partagé coque ↔ jeux
-node outils/test-assets.js        # 67 vérifications de la chaîne d'images
+node outils/test-assets.js        # 79 vérifications de la chaîne d'images
 node outils/scan-assets.js        # indexe les illustrations déposées
 ```
 Note : `http.server` est **mono-thread**. Il suffit pour jouer, mais il se bloque
@@ -458,18 +458,45 @@ Commits courts en français, à l'impératif : `Ajoute la sidebar`, `Corrige le 
 un fichier au bon nom suffit à le voir en jeu — aucun code à toucher.
 
 ```bash
-node outils/scan-assets.js --liste    # tout ce qu'il y a à produire
+node outils/atelier.js                # L'ATELIER : jeter les images, c'est tout
+node outils/scan-assets.js --liste    # à la main : ce qu'il y a à produire
 node outils/scan-assets.js --manque   # ce qui reste
 node outils/scan-assets.js            # indexe ce qui est déposé
 node outils/scan-assets.js --init     # (re)crée les dossiers et leurs notices
 ```
+
+**`outils/atelier.js` sert une interface locale** (`outils/atelier.html`) où l'on
+jette les images en vrac : elle les reconnaît au nom même sale (« Drew FINAL
+v2.png »), refuse les mauvais ratios en disant pourquoi, renomme, range et
+régénère l'index. Groupée **par jeu**, avec un compteur par jeu — on travaille un
+jeu à la fois, et « Commun » d'abord puisque ces dessins servent partout.
+
+Elle est passée par un serveur Node et non par la File System Access API :
+`showDirectoryPicker` s'est révélée **absente** du Chrome de cette machine
+(contexte sécurisé, page de premier niveau, et pourtant `undefined` — une
+politique d'entreprise suffit). Un outil dont l'unique voie peut ne pas exister
+n'est pas un outil. Ce n'est pas une étape de compilation : le site reste
+servable tel quel, l'atelier est un outil de développement comme les bancs
+d'essai.
+
+Trois pièges qu'il fallait traiter, et qui sont tenus par des vérifications :
+les noms d'export sont sales (`@2x`, ` (1)`, ` FINAL v2`) ; `drew` existe dans
+DEUX familles (le personnage et la vignette du hub, et c'est vrai des dix
+vignettes) — seules les **dimensions** tranchent, un 96 × 144 ne pouvant pas
+être une vignette 4/3 ; et un identifiant ne doit pas mordre sur un mot plus
+long (`drewitt` n'est pas `drew`).
+
+Le reconnaisseur (`normaliseNom`, `devineEntree`) et le juge
+(`controleDimensions`) vivent dans `assets-familles.js`, partagés par l'atelier
+et le scanner. Deux juges qui divergent rempliraient les dossiers d'images qui
+ne s'afficheront jamais.
 
 **La liste ne vit PAS dans ce fichier.** Elle vit dans
 `outils/assets-familles.js`, d'où le scanner l'imprime. C'est délibéré :
 l'inventaire qui était ici avait été écrit quand le portail avait quatre jeux,
 et il était faux dès le sixième. Une liste recopiée dérive toujours.
 
-**128 fichiers**, en 14 familles, export **2×** (un personnage se livre en
+**130 fichiers**, en 14 familles, export **2×** (un personnage se livre en
 96 × 144 et s'affiche dans 48 × 72). Le scanner vérifie le **ratio** de chaque
 fichier, détecte l'échelle réelle (1×, 2× ou 3× passent), rejette ce qui est
 déformé en disant pourquoi, et signale les noms inconnus — presque toujours une
@@ -510,7 +537,7 @@ distraction.
 remplie de variantes combinatoires (3 formes × 6 maillots sur cinq rangs) vues à
 20 px de haut. 18 dessins pour un gain nul.
 
-`node outils/test-assets.js` tient l'ensemble (67 vérifications) : il fabrique
+`node outils/test-assets.js` tient l'ensemble (79 vérifications) : il fabrique
 de vrais PNG, les fait passer par le scanner, et exige que chaque jeu rende une
 balise `img` quand l'image existe. Sans ça, on ne saurait qu'en regardant
 l'écran — et seulement pour le jeu regardé.

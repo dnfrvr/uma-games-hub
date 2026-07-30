@@ -6,32 +6,59 @@ la main dans les fichiers de données de chaque jeu. C'était fait pour tenir sa
 art, pas pour rester.
 
 Ce document est le mode d'emploi du remplacement. **Il n'y a aucun code à
-toucher** : tu déposes des fichiers, tu lances une commande.
+toucher, et aucun fichier à renommer** : tu lances l'atelier, tu y jettes tes
+images, il fait le reste.
 
 ---
 
-## 1. La procédure, en trois gestes
+## 1. La façon paresseuse : l'atelier
 
 ```bash
-# 1. Qu'est-ce qu'il y a à produire ?
-node outils/scan-assets.js --liste
-
-# 2. … tu dessines, tu exportes, tu déposes les fichiers dans les dossiers …
-
-# 3. Indexe ce que tu viens de déposer
-node outils/scan-assets.js
+node outils/atelier.js
 ```
 
-Puis recharge la page — **avec Ctrl+Maj+R**, le serveur local ne renvoie pas
-d'en-tête anti-cache et le navigateur garde l'ancienne version.
+Ouvre l'adresse affichée, **jette tes images dans la grande zone**, c'est fini.
+L'atelier les reconnaît par leur nom, vérifie le ratio, les renomme, les range
+dans le bon dossier et régénère l'index. Aucune commande ensuite, aucun fichier
+à renommer à la main.
 
-Trois autres commandes utiles :
+Ce qu'il fait pour toi :
 
-| Commande | Ce qu'elle fait |
-|---|---|
-| `node outils/scan-assets.js --manque` | seulement ce qui reste à dessiner |
-| `node outils/scan-assets.js --init` | (re)crée les dossiers et leurs notices |
-| `node outils/test-assets.js` | vérifie que toute la chaîne tient |
+- **Il devine la destination** même quand le nom est sale.
+  `Drew FINAL v2.png`, `drew@2x.png`, `ovni (1).png`, `TONNEAU.png` : tous
+  reconnus. Ce qu'il ne reconnaît pas atterrit dans un bac, avec une liste
+  déroulante pour le ranger d'un clic.
+- **Il travaille jeu par jeu.** Une section par jeu, un compteur par jeu, et un
+  sommaire en haut pour sauter de l'un à l'autre. « Commun » vient en premier :
+  ces dessins servent à plusieurs jeux, les faire d'abord fait avancer partout.
+- **Il refuse ce qui est faux, en disant pourquoi.** Un `50 × 70` à la place
+  d'un `96 × 144` affiche « mauvais ratio » sur la case, en rouge.
+- **Il montre les orphelins** : un fichier présent que la liste n'attend plus
+  (entrée retirée, ou faute de frappe), avec de quoi le renommer ou le jeter.
+- **Il relit le disque** en revenant sur l'onglet : si tu remplaces un fichier à
+  la main ou que tu fais un `git pull`, l'affichage suit.
+- **Le site est jouable depuis le même serveur** : va voir ton dessin en jeu
+  sans rien relancer.
+
+Chaque case est aussi cliquable (pour ne poser qu'un dessin) et accepte un
+dépôt direct — dans ce cas le nom du fichier est ignoré, c'est toi qui décides.
+
+## 2. À la main, si tu préfères
+
+```bash
+node outils/scan-assets.js --liste     # ce qu'il y a à produire, groupé par jeu
+node outils/scan-assets.js --manque    # seulement ce qui reste
+node outils/scan-assets.js             # indexe ce que tu as déposé
+node outils/scan-assets.js --init      # (re)crée les dossiers et leurs notices
+node outils/test-assets.js             # vérifie que toute la chaîne tient
+```
+
+Tu déposes les fichiers **nommés exactement** comme la liste le dit, tu lances
+le scan, tu recharges la page — **avec Ctrl+Maj+R**, le serveur local ne renvoie
+pas d'en-tête anti-cache.
+
+Les deux voies sont interchangeables : elles partagent la même liste et le même
+juge (`controleDimensions`), et écrivent le même `assets/index.js`.
 
 ### Ce que le scan te répond
 
@@ -48,7 +75,7 @@ Rejeté 1 fichier(s) :
 Ignoré — nom inconnu, probablement une faute de frappe :
   ? assets/creatures/soucoupe.png
 
-assets/index.js écrit — 3 / 128 image(s) en ligne (2 %), 125 encore en SVG.
+assets/index.js écrit — 3 / 130 image(s) en ligne (2 %), 127 encore en SVG.
 ```
 
 **Un fichier rejeté ou ignoré n'est pas perdu** : il reste sur le disque, il
@@ -56,20 +83,20 @@ n'est simplement pas affiché. Corrige et relance.
 
 ---
 
-## 2. Ce qu'il ne faut PAS faire
+## 3. Ce qu'il ne faut PAS faire
 
 - **Ne modifie pas `assets/index.js`.** C'est un fichier généré ; le prochain
   scan écrasera tout.
-- **N'oublie pas de relancer le scan.** C'est le seul piège du dispositif :
-  déposer un fichier ne suffit pas, rien ne se voit avant l'indexation. Si ton
-  dessin n'apparaît pas, c'est presque toujours ça.
+- **Si tu ranges à la main, n'oublie pas le scan.** C'est le seul piège de la
+  voie manuelle : déposer un fichier ne suffit pas, rien ne se voit avant
+  l'indexation. L'atelier, lui, l'indexe tout seul.
 - **Ne supprime pas les SVG.** Ils sont le repli permanent et la référence de
   cadrage. Un dessin absent, rejeté, ou une image qui ne charge pas : le SVG
   reprend la main, silencieusement.
 
 ---
 
-## 3. La nomenclature
+## 4. La nomenclature
 
 ### Le nom du fichier EST la clé
 
@@ -113,7 +140,7 @@ jeu.
 
 ```
 assets/
-├── personnages/     39 fichiers   partagé
+├── personnages/     41 fichiers   partagé
 ├── creatures/       14            partagé
 ├── objets/          13            partagé
 ├── vignettes/       10            partagé (miniatures du hub)
@@ -124,7 +151,7 @@ games/<jeu>/assets/  décors, mobilier, obstacles propres au jeu
 
 ---
 
-## 4. Les formats
+## 5. Les formats
 
 ### L'échelle : exporte en 2×
 
@@ -177,7 +204,7 @@ Glinda Run et ceux de Derry Driver. Là, seule la largeur compte.
 
 ---
 
-## 5. Ce qui n'aura jamais d'image
+## 6. Ce qui n'aura jamais d'image
 
 Deux cas, et ce n'est pas un oubli.
 
@@ -194,7 +221,7 @@ portraits ont donc été **retirés** : le gadget est redevenu ce qu'il était e
 
 ---
 
-## 6. Comment ça marche, si tu veux le savoir
+## 7. Comment ça marche, si tu veux le savoir
 
 Trois pièces.
 
@@ -255,7 +282,7 @@ fanfaronnade de Mads. En déduire un nom de fichier revenait à deviner.
 
 ---
 
-## 7. Ajouter une famille ou un dessin à la liste
+## 8. Ajouter une famille ou un dessin à la liste
 
 Ouvre `outils/assets-familles.js`, ajoute l'entrée, puis :
 
@@ -271,12 +298,14 @@ l'écran continue d'afficher le SVG, sans que rien ne signale l'écart.
 
 ---
 
-## 8. Si ça ne marche pas
+## 9. Si ça ne marche pas
 
 | Symptôme | Cause presque certaine |
 |---|---|
-| Le dessin n'apparaît pas | le scan n'a pas été relancé, ou pas de Ctrl+Maj+R |
-| « mauvais ratio » | l'export n'est pas au ratio du cadre (voir §4) |
+| Le dessin n'apparaît pas | le scan n'a pas été relancé (voie manuelle), ou pas de Ctrl+Maj+R |
+| L'atelier dit « pas joignable » | le serveur n'est pas lancé : `node outils/atelier.js` |
+| Un fichier part au bac à ranger | son nom ne commence par aucun identifiant connu — range-le au menu déroulant, ou renomme-le |
+| « mauvais ratio » | l'export n'est pas au ratio du cadre (voir §5) |
 | « nom inconnu » | faute de frappe ; `--liste` donne les noms exacts |
 | Deux fois trop grand | ne devrait plus arriver ; vérifie que `echelle` est bien dans `assets/index.js` |
 | Tout est redevenu du SVG | `assets/index.js` a été supprimé ou vidé — relance le scan |

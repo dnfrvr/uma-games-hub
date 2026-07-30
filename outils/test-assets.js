@@ -472,6 +472,68 @@ try {
         .indexOf('umaDessin("personnages"') !== -1);
   }
 
+  /* --- 4 quinquies. La reconnaissance des noms de fichiers ---------------
+     L'atelier accepte qu'on lui jette des images en vrac. Ces règles décident
+     où chacune va : elles doivent tolérer les noms que crache un éditeur
+     (« Drew FINAL v2.png ») sans jamais se tromper de destination. Elles vivent
+     dans assets-familles.js justement pour être éprouvables ici — dans la page,
+     elles ne l'auraient pas été. */
+  {
+    const { devineEntree, normaliseNom } = require("./assets-familles");
+    const PERSO = { largeur: 96, hauteur: 144 };
+    const VIGNETTE = { largeur: 640, hauteur: 480 };
+    const ou = (nom, dim) => {
+      const r = devineEntree(nom, dim);
+      return r === "ambigu" ? "ambigu" : r ? r.nomFamille + "/" + r.entree.id : null;
+    };
+
+    verifie("un nom exact est reconnu", ou("drew.png", PERSO) === "personnages/drew");
+    verifie("le bruit d'export est toléré",
+      ou("Drew FINAL v2.png", PERSO) === "personnages/drew", ou("Drew FINAL v2.png", PERSO));
+    verifie("les accents et les espaces sont absorbés",
+      normaliseNom("Épée de Glinda (copie).PNG") === "epee-de-glinda-copie");
+    verifie("le suffixe @2x ne masque pas la variante",
+      ou("drew-court@2x.png", PERSO) === "personnages/drew-court",
+      ou("drew-court@2x.png", PERSO));
+
+    /* Le piège du préfixe : sans le tri par longueur, « drew-court » tomberait
+       sur « drew », qui est plus court et colle aussi. */
+    verifie("la variante la plus longue gagne sur la base",
+      ou("drew-court-final-v3.png", PERSO) === "personnages/drew-court");
+
+    /* Le piège de la frontière : un identifiant ne doit pas mordre sur un mot
+       plus long. */
+    verifie("un mot plus long n'est pas confondu", ou("drewitt.png", PERSO) === null);
+    verifie("un nom inconnu ne va nulle part", ou("truc-inconnu.png", PERSO) === null);
+
+    /* Le vrai piège : `drew` est À LA FOIS un personnage et une vignette du
+       hub, et c'est vrai des dix vignettes. Seules les dimensions tranchent. */
+    verifie("un id présent dans deux familles est tranché par le ratio",
+      ou("drew.png", VIGNETTE) === "vignettes/drew" &&
+      ou("drew.png", PERSO) === "personnages/drew",
+      "vignette → " + ou("drew.png", VIGNETTE) + ", perso → " + ou("drew.png", PERSO));
+    verifie("sans dimensions, un id ambigu est renvoyé à l'utilisateur",
+      ou("drew.png", null) === "ambigu");
+  }
+
+  /* --- 4 sexies. Chaque famille appartient à un jeu ----------------------
+     On travaille jeu par jeu : une famille sans jeu n'apparaîtrait dans aucune
+     section de l'atelier, donc ses dessins ne seraient jamais demandés. */
+  {
+    const { FAMILLES: F, jeuxOrdonnes } = require("./assets-familles");
+    const sansJeu = Object.entries(F).filter(([, f]) => !f.jeu).map(([n]) => n);
+    verifie("chaque famille déclare son jeu", sansJeu.length === 0, sansJeu.join(", "));
+
+    const jeux = jeuxOrdonnes();
+    verifie("« Commun » vient en premier", jeux[0] && jeux[0].nom === "Commun",
+      jeux[0] && jeux[0].nom);
+    const compte = jeux.reduce(
+      (n, j) => n + j.familles.reduce((m, [, f]) => m + f.ids.length, 0), 0);
+    const total = Object.values(F).reduce((n, f) => n + f.ids.length, 0);
+    verifie("le regroupement par jeu ne perd aucun dessin", compte === total,
+      compte + " / " + total);
+  }
+
   /* --- 5. La liste et le code sont d'accord ----------------------------- */
   const { FAMILLES, ECHELLE } = require("./assets-familles");
   verifie("l'échelle de référence est 2×", ECHELLE === 2);
