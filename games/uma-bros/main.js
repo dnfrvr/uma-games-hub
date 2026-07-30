@@ -131,7 +131,13 @@
     jeu.reste = niveau.chrono;
     jeu.fini = false;
 
-    scene.style.background = niveau.ciel;
+    /* Le ciel du niveau : une image si elle existe, le dégradé sinon. Le
+       dégradé reste dessous, donc une image qui ne couvre pas tout n'ouvre pas
+       un trou blanc. */
+    const ciel = typeof umaFond === "function" ? umaFond("decors-uma-bros", niveau.id) : null;
+    scene.style.background = ciel
+      ? ciel + " center / cover no-repeat, " + niveau.ciel
+      : niveau.ciel;
     scene.dataset.niveau = niveau.id;
     scene.style.setProperty("--sol-herbe", niveau.herbe);
     scene.style.setProperty("--sol-terre", niveau.terre);
@@ -205,9 +211,15 @@
         "ennemi ennemi-" + def.type + (type.ecrasable === false ? " inecrasable" : "");
       el.style.width = type.largeur + "px";
       el.style.height = type.hauteur + "px";
-      /* Une silhouette humaine sort de la fabrique commune, comme partout
-         ailleurs dans le portail ; le reste est dessiné dans niveaux.js. */
-      el.innerHTML = type.perso ? persoSVG(type.perso) : type.svg;
+      /* Les ennemis à silhouette humaine (Nils, Elphie) passent par persoSVG,
+         qui sait déjà choisir l'image depuis leur `id`. Les autres sont des
+         créatures : elles vont chercher dans la famille partagée, celle que
+         Sanity Whack et UMA Memory utilisent aussi. */
+      el.innerHTML = type.perso
+        ? persoSVG(type.perso)
+        : typeof umaDessin === "function"
+        ? umaDessin("creatures", def.type, type.svg)
+        : type.svg;
       monde.appendChild(el);
 
       /* L'altitude de repos : ceux qui volent ondulent autour, ceux qui

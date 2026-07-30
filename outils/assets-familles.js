@@ -51,9 +51,9 @@ const FAMILLES = {
   /* =========================================================
      Les personnages, partagés par TOUT le portail
      ---------------------------------------------------------
-     Un seul dessin de Drew sert dans Dress my Drew, UMA Bros, UMA Memory,
-     Sanity Whack et le Love Tester. C'est le gros de l'économie : sans
-     dossier partagé, il faudrait le dessiner cinq fois.
+     Un seul dessin de Drew sert dans Dress my Drew, UMA Bros, UMA Memory et
+     Sanity Whack. C'est le gros de l'économie : sans dossier partagé, il
+     faudrait le dessiner quatre fois.
 
      La CASCADE du résolveur (voir shared/images.js) fait qu'un `drew.png`
      suffit à voir Drew partout : les poses ne font que l'affiner. Commence
@@ -107,16 +107,16 @@ const FAMILLES = {
         { suffixe: "haut", quoi: "pompons en haut", ou: "Pep Rally Rhythm" },
         { suffixe: "bas", quoi: "pompons en bas", ou: "Pep Rally Rhythm" },
       ]),
-      perso("boq", "Boq", "UMA Memory, Love Tester", [
+      perso("boq", "Boq", "UMA Memory", [
         { suffixe: "court", quoi: "en train de poursuivre", ou: "Run, Glinda, Run" },
       ]),
-      perso("mads", "Mads Prout", "Balance ta tomate, UMA Memory, Love Tester", [
+      perso("mads", "Mads Prout", "Balance ta tomate, UMA Memory", [
         { suffixe: "nargue", quoi: "bras levés, fanfaron", ou: "Balance ta tomate" },
         { suffixe: "planque", quoi: "accroupi derrière un abri", ou: "Balance ta tomate" },
         { suffixe: "touche", quoi: "touché par une tomate", ou: "Balance ta tomate" },
       ]),
-      perso("nils", "Nils", "UMA Bros, UMA Memory, Love Tester"),
-      perso("elphie", "Elphie", "UMA Bros, UMA Memory, Love Tester"),
+      perso("nils", "Nils", "UMA Bros, UMA Memory"),
+      perso("elphie", "Elphie", "UMA Bros, UMA Memory"),
       perso("mamie", "La grand-mère d'Elias", "Sanity Whack, UMA Memory"),
       perso("lanceur", "Le lanceur de tomates (dos)", "Balance ta tomate")
     ),
@@ -397,14 +397,16 @@ const FAMILLES = {
    ========================================================= */
 const RESTE_EN_SVG = [
   {
-    quoi: "Les visages du Love Tester pour un prénom inconnu",
-    ou: "games/love-tester/verdicts.js → PALETTE, via hachage.js",
+    quoi: "Le Love Tester n'a plus aucun dessin du tout",
+    ou: "games/love-tester/ — réglé, rien à produire",
     pourquoi:
-      "Le portrait est tiré du hachage du prénom : « Camille » a toujours la " +
-      "même tête, et n'importe quel prénom tapé doit en avoir une. Aucun jeu " +
-      "de PNG fini ne peut couvrir un ensemble infini de prénoms. Les huit " +
-      "personnages du CASTING, eux, prennent bien leur image (famille " +
-      "« personnages ») — c'est seulement l'inconnu qui reste dessiné.",
+      "C'était le seul cas que la conversion en illustrations ne savait pas " +
+      "résoudre : la machine inventait un visage pour un prénom inconnu, tiré " +
+      "du hachage, et l'ensemble des prénoms possibles est infini — aucun jeu " +
+      "de PNG fini ne pouvait le couvrir. Les portraits ont donc été retirés " +
+      "et le gadget est redevenu ce qu'il était en 2012 : deux champs, une " +
+      "aiguille, un verdict. Du texte, et rien d'autre. Le problème a " +
+      "disparu au lieu d'être contourné.",
   },
   {
     quoi: "Les silhouettes de foule",

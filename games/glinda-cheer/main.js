@@ -236,6 +236,31 @@ function construitCouloirs() {
    comme un seul homme. */
 const MAILLOTS = ["#e91e8c", "#ffd84d", "#4de0ff", "#9b4dff", "#c6ff4d", "#ff8ac4"];
 
+/* Le stade est bâti en CSS : cinq morceaux, chacun sa classe. Plutôt que de
+   dupliquer une règle par morceau, on parcourt la liste et on pose une image
+   de fond là où il y en a une — les dégradés de style.css restent le repli, et
+   un morceau non dessiné se mélange sans couture avec ceux qui le sont. */
+function habilleStade() {
+  if (typeof umaFond !== "function") return;
+  const MORCEAUX = [
+    ["ciel", ".ciel"],
+    ["tribune", ".tribunes"],
+    ["pelouse", ".pelouse"],
+    ["poteaux", ".poteaux"],
+    ["panneau", ".panneau-score"],
+  ];
+  MORCEAUX.forEach(([id, selecteur]) => {
+    const el = document.querySelector(selecteur);
+    if (!el) return;
+    const image = umaFond("decors-glinda-cheer", id);
+    if (!image) return;
+    el.style.backgroundImage = image;
+    el.style.backgroundSize = "cover";
+    el.style.backgroundPosition = "center";
+    el.style.backgroundRepeat = "no-repeat";
+  });
+}
+
 function construitFoule() {
   for (let rang = 0; rang < 5; rang++) {
     const ligne = document.createElement("div");
@@ -839,6 +864,7 @@ elements.rejouer.addEventListener("click", () => {
 
 construitCouloirs();
 construitFoule();
+habilleStade();
 dessineGlinda("repos");
 construitMenuCharts();
 majTableau();

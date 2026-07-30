@@ -49,6 +49,7 @@ Voir `uma-games-hub-SPEC.md` pour l'architecture du hub/sidebar, et les fichiers
 ```
 uma-games-hub/
 ├── CLAUDE.md                   # ce fichier
+├── ILLUSTRATIONS.md             # mode d'emploi du remplacement des SVG
 ├── uma-games-hub-SPEC.md        # spec du hub + sidebar + manifest
 ├── dress-my-drew-SPEC.md        # spec du jeu de Drew
 ├── games-manifest.json          # source unique de vérité : la liste des jeux
@@ -322,7 +323,7 @@ recalculent tous depuis ce fichier.
 python3 -m http.server 8000       # puis ouvrir http://localhost:8000
 node outils/test-jeux.js          # 59 vérifications de règles, sans navigateur
 node outils/test-collisions.js    # aucun nom de classe partagé coque ↔ jeux
-node outils/test-assets.js        # 61 vérifications de la chaîne d'images
+node outils/test-assets.js        # 67 vérifications de la chaîne d'images
 node outils/scan-assets.js        # indexe les illustrations déposées
 ```
 Note : `http.server` est **mono-thread**. Il suffit pour jouer, mais il se bloque
@@ -495,24 +496,47 @@ fanfaronnade de Mads. En déduire un nom de fichier revenait à deviner. Une
 **cascade** fait qu'un seul `eoghan.png` répond déjà à « eoghan-accroupi » :
 on livre un dessin par personnage, on affine les poses ensuite.
 
-**Deux familles restent en SVG, et ce n'est pas un oubli** (détaillé dans
-`RESTE_EN_SVG` d'`assets-familles.js`) : les visages que le Love Tester
-fabrique pour un prénom **inconnu** sont tirés d'un hachage, donc aucun jeu de
-PNG fini ne peut couvrir un ensemble infini de prénoms ; et les silhouettes de
-foule de Pep Rally sont 3 formes × 6 maillots vues à 20 px de haut.
+**Le Love Tester n'a plus aucun dessin, et c'est une décision.** C'était le seul
+cas que ce dispositif ne savait pas résoudre : la machine inventait un visage
+pour un prénom inconnu, tiré du hachage du prénom, et l'ensemble des prénoms
+possibles est infini — aucun jeu de PNG fini ne pouvait le couvrir. Les
+portraits ont donc été retirés (avec `PALETTE`, les `look` du casting, les
+styles et la dépendance à `perso.js`) : le gadget est redevenu ce qu'il était en
+2012, deux champs, une aiguille, un verdict. Du texte, et rien d'autre. Deux
+vérifications de `test-machine.js` interdisent qu'un dessin revienne par
+distraction.
 
-`node outils/test-assets.js` tient l'ensemble (61 vérifications) : il fabrique
+**Les silhouettes de foule restent en SVG** : la tribune de Pep Rally est
+remplie de variantes combinatoires (3 formes × 6 maillots sur cinq rangs) vues à
+20 px de haut. 18 dessins pour un gain nul.
+
+`node outils/test-assets.js` tient l'ensemble (67 vérifications) : il fabrique
 de vrais PNG, les fait passer par le scanner, et exige que chaque jeu rende une
 balise `img` quand l'image existe. Sans ça, on ne saurait qu'en regardant
 l'écran — et seulement pour le jeu regardé.
 
-**Ce qui est routé à ce jour** : la fabrique de personnages (donc les 39
-personnages, partout), les 34 cartes d'UMA Memory, les 14 cibles et pièges de
-Sanity Whack, et l'avatar d'Elias. **Ce qui ne l'est pas encore** : les décors
-et fonds (7 familles), le mobilier de Kiss & Cache, les obstacles de Run Glinda
-Run et de Derry Driver, et les vignettes du hub. Les fichiers peuvent déjà être
-déposés et sont déjà validés par le scanner ; c'est l'affichage qui reste à
-brancher, jeu par jeu.
+**Les 14 familles sont câblées** : personnages (via `persoSVG`, donc partout à
+la fois), créatures, objets, vignettes du hub, mobilier et fonds de Kiss &
+Cache, décors de Drew, d'UMA Bros, de Derry Driver, du stade de Pep Rally, de
+Balance ta tomate, couches de parallaxe et obstacles de Run Glinda Run,
+obstacles de Derry Driver. Déposer un fichier et lancer le scan suffit.
+
+Derry Driver dessine au canvas et non en HTML : `umaImageCanvas` lui rend un
+objet `Image` déjà chargé, parce que `drawImage` sur une image non chargée ne
+dessine rien — sans erreur — et l'obstacle disparaîtrait une frame sur deux. Le
+premier appel lance le chargement et rend `null` (le tracé habituel est peint),
+les suivants rendent l'image.
+
+**Le banc d'essai refuse une famille que personne n'appelle.** C'était le piège
+le plus probable du dispositif : déclarer un dossier, valider les fichiers
+déposés, et n'appeler le résolveur nulle part — le scan annonce « indexé »
+pendant que l'écran affiche toujours le SVG, et rien ne signale l'écart.
+`node outils/test-assets.js` cherche le nom de chaque famille dans le code qui
+tourne. Il a servi tout de suite : les fonds de parcours de Derry étaient
+oubliés.
+
+**Le mode d'emploi complet est dans `ILLUSTRATIONS.md`** — procédure,
+nomenclature, formats, cadrage, dépannage.
 
 **Conventions de dessin** : fond transparent (sauf décors), personnage aux pieds
 posés sur le bord bas du cadre, créature occupant le bas d'un cadre carré. Le

@@ -338,8 +338,18 @@ verifie(
 );
 
 verifie(
-  "chaque personnage du casting a des réglages de dessin",
-  D.CASTING.every((c) => c.look && c.look.peau && c.look.cheveux && c.mention)
+  "chaque personnage du casting a un nom et une mention",
+  D.CASTING.every((c) => c.nom && c.mention)
+);
+
+/* La machine est un appareil à TEXTE : plus aucun visage, donc plus aucun
+   réglage de dessin dans les données. Cette vérification empêche de les
+   réintroduire par distraction — avec eux revenait le seul problème que la
+   conversion en illustrations ne savait pas résoudre : inventer une tête pour
+   un prénom quelconque, alors que l'ensemble des prénoms est infini. */
+verifie(
+  "aucun réglage de dessin ne subsiste dans les données",
+  D.CASTING.every((c) => !c.look) && !D.PALETTE
 );
 
 /* Un relevé annexe ne doit plus pouvoir CONTREDIRE le verdict. Avant, les

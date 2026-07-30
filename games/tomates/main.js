@@ -222,6 +222,21 @@
   function dessineAbri(abri) {
     const t = ABRIS[abri.type];
     const b = boiteAbri(abri);
+
+    /* La scène est un SVG à viewBox fixe : une image s'y pose avec `<image>`,
+       aux mêmes coordonnées de monde que le rectangle qu'elle remplace. Pas de
+       conversion de pixels à faire, le viewBox s'en charge. */
+    if (typeof umaAsset === "function") {
+      const img = umaAsset("decors-tomates", abri.type);
+      if (img) {
+        return (
+          '<image href="' + img.src + '" x="' + b.x + '" y="' + b.y +
+          '" width="' + b.l + '" height="' + b.h +
+          '" preserveAspectRatio="none"/>'
+        );
+      }
+    }
+
     let s =
       '<rect x="' + b.x + '" y="' + b.y + '" width="' + b.l + '" height="' + b.h +
       '" rx="1" fill="' + t.couleur + '" stroke="' + TRAIT + '" stroke-width="1"/>';

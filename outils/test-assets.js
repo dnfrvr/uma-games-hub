@@ -435,6 +435,43 @@ try {
       "hors d'atteinte du bouchon : " + (sansImages.join(", ") || "aucun"));
   }
 
+  /* --- 4 quater. CHAQUE famille est réellement câblée -------------------
+     Le piège de tout ce dispositif : déclarer une famille, générer son
+     dossier, valider les fichiers déposés… et n'appeler le résolveur nulle
+     part. Le scanner dirait « indexé », l'écran continuerait d'afficher le
+     SVG, et rien ne signalerait l'écart. Cette vérification cherche le nom de
+     chaque famille dans le code qui tourne : si personne ne le mentionne,
+     c'est qu'aucun point d'appel ne la consomme. */
+  {
+    const { FAMILLES: F } = require("./assets-familles");
+    const sources = [];
+    const ajoute = (dir) => {
+      for (const f of fs.readdirSync(path.join(RACINE, dir), { withFileTypes: true })) {
+        const rel = dir + "/" + f.name;
+        if (f.isDirectory()) { ajoute(rel); continue; }
+        if (!/\.(js|html)$/.test(f.name) || f.name.startsWith("test-")) continue;
+        sources.push(fs.readFileSync(path.join(RACINE, rel), "utf8"));
+      }
+    };
+    ajoute("games");
+    ajoute("shared");
+    sources.push(fs.readFileSync(path.join(RACINE, "index.html"), "utf8"));
+    const tout = sources.join("\n");
+
+    /* Les personnages passent par persoSVG (via `id`) et non par un nom de
+       famille écrit en clair : on la vérifie autrement, plus haut. */
+    const orphelines = Object.keys(F).filter(
+      (nom) => nom !== "personnages" && tout.indexOf('"' + nom + '"') === -1
+    );
+    verifie("chaque famille d'assets est consommée par au moins un point d'appel",
+      orphelines.length === 0,
+      orphelines.length ? "jamais appelée : " + orphelines.join(", ") : "");
+
+    verifie("la famille des personnages passe par persoSVG",
+      fs.readFileSync(path.join(RACINE, "shared/perso.js"), "utf8")
+        .indexOf('umaDessin("personnages"') !== -1);
+  }
+
   /* --- 5. La liste et le code sont d'accord ----------------------------- */
   const { FAMILLES, ECHELLE } = require("./assets-familles");
   verifie("l'échelle de référence est 2×", ECHELLE === 2);

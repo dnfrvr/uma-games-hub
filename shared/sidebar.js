@@ -104,7 +104,7 @@
 
     const img = document.createElement("img");
     img.className = "sidebar-vignette";
-    img.src = versRacine(jeu.vignette);
+    img.src = (window.umaVignette && umaVignette(jeu.id)) || versRacine(jeu.vignette);
     img.alt = "";
     img.loading = "lazy";
 

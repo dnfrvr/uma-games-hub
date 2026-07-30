@@ -191,7 +191,6 @@ function monte(sobre) {
 
   const contexte = vm.createContext(bac);
   [
-    path.join(RACINE, "shared", "perso.js"),
     path.join(ICI, "hachage.js"),
     path.join(ICI, "verdicts.js"),
     path.join(ICI, "main.js"),
@@ -246,9 +245,9 @@ verifie(
   el("lt-echelle").children.length + " voyants"
 );
 verifie(
-  "les deux portraits sont posés dès le départ (cadre vide)",
-  el("lt-portrait-a").classList.contains("lt-portrait-vide") &&
-    el("lt-portrait-b").classList.contains("lt-portrait-vide")
+  "les deux légendes annoncent l'attente au départ",
+  el("lt-identite-a").textContent === "en attente" &&
+    el("lt-identite-b").textContent === "en attente"
 );
 verifie("le carnet vide affiche sa ligne d'attente", el("lt-carnet").children.length === 1);
 
@@ -262,13 +261,8 @@ teste("Drew", "Glinda");
 const attendu = H.score("Drew", "Glinda");
 
 verifie(
-  "le portrait d'un personnage du casting est reconnu",
-  el("lt-portrait-a").classList.contains("lt-portrait-connu") &&
-    el("lt-identite-a").textContent === "Dress my Drew"
-);
-verifie(
-  "un corps est bien dessiné dans le cadre",
-  el("lt-portrait-a").innerHTML.indexOf("<svg") !== -1
+  "un prénom du casting affiche sa mention",
+  el("lt-identite-a").textContent === "Dress my Drew"
 );
 verifie(
   "le cadran affiche le score sur trois chiffres (" + el("lt-chiffres").textContent + ")",
@@ -354,22 +348,25 @@ verifie(
   el("lt-verdict").innerHTML.indexOf("lt-solo") !== -1
 );
 verifie(
-  "un prénom hors casting reçoit quand même un visage",
-  el("lt-portrait-a").innerHTML.indexOf("<svg") !== -1 &&
-    el("lt-identite-a").textContent === "inconnu au bataillon"
+  "un prénom hors casting est annoncé comme inconnu",
+  el("lt-identite-a").textContent === "inconnu au bataillon"
 );
 
+/* La machine est un appareil à TEXTE. Elle affichait un portrait dessiné de
+   chaque côté, et pour un prénom inconnu elle en inventait un depuis le
+   hachage — la seule famille de dessins du portail qu'aucune illustration ne
+   pouvait remplacer, l'ensemble des prénoms étant infini. Ce contrôle empêche
+   qu'un dessin revienne par distraction. */
 (function () {
-  const visage = (nom) => {
-    el("lt-nom-a").value = nom;
-    el("lt-nom-a").declenche("input");
-    return el("lt-portrait-a").innerHTML;
-  };
-  const un = visage("Camille");
-  const deux = visage("Camille");
-  const trois = visage("Bertrand");
-  verifie("le visage d'un inconnu est stable d'une frappe à l'autre", un === deux);
-  verifie("deux inconnus n'ont pas le même visage", un !== trois);
+  const zones = ["lt-machine", "lt-verdict", "lt-carnet"];
+  const dessins = zones.filter((z) => {
+    const html = el(z).innerHTML || "";
+    return html.indexOf("<svg") !== -1 || html.indexOf("<img") !== -1;
+  });
+  verifie("la machine n'affiche aucun dessin ni aucune image",
+    dessins.length === 0, dessins.join(", "));
+  verifie("le générateur de visages a disparu des données",
+    !D.PALETTE && D.CASTING.every((c) => !c.look));
 })();
 
 titre("4. Les boutons annexes");

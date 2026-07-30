@@ -156,6 +156,61 @@
     return trouve ? 'url("' + trouve.src + '")' : null;
   }
 
+  /* =========================================================
+     Le cas du canvas
+     ---------------------------------------------------------
+     Derry Driver ne pose pas de HTML : il dessine sa route au pinceau 2D. On ne
+     peut pas lui rendre une balise `img`, il lui faut un objet Image déjà
+     chargé — `drawImage` sur une image non chargée ne dessine rien, sans
+     erreur, et l'obstacle disparaîtrait une frame sur deux.
+
+     D'où ce cache : le premier appel lance le chargement et rend `null` (le
+     jeu dessine donc son tracé habituel), les appels suivants rendent l'image
+     dès qu'elle est prête. Aucun scintillement, aucune attente, et le tracé
+     d'origine reste le repli permanent.
+     ========================================================= */
+  const cacheCanvas = {};
+
+  /**
+   * Une image prête à passer à `drawImage`, ou `null`.
+   * @returns {HTMLImageElement|null}
+   */
+  function umaImageCanvas(famille, id) {
+    const cle = famille + "/" + id;
+    if (Object.prototype.hasOwnProperty.call(cacheCanvas, cle)) {
+      const entree = cacheCanvas[cle];
+      return entree && entree.pret ? entree.img : null;
+    }
+
+    const trouve = asset(famille, id);
+    if (!trouve || typeof Image === "undefined") {
+      cacheCanvas[cle] = null;
+      return null;
+    }
+
+    const entree = { img: new Image(), pret: false };
+    entree.img.onload = () => { entree.pret = true; };
+    /* Une image cassée ne doit pas être retentée à chaque frame. */
+    entree.img.onerror = () => { cacheCanvas[cle] = null; };
+    entree.img.src = trouve.src;
+    cacheCanvas[cle] = entree;
+    return null;
+  }
+
+  /**
+   * La vignette d'un jeu, si elle a été dessinée. Rend `null` sinon, pour que
+   * l'appelant garde le chemin de `games-manifest.json`.
+   *
+   * Elle a sa propre fonction parce qu'elle est demandée depuis QUATRE endroits
+   * (la grille du hub, le jeu à la une, le classement, le rail « Tu aimeras
+   * aussi ») plus la régie : sans ça, la même condition serait recopiée cinq
+   * fois et l'une d'elles finirait par être oubliée.
+   */
+  function umaVignette(idJeu) {
+    const trouve = asset("vignettes", idJeu);
+    return trouve ? trouve.src : null;
+  }
+
   /** Vrai si au moins un asset est indexé — pratique pour les bancs d'essai. */
   function umaAssetsCharges() {
     return Object.keys(index()).length > 0;
@@ -164,10 +219,14 @@
   window.umaAsset = asset;
   window.umaDessin = umaDessin;
   window.umaFond = umaFond;
+  window.umaVignette = umaVignette;
+  window.umaImageCanvas = umaImageCanvas;
   window.umaAssetsCharges = umaAssetsCharges;
 
   /* Pour les bancs d'essai Node, qui chargent ce fichier dans un contexte vm. */
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = { asset, umaDessin, umaFond, umaAssetsCharges };
+    module.exports = {
+      asset, umaDessin, umaFond, umaVignette, umaImageCanvas, umaAssetsCharges,
+    };
   }
 })();

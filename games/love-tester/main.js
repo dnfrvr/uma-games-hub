@@ -1,9 +1,11 @@
 /* =========================================================
    Love Tester — le moteur
    ---------------------------------------------------------
-   Ce fichier ne sait rien dire et ne sait dessiner personne : les textes et
-   les visages sont dans verdicts.js, le calcul dans hachage.js, les corps
-   dans shared/perso.js. Ici, il n'y a que la mise en scène.
+   Ce fichier ne sait rien dire : les textes sont dans verdicts.js, le calcul
+   dans hachage.js. Ici, il n'y a que la mise en scène.
+
+   La machine est un appareil à TEXTE : deux prénoms saisis, une aiguille, un
+   verdict. Elle n'affiche aucun visage — voir `majIdentite` pour le pourquoi.
 
    Et la mise en scène est TOUT le jeu. Le pourcentage est connu dès la
    première frappe au clavier ; l'afficher immédiatement n'amuserait
@@ -29,7 +31,6 @@
 
   const machine = $("lt-machine");
   const champs = { a: $("lt-nom-a"), b: $("lt-nom-b") };
-  const portraits = { a: $("lt-portrait-a"), b: $("lt-portrait-b") };
   const identites = { a: $("lt-identite-a"), b: $("lt-identite-b") };
   const remplissage = $("lt-remplissage");
   const vague = $("lt-vague");
@@ -46,7 +47,7 @@
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* =========================================================
-     1. Les visages
+     1. Reconnaître un prénom
      ========================================================= */
 
   /** Le personnage du casting qui répond à ce prénom, ou null. */
@@ -59,44 +60,26 @@
     return null;
   }
 
-  /* Un prénom inconnu a droit à un visage lui aussi, tiré de son propre
-     hachage : « Camille » aura toujours la même tête, sur toutes les
-     machines et pour toujours. C'est la promesse du pourcentage, appliquée
-     au dessin. */
-  function visageInconnu(nom) {
-    const n = H.normalise(nom);
-    const P = D.PALETTE;
-    const pris = (sel, tableau) => H.pioche(n, sel, tableau);
-    return {
-      peau: pris("peau", P.peaux),
-      cheveux: pris("coiffure", P.cheveux),
-      couleurCheveux: pris("teinture", P.couleursCheveux),
-      haut: pris("haut", P.hauts),
-      bas: pris("bas", P.bas),
-      bouche: pris("bouche", P.bouches),
-      accessoire: pris("accessoire", P.accessoires),
-      couleurAccessoire: pris("teinteAccessoire", P.hauts),
-      regard: "face",
-    };
-  }
+  /* La machine ne montre AUCUN visage : c'est un appareil à chiffres et à
+     verdicts, pas une galerie de portraits. Elle affichait un portrait dessiné
+     de chaque côté, et pour un prénom qu'elle ne connaît pas il fallait
+     l'inventer — un visage tiré du hachage du prénom, avec sa palette de
+     peaux, de coiffures et de hauts. C'était la seule famille de dessins du
+     portail qu'aucune illustration ne pourrait jamais remplacer : « Camille »
+     doit avoir une tête, et l'ensemble des prénoms possibles est infini.
 
-  /** Redessine le portrait et la légende d'un des deux côtés. */
-  function majPortrait(cote) {
+     En le retirant, le gadget redevient ce qu'il était en 2012 — deux champs,
+     une aiguille, un verdict — et le problème disparaît au lieu d'être
+     contourné. La légende sous le champ reste : c'est du texte, et c'est elle
+     qui dit si la machine reconnaît le prénom. */
+  function majIdentite(cote) {
     const nom = champs[cote].value;
-    const hote = portraits[cote];
-    const legende = identites[cote];
-
     if (!H.normalise(nom)) {
-      hote.className = "lt-portrait lt-portrait-vide";
-      hote.innerHTML = '<span aria-hidden="true">?</span>';
-      legende.textContent = "en attente";
+      identites[cote].textContent = "en attente";
       return;
     }
-
     const perso = connu(nom);
-    hote.className = "lt-portrait" + (perso ? " lt-portrait-connu" : "");
-    hote.innerHTML = persoSVG(perso ? perso.look : visageInconnu(nom));
-    legende.textContent = perso ? perso.mention : "inconnu au bataillon";
+    identites[cote].textContent = perso ? perso.mention : "inconnu au bataillon";
   }
 
   /* =========================================================
@@ -123,15 +106,6 @@
 
   function crans() {
     return echelle.querySelectorAll(".lt-cran");
-  }
-
-  function miniature(nom) {
-    const perso = connu(nom);
-    return (
-      '<span class="lt-mini">' +
-      persoSVG(perso ? perso.look : visageInconnu(nom)) +
-      "</span>"
-    );
   }
 
   /* Les prénoms viennent d'un champ de saisie : ils ne sont jamais injectés
@@ -436,8 +410,8 @@
         b.addEventListener("click", () => {
           champs.a.value = l.a;
           champs.b.value = l.b;
-          majPortrait("a");
-          majPortrait("b");
+          majIdentite("a");
+          majIdentite("b");
           lance();
         });
         li.appendChild(b);
@@ -524,7 +498,7 @@
   });
 
   ["a", "b"].forEach((cote) => {
-    champs[cote].addEventListener("input", () => majPortrait(cote));
+    champs[cote].addEventListener("input", () => majIdentite(cote));
   });
 
   $("lt-inverser").addEventListener("click", () => {
@@ -532,8 +506,8 @@
     const tmp = champs.a.value;
     champs.a.value = champs.b.value;
     champs.b.value = tmp;
-    majPortrait("a");
-    majPortrait("b");
+    majIdentite("a");
+    majIdentite("b");
     /* Le gag ET la démonstration : la clé d'un couple est rangée par ordre
        alphabétique avant d'être hachée, donc inverser ne peut rien changer. */
     if (memeCouple && memeCouple === cleAffichee) {
@@ -563,8 +537,8 @@
   construitEchelle();
   carnet.rend();
   majBoutonSon();
-  majPortrait("a");
-  majPortrait("b");
+  majIdentite("a");
+  majIdentite("b");
   poseJauge(0);
   chiffres.textContent = "---";
 })();

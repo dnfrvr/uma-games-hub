@@ -92,7 +92,7 @@
         titre: jeu.titre,
         accroche: ACCROCHES[i % ACCROCHES.length],
         bouton: "Jouer gratuitement ▸",
-        vignette: versRacine(jeu.vignette),
+        vignette: (window.umaVignette && umaVignette(jeu.id)) || versRacine(jeu.vignette),
         couleur: jeu.couleur,
         url: versRacine(jeu.url),
       }));

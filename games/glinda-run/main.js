@@ -80,6 +80,15 @@
          peut donc la faire glisser d'une période puis la remettre à zéro
          sans que personne ne voie la couture. */
       el.style.width = "calc(100% + " + c.periode + "px)";
+      /* La couche de parallaxe prend son image si elle existe. Elle doit se
+         raccorder à elle-même horizontalement, d'où le `repeat-x` : la bande
+         fait une période de plus que la scène et glisse en boucle. */
+      const image = typeof umaFond === "function" ? umaFond("decors-glinda-run", c.id) : null;
+      if (image) {
+        el.style.backgroundImage = image;
+        el.style.backgroundRepeat = "repeat-x";
+        el.style.backgroundSize = "auto 100%";
+      }
       decor.appendChild(el);
       return { el: el, facteur: c.facteur, periode: c.periode };
     });
@@ -187,7 +196,12 @@
       el.innerHTML = POMPON_SVG;
     } else {
       el.className = "run-obstacle run-obstacle-" + o.type;
-      el.innerHTML = o.def.svg;
+      /* Chaque obstacle a sa propre largeur/hauteur dans donnees.js : le ratio
+         vient de là, pas de la famille (`ratioLibre` côté scanner). */
+      el.innerHTML =
+        typeof umaDessin === "function"
+          ? umaDessin("obstacles-glinda-run", o.def.id || o.type, o.def.svg)
+          : o.def.svg;
     }
     const boite = boiteObjet(o);
     el.style.width = o.largeur + "px";

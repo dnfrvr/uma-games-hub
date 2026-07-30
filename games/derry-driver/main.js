@@ -295,12 +295,31 @@
   }
 
   function ciel(parcours) {
+    /* Le dégradé est peint d'abord, TOUJOURS : si l'image du parcours a de la
+       transparence ou ne remplit pas toute la toile, il reste dessous au lieu
+       de laisser du noir. */
     const g = pinceau.createLinearGradient(0, 0, 0, hauteur);
     g.addColorStop(0, parcours.ciel[0]);
     g.addColorStop(0.6, parcours.ciel[1]);
     g.addColorStop(1, parcours.ciel[2]);
     pinceau.fillStyle = g;
     pinceau.fillRect(0, 0, largeur, hauteur);
+
+    /* Le fond dessiné du parcours, s'il existe. Il se répète en largeur : la
+       route défile, un fond qui s'arrêterait au bord se verrait. */
+    const image =
+      typeof umaImageCanvas === "function"
+        ? umaImageCanvas("decors-derry", parcours.id)
+        : null;
+    if (!image || !image.naturalWidth) return;
+
+    const h = hauteur;
+    const l = image.naturalWidth * (h / image.naturalHeight);
+    /* Défilement lent, au même facteur que les collines juste en dessous :
+       c'est le plan le plus lointain, il bouge à peine. `cam.x` est la position
+       de la caméra, la même que celle qu'emploie `ecranX`. */
+    let x = -((cam.x * 0.12) % l);
+    for (; x < largeur; x += l) pinceau.drawImage(image, x, 0, l, h);
   }
 
   /* Une silhouette de collines très lente : c'est elle qui donne la
@@ -486,7 +505,24 @@
       pinceau.strokeStyle = TRAIT;
       pinceau.lineWidth = 3.5;
       pinceau.lineJoin = "round";
-      if (o.type === "nid") dessineNid(o);
+      /* L'image de l'obstacle si elle est chargée, sinon le tracé d'origine.
+         Un seul aiguillage ici plutôt qu'un dans chacune des trois fonctions
+         de dessin : elles restent le repli, intactes.
+         Les noms de famille suivent la liste (`nid-de-poule`, `plot`,
+         `barriere`), pas les types courts du moteur. */
+      const NOM_ASSET = { nid: "nid-de-poule", plot: "plot", barriere: "barriere" };
+      const image =
+        typeof umaImageCanvas === "function"
+          ? umaImageCanvas("obstacles-derry", NOM_ASSET[o.type] || o.type)
+          : null;
+
+      if (image) {
+        /* Posé AU SOL et centré : l'origine du pinceau est déjà au point de
+           contact, donc l'image monte de toute sa hauteur au-dessus. */
+        const l = o.largeur;
+        const h = l * (image.naturalHeight / image.naturalWidth || 1);
+        pinceau.drawImage(image, -l / 2, -h, l, h);
+      } else if (o.type === "nid") dessineNid(o);
       else if (o.type === "plot") dessinePlot(o, touche);
       else dessineBarriere(o, touche);
       pinceau.restore();

@@ -223,7 +223,20 @@ const DECORS = [
 /* Ton image si tu en as déposé une, sinon le SVG de secours.
    La même URL sert au DOM (background-image) et au canvas (drawImage). */
 DECORS.forEach((d) => {
-  if (d.fichier) {
+  /* Une image indexée par `node outils/scan-assets.js` passe devant tout le
+     reste : c'est le chemin normal du portail depuis que la conversion est
+     outillée. Les identifiants sont préfixés ici (`decor_augusta`) et pas dans
+     la liste d'assets (`augusta.png`) — le préfixe est une convention interne à
+     ce jeu, pas un nom de fichier à imposer. Le champ `fichier` reste accepté
+     pour un décor déposé à la main hors des familles. */
+  const indexee =
+    typeof umaAsset === "function"
+      ? umaAsset("decors-drew", String(d.id).replace(/^decor_/, ""))
+      : null;
+
+  if (indexee) {
+    d.url = indexee.src;
+  } else if (d.fichier) {
     d.url = d.fichier;
   } else if (d.svg) {
     d.url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(d.svg.replace(/\s+/g, " ").trim());

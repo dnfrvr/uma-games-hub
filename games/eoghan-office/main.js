@@ -115,7 +115,15 @@ function chargeDecor(decor) {
   etat.props = [];
 
   elements.salle.dataset.decor = decor.id;
-  elements.salle.style.setProperty("--fond", decor.palette.fond);
+  /* Le fond de salle : une image si elle existe, sinon le dégradé en trois
+     bandes du décor. On la pose en `background-image` sur la salle et on laisse
+     les trois bandes en dessous — si l'image a de la transparence ou ne couvre
+     pas tout, le dégradé reste dessous plutôt que d'ouvrir un trou blanc. */
+  const fondImage = typeof umaFond === "function" ? umaFond("decors-eoghan", decor.id) : null;
+  elements.salle.style.setProperty(
+    "--fond",
+    fondImage ? fondImage + " center / cover no-repeat, " + decor.palette.fond : decor.palette.fond
+  );
   elements.salle.style.setProperty("--sol-arriere", decor.palette.solArriere);
   elements.salle.style.setProperty("--sol-avant", decor.palette.solAvant);
   elements.salle.style.setProperty("--bandeau", decor.palette.bandeau);
@@ -129,7 +137,13 @@ function chargeDecor(decor) {
     const modeleProp = PROPS[modele.type];
     const el = document.createElement("div");
     el.className = "prop prop-" + modele.type;
-    el.innerHTML = modeleProp.svg;
+    /* Le meuble prend son image si elle existe. Le ratio n'est pas imposé par
+       la famille mais par la donnée (`largeur`/`hauteur` de PROPS), d'où
+       `ratioLibre` côté scanner. */
+    el.innerHTML =
+      typeof umaDessin === "function"
+        ? umaDessin("eoghan-mobilier", modele.type, modeleProp.svg)
+        : modeleProp.svg;
     el.style.width = pourcent(modeleProp.largeur) + "%";
     const a = ancrage(modele.plan);
     el.style.left = pourcent(modele.x) + "%";

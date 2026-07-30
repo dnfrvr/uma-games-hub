@@ -240,7 +240,7 @@
     lienImg.setAttribute("aria-label", "Jouer à " + jeu.titre);
 
     const img = document.createElement("img");
-    img.src = jeu.vignette;
+    img.src = (window.umaVignette && umaVignette(jeu.id)) || jeu.vignette;
     img.alt = "";
     lienImg.appendChild(img);
 
@@ -407,7 +407,7 @@
     cadre.className = "carte-vignette";
 
     const img = document.createElement("img");
-    img.src = jeu.vignette;
+    img.src = (window.umaVignette && umaVignette(jeu.id)) || jeu.vignette;
     img.alt = "";
     img.loading = "lazy";
     cadre.appendChild(img);
@@ -474,7 +474,7 @@
 
       const img = document.createElement("img");
       img.className = "rang-vignette";
-      img.src = jeu.vignette;
+      img.src = (window.umaVignette && umaVignette(jeu.id)) || jeu.vignette;
       img.alt = "";
       img.loading = "lazy";
 

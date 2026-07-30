@@ -46,7 +46,6 @@
                 <div class="lt-pupitre">
                   <!-- Prénom de gauche -->
                   <div class="lt-place">
-                    <div class="lt-portrait" id="lt-portrait-a" aria-hidden="true"></div>
                     <p class="lt-identite" id="lt-identite-a">&nbsp;</p>
                     <label class="lt-etiquette" for="lt-nom-a">Premier prénom</label>
                     <input class="lt-saisie" id="lt-nom-a" name="a" type="text"
@@ -90,7 +89,6 @@
 
                   <!-- Prénom de droite -->
                   <div class="lt-place">
-                    <div class="lt-portrait" id="lt-portrait-b" aria-hidden="true"></div>
                     <p class="lt-identite" id="lt-identite-b">&nbsp;</p>
                     <label class="lt-etiquette" for="lt-nom-b">Second prénom</label>
                     <input class="lt-saisie" id="lt-nom-b" name="b" type="text"
@@ -153,7 +151,8 @@
        passent AVANT les scripts du jeu, qui dessinent au chargement. -->
   <script src="../../assets/index.js"></script>
   <script src="../../shared/images.js"></script>
-  <script src="../../shared/perso.js"></script>
+  <!-- Pas de shared/perso.js ici : la machine n'affiche aucun visage. -->
+
   <script src="hachage.js"></script>
   <script src="verdicts.js"></script>
   <script src="main.js"></script>
