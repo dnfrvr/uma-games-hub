@@ -286,6 +286,22 @@ body:has(.page) .entete-site { max-width: 1330px; }
 .pub-banniere .pub-scene { max-width: 728px; height: 90px; margin: 0 auto; }
 .pub-pave .pub-scene { height: 250px; }
 
+/* La bannière porte sa propre marge basse, et c'est volontairement elle qui
+   la porte plutôt que le conteneur.
+
+   Elle vit dans DEUX parents qui n'espacent pas pareil : `.portail` sur
+   l'accueil (flux de blocs, sans gap) et `.colonne-jeu` sur une page de jeu
+   (colonne flex, sans gap non plus). Sur l'accueil l'espace venait en fait du
+   `margin-top` de `.portail-corps`, l'élément SUIVANT — donc une page de jeu,
+   où c'est le lecteur qui suit, n'avait rien du tout et la pub collait au
+   bezel. Un `gap` sur `.colonne-jeu` aurait aussi rouvert les écarts déjà
+   réglés par `#fil-ariane` et `.fiche-jeu`, qui portent les leurs.
+
+   12 px : la valeur de `.fiche-jeu`, le bloc voisin dans la même colonne. En
+   flux de blocs cette marge se fusionne avec le `margin-top` de
+   `.portail-corps`, donc l'accueil ne bouge pas d'un pixel. */
+.pub-banniere { margin-bottom: 12px; }
+
 .pub-cadre {
   position: absolute;
   inset: 0;
